@@ -7,7 +7,7 @@ clean:
 	-docker rmi `docker images -q --filter "dangling=true"`
 
 build: clean
-	python setup.py bdist_wheel --universal
+	python setup.py bdist_wheel
 
 install: build
 	pip install -U dist/*.whl
