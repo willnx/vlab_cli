@@ -13,6 +13,7 @@ from vlab_cli.lib.api import consume_task
 @click.pass_context
 def info(ctx):
     """Display general information about your virtual lab"""
+
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/inventory',
                         message='Collecting information about your inventory',

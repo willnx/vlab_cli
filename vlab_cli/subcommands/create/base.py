@@ -8,6 +8,7 @@ from vlab_cli.subcommands.create.network import network
 from vlab_cli.subcommands.create.jumpbox import jumpbox
 from vlab_cli.subcommands.create.esrs import esrs
 from vlab_cli.subcommands.create.cee import cee
+from vlab_cli.subcommands.create.router import router
 
 
 @click.group()
@@ -22,3 +23,4 @@ create.add_command(network)
 create.add_command(jumpbox)
 create.add_command(esrs)
 create.add_command(cee)
+create.add_command(router)

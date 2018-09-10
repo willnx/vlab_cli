@@ -19,7 +19,7 @@ def network(ctx, name):
     if name:
         networks = [x for x in networks if x == name]
     if networks:
-        click.echo('\n{}\n'.format(tabulate([networks], headers=['Name']), tablefmt='presto'))
+        click.echo('\n{}\n'.format(tabulate([['\n'.join(networks)]], headers=['Name']), tablefmt='presto'))
     elif name:
         click.echo('No network with name: {}'.format(name))
     else:

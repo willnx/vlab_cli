@@ -46,11 +46,13 @@ def get_formatted_table(images):
               '8.0.1 (Halfpipe)',
               '8.1.0 (FreightTrain)',
               '8.1.1 (Niijima)',
+              '8.1.2 (Kanagawa)',
              ]
     riptide = sorted([x for x in images if '7.2' < x < '8.0.1'])
     halfpipe = sorted([x for x in images if '8.0.0' < x < '8.1.0'])
     freight_train = sorted([x for x in images if '8.0.1'< x < '8.1.1'])
-    niijima = sorted([x for x in images if '8.1.0' < x < '8.2.0'])
+    niijima = sorted([x for x in images if '8.1.0' < x < '8.1.2'])
+    kanagawa = sorted([x for x in images if '8.1.1' < x < '8.2.0'])
     table = columned_table(header, [riptide, halfpipe, freight_train, niijima])
     return table
 
