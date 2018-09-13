@@ -40,7 +40,7 @@ def delete_cluster(vlab_api, cluster):
                         endpoint='/api/1/inf/onefs',
                         message='Looking up OneFS cluster {}'.format(cluster),
                         method='GET').json()
-    nodes = [x for x in data['content'].keys() if x.split('-')[0] == cluster]
+    nodes = _find_cluster_nodes(cluster, all_nodes=data['content'].keys())
     if not nodes:
         raise click.ClickException('No cluster named {} found'.format(cluster))
     tasks = {}
@@ -51,3 +51,37 @@ def delete_cluster(vlab_api, cluster):
             tasks[node] = '/api/1/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
         block_on_tasks(vlab_api, tasks)
     click.echo('OK!')
+
+
+def _find_cluster_nodes(cluster_name, all_nodes):
+    """Given a cluster name, and a list of nodes owned, find the nodes that belong
+    to that cluster
+
+    :Returns: List
+
+    :param cluster_name: The name of the OneFS cluster
+    :type cluster_name: String
+
+    :param all_nodes: Every OneFS node a user owns
+    :type all_nodes: List
+    """
+    # Example of nodes in the cluster named "foo-bar"
+    # foo-bar-1
+    # foo-bar-10
+    # foo-bar-100
+    # Example of nodes in a different cluster
+    # foo-barb-1
+    # foo-bar
+    # foobar
+    # Must not falsely match foo-bar-baz-1, foobar, or foo-bar
+    cluster_nodes = []
+    cluster_name_has_dashes = bool(cluster_name.count('-'))
+    for node in all_nodes:
+        # perform 1 split at most
+        chunked_name = node.rsplit('-', 1)
+        # Avoid matching foo-bar the cluster with a single node named foo-bar
+        if cluster_name_has_dashes and len(chunked_name) == 1:
+            continue
+        elif chunked_name[0] == cluster_name:
+            cluster_nodes.append(node)
+    return cluster_nodes
