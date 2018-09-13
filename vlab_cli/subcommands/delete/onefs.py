@@ -40,7 +40,7 @@ def delete_cluster(vlab_api, cluster):
                         endpoint='/api/1/inf/onefs',
                         message='Looking up OneFS cluster {}'.format(cluster),
                         method='GET').json()
-    nodes = _find_cluster_nodes(cluster, all_nodes=data['content'].keys()]
+    nodes = _find_cluster_nodes(cluster, all_nodes=data['content'].keys())
     if not nodes:
         raise click.ClickException('No cluster named {} found'.format(cluster))
     tasks = {}
