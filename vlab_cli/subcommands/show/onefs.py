@@ -23,8 +23,8 @@ def onefs(ctx, images):
         rows = []
         for img in info['image']:
             rows.append(Version(img, name='OneFS'))
+        click.echo('\n{}\n'.format(rows))
         table = get_formatted_table(sorted(rows))
-        click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
                             endpoint='/api/1/inf/onefs',
@@ -53,7 +53,7 @@ def get_formatted_table(images):
     freight_train = sorted([x for x in images if '8.0.1'< x < '8.1.1'])
     niijima = sorted([x for x in images if '8.1.0' < x < '8.1.2'])
     kanagawa = sorted([x for x in images if '8.1.1' < x < '8.2.0'])
-    table = columned_table(header, [riptide, halfpipe, freight_train, niijima])
+    table = columned_table(header, [riptide, halfpipe, freight_train, niijima, kanagawa])
     return table
 
 
