@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-CLI for maestro
+Enables building standard Python vLab CLI distributions
 """
-
 from setuptools import setup, find_packages
-from os import environ
+
+from vlab_cli import version
+
 
 setup(name="vlab-cli",
       author="Nicholas Willhite",
-      version='0.0.3',
+      version=version.__version__,
       packages=find_packages(),
       classifiers=[
         'Development Status :: 3 - Alpha',
@@ -24,5 +25,5 @@ setup(name="vlab-cli",
       description="Command Line Interface for vLab",
       long_description=open('README.rst').read(),
       entry_points={'console_scripts' : 'vlab=vlab_cli.vlab:cli'},
-      install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography', 'colorama']
+      install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography', 'colorama'],
       )

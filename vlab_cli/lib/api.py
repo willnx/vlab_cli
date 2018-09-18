@@ -10,11 +10,12 @@ import pkg_resources
 import click
 import requests
 
+from vlab_cli import version
 from vlab_cli.lib.widgets import Spinner
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-USER_AGENT = 'vLab CLI {}'.format(pkg_resources.get_distribution('vlab-cli').version)
+USER_AGENT = 'vLab CLI {}'.format(version.__version__)
 
 class vLabApi(object):
     """A small wrapper around requests.Session to handle boiler-plate code in API calls.
