@@ -11,6 +11,7 @@ from json import JSONDecodeError
 import click
 from jwt import PyJWTError
 
+from vlab_cli import version
 from vlab_cli.lib import tokenizer
 from vlab_cli.lib.api import vLabApi
 from vlab_cli.lib.logger import get_logger
@@ -24,7 +25,7 @@ environ['LANG'] = environ.get('LC_ALL', 'C.UTF-8')
 # Settings and defaults
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 VLAB_URL = 'https://vlab-dev.igs.corp'
-VLAB_VERSION = pkg_resources.get_distribution('vlab-cli').version
+VLAB_VERSION = version.__version__
 VLAB_VERIFY_HOSTNAME = True
 VLAB_USER = getuser()
 
