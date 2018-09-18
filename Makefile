@@ -9,6 +9,9 @@ clean:
 build: clean
 	python setup.py bdist_wheel
 
+msi: clean
+	python setup_win.py bdist_msi
+
 install: build
 	pip install -U dist/*.whl
 
