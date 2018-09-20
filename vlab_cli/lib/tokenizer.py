@@ -113,7 +113,7 @@ def create(username, vlab_url, verify):
 
     # Now obtain a token
     password = getpass('Please enter your password: ')
-    resp = requests.post(vlab_url + '/api/1/auth/token',
+    resp = requests.post(vlab_url + '/api/2/auth/token',
                          json={'username': username, 'password': password},
                          headers={'User-Agent': USER_AGENT},
                          verify=verify)

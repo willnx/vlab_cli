@@ -41,25 +41,22 @@ def handle_show(token_contents):
     :param token_contents: The decoded vLab auth token
     :type token_contents: Dictionary
     """
-    heading = """
+    info = """
     Username   : {}
     Issued by  : {}
     Issued at  : {}
     Expires at : {}
     Version    : {}
+    Client IP  : {}
+    \n
     """.format(token_contents['username'],
                token_contents['iss'],
                time.strftime('%m/%d/%Y %H:%M:%s', time.gmtime(token_contents['iat'])),
                time.strftime('%m/%d/%Y %H:%M:%s', time.gmtime(token_contents['exp'])),
-               token_contents['version'])
-    group_heading = """
-    Group Membership
-    {}
-    """.format('-' * len(max(token_contents['memberOf'], key=len)))
-    groups = '\n'.join(token_contents['memberOf'])
-    print(textwrap.dedent(heading))
-    print(textwrap.dedent(group_heading).rstrip('\n'))
-    print(groups, '\n')
+               token_contents['version'],
+               token_contents['client_ip'])
+    click.echo(textwrap.dedent(info))
+
 
 
 def handle_delete(vlab_url, token, vlab_api):
