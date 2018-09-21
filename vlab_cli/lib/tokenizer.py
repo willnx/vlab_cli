@@ -3,8 +3,22 @@
 Handles initial interaction with local vLab Auth tokens.
 
 The tokenizer supports users interacting with multiple vLab servers by storing
-the tokens in a JSON encoded file. The keys are the URLs for the vLab server,
-and the values are simply the tokens.
+the tokens in a JSON encoded file. The schema of that JSON file is as follows::
+
+  {"version" : 1,
+   "vlabs" : {
+    "my-vlab.somewhere.com" : {
+     "token" : "aaa.bbb.ccc",
+     "key" : "Public decryption key",
+     "algorithm" : "The JWT encryption method, i.e. HS256, RS512, etc"
+    },
+    "my-vlab-dev.somewhere.com" : {
+     "token" : "ddd.eee.fff",
+     "key" : "Public decryption key",
+     "algorithm" : "The JWT encryption method, i.e. HS256, RS512, etc"
+    }
+   }
+  }
 """
 import os
 import json
@@ -14,30 +28,30 @@ from getpass import getpass
 
 import jwt
 import requests
-from requests.exceptions import HTTPError
 
 from vlab_cli.lib.api import USER_AGENT
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Creates path like /home/alice/.vlab/; must work with windows
 TOKEN_DIR = os.path.join(os.path.expanduser('~'), '.vlab')
-TOKEN_FILE = os.path.join(TOKEN_DIR, 'token')
+TOKEN_FILE = os.path.join(TOKEN_DIR, 'token.json')
 
 
 def read(vlab_url):
-    """Obtain the auth token for the supplied vLab server
+    """Obtain the auth token, decryption key and algorithm for the supplied vLab server
 
-    :Returns: String
+    :Returns: Tuple
 
     :param vlab_url: The specific vLab server that issued the auth token
     :type vlab_url: String
     """
     with open(TOKEN_FILE) as the_file:
         contents = json.load(the_file)
-    return contents[vlab_url]
+    this_lab = contents['vlabs'][vlab_url]
+    return this_lab['token'], this_lab['key'], this_lab['algorithm']
 
 
-def decode(token, vlab_url, verify):
+def decode(token, vlab_url, decryption_key, algorithm):
     """Convert the token from a string into a usable object
 
     :Returns: Dictionary
@@ -48,15 +62,15 @@ def decode(token, vlab_url, verify):
     :param vlab_url: The specific vLab server that issued the auth token
     :type vlab_url: String
 
-    :param verify: Set to False if the vLab server is using a self-signed TLS cert
-    :type verify: Boolean
+    :param decryption_key: The value to convert the token to plain text
+    :type decryption_key: String
+
+    :param algorithm: The algorithm used to when decrypting the token
+    :type algorithm: String
     """
-    resp = requests.get(vlab_url + '/api/1/auth/key', verify=verify,
-                        headers={'User-Agent': USER_AGENT})
-    resp.raise_for_status()
-    content = resp.json()['content']
-    data = jwt.decode(token, content['key'], issuer=vlab_url,
-                      algorithms=content['algorithm'])
+
+    data = jwt.decode(token, decryption_key, issuer=vlab_url,
+                      algorithms=algorithm)
     remaining_time = data['exp'] - time.time()
     if remaining_time < 600:
         # it will expire in the next 10 minutes
@@ -65,7 +79,7 @@ def decode(token, vlab_url, verify):
         return data
 
 
-def write(token, vlab_url):
+def write(token, vlab_url, decryption_key, algorithm):
     """Save the token to a local file.
     This avoids users having to enter their password every time they run a command.
 
@@ -76,10 +90,19 @@ def write(token, vlab_url):
 
     :param vlab_url: The specific vLab server that issued the auth token
     :type vlab_url: String
+
+    :param decryption_key: The value to convert the token to plain text
+    :type decryption_key: String
+
+    :param algorithm: The algorithm used to when decrypting the token
+    :type algorithm: String
     """
     with open(TOKEN_FILE) as the_file:
         contents = json.load(the_file)
-    contents[vlab_url] = token
+    contents['vlabs'][vlab_url] = {}
+    contents['vlabs'][vlab_url]['token'] = token
+    contents['vlabs'][vlab_url]['key'] = decryption_key
+    contents['vlabs'][vlab_url]['algorithm'] = algorithm
     with open(TOKEN_FILE, 'w') as the_file:
         json.dump(contents, the_file, indent=4, sort_keys=True)
 
@@ -92,7 +115,7 @@ def create(username, vlab_url, verify):
     :param username: The name of the user to authenticate as.
     :type username: String
 
-    :param vlab_url: The specific vLab server that issued the auth token
+    :param vlab_url: The specific vLab server to obtain a new token from.
     :type vlab_url: String
 
     :param verify: Set to False if the vLab server is using a self-signed TLS cert
@@ -109,19 +132,28 @@ def create(username, vlab_url, verify):
             pass
         os.chmod(TOKEN_FILE, 0o600)
         with open(TOKEN_FILE, 'w') as the_file:
-            json.dump({}, the_file, indent=4, sort_keys=True)
+            json.dump({'version' : 1, 'vlabs': {}}, the_file, indent=4, sort_keys=True)
 
     # Now obtain a token
-    password = getpass('Please enter your password: ')
+    password = getpass('Please enter your CORP domain password: ')
     resp = requests.post(vlab_url + '/api/2/auth/token',
                          json={'username': username, 'password': password},
                          headers={'User-Agent': USER_AGENT},
                          verify=verify)
-    if not resp.ok:
-        err = resp.json()['error']
-        raise RuntimeError(err)
+    if resp.status_code == 401:
+        error = 'Invalid password supplied for user {}'.format(username)
+        raise ValueError(error)
+    elif not resp.ok:
+        resp.raise_for_status()
     else:
-        return resp.json()['content']['token']
+        new_token = resp.json()['content']['token']
+        resp = requests.get(vlab_url + '/api/1/auth/key',
+                            headers={'User-Agent': USER_AGENT},
+                            verify=verify)
+        data = resp.json()
+        decryption_key = data['content']['key']
+        algorithm = data['content']['algorithm']
+        return new_token, decryption_key, algorithm
 
 
 def truncate():
@@ -149,7 +181,6 @@ def delete(vlab_url):
     """
     with open(TOKEN_FILE, 'r') as the_file:
         contents = json.load(the_file)
-
-    contents.pop(vlab_url, '')
+    contents['vlabs'].pop(vlab_url, '')
     with open(TOKEN_FILE, 'w') as the_file:
         json.dump(contents, the_file)
