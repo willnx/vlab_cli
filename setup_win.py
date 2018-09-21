@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 from cx_Freeze import setup, Executable
 from vlab_cli import version
 
-packages = ['pkg_resources', 'jwt', 'idna', 'vlab_cli']
+packages = ['pkg_resources', 'jwt', 'idna', 'vlab_cli', 'cryptography', 'cffi']
 bdist_msi_options = {'add_to_path': True, 'install-icon': 'vlab_icon.ico'}
 
 setup(name="vlab-cli",
