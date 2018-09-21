@@ -49,31 +49,35 @@ def cli(ctx, vlab_url, verify, vlab_username, verbose):
 
     # Get the token and decode it, assuming everything is OK
     try:
-        token = tokenizer.read(vlab_url)
-        token_contents = tokenizer.decode(token, vlab_url, verify)
+        token, decryption_key, algorithm = tokenizer.read(vlab_url)
+        token_contents = tokenizer.decode(token, vlab_url, decryption_key, algorithm)
     except (FileNotFoundError, PyJWTError, KeyError) as doh:
-        if verbose:
-            log.exception(verbose)
+        log.debug(doh, exc_info=True)
         try:
             # Can't assume everything will go well here; might get file permission error
             # or user could enter a bad password
-            token  = tokenizer.create(vlab_username, vlab_url, verify)
-            token_contents = tokenizer.decode(token, vlab_url, verify)
-            tokenizer.write(token, vlab_url)
+            token, decryption_key, algorithm  = tokenizer.create(vlab_username, vlab_url, verify)
+            token_contents = tokenizer.decode(token, vlab_url, decryption_key, algorithm)
+            tokenizer.write(token, vlab_url, decryption_key, algorithm)
+        except ValueError as doh:
+            log.debug(doh, exc_info=True)
+            raise click.ClickException(doh)
         except Exception as doh:
+            log.debug(doh, exc_info=True)
+            log.exception(doh)
             raise click.ClickException(doh)
     except JSONDecodeError:
         tokenizer.truncate() # Not going to even try to fix the invalid JSON
         try:
             # Like before, can't assume everything will go OK...
-            token  = tokenizer.create(vlab_username, vlab_url, verify)
-            token_contents = tokenizer.decode(token, vlab_url, verify)
-            tokenizer.write(token, vlab_url)
+            token, decryption_key, algorithm  = tokenizer.create(vlab_username, vlab_url, verify)
+            token_contents = tokenizer.decode(token, vlab_url, decryption_key, algorithm)
+            tokenizer.write(token, vlab_url, decryption_key, algorithm)
         except Exception as doh:
+            log.debug(doh, exc_info=True)
             raise click.ClickException(doh)
     except Exception as doh:
-        if verbose:
-            log.exception(doh)
+        log.debug(doh, exc_info=True)
         raise click.ClickException(doh)
 
     vlab_api = vLabApi(server=vlab_url, token=token, verify=verify)
