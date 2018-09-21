@@ -38,7 +38,7 @@ TOKEN_FILE = os.path.join(TOKEN_DIR, 'token.json')
 
 
 def read(vlab_url):
-    """Obtain the auth token and decryption key for the supplied vLab server
+    """Obtain the auth token, decryption key and algorithm for the supplied vLab server
 
     :Returns: Tuple
 
