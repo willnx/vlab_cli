@@ -48,7 +48,6 @@ def handle_show(token_contents):
     Expires at : {}
     Version    : {}
     Client IP  : {}
-    \n
     """.format(token_contents['username'],
                token_contents['iss'],
                time.strftime('%m/%d/%Y %H:%M:%s', time.gmtime(token_contents['iat'])),
@@ -69,12 +68,12 @@ def handle_delete(vlab_url, token, vlab_api):
     """
     try:
         tokenizer.delete(vlab_url)
-        resp = vlab_api.delete('/api/1/auth/token', json={'token': token})
+        resp = vlab_api.delete('/api/2/auth/token', json={'token': token})
         resp.raise_for_status()
     except Exception as doh:
         raise click.ClickException(doh)
     else:
-        print('OK!')
+        click.echo('OK!')
 
 
 def handle_refresh(vlab_url, username, verify, vlab_api, token):
@@ -92,11 +91,11 @@ def handle_refresh(vlab_url, username, verify, vlab_api, token):
     :type verify: Boolean
     """
     try:
-        token  = tokenizer.create(username, vlab_url, verify)
-        tokenizer.write(token, vlab_url)
-        resp = vlab_api.delete('/api/1/auth/token', json={'token': token})
+        token, decryption_key, algorithm  = tokenizer.create(username, vlab_url, verify)
+        tokenizer.write(token, vlab_url, decryption_key, algorithm)
+        resp = vlab_api.delete('/api/2/auth/token', json={'token': token})
         resp.raise_for_status()
     except Exception as doh:
         raise click.ClickException(doh)
     else:
-        print('OK!')
+        click.echo('OK!')

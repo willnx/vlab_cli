@@ -72,7 +72,7 @@ def cli(ctx, vlab_url, verify, vlab_username, verbose, debug):
             raise click.ClickException(doh)
     except JSONDecodeError:
         log.info('Token file contains invalid JSON, automatically deleting file')
-        tokenizer.truncate() # Not going to even try to fix the invalid JSON
+        tokenizer.destroy() # Not going to even try to fix the invalid JSON
         try:
             # Like before, can't assume everything will go OK...
             log.info("Successfully deleted token file")
