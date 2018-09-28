@@ -10,6 +10,7 @@ from vlab_cli.subcommands.delete.jumpbox import jumpbox
 from vlab_cli.subcommands.delete.esrs import esrs
 from vlab_cli.subcommands.delete.cee import cee
 from vlab_cli.subcommands.delete.router import router
+from vlab_cli.subcommands.delete.windows import windows
 
 @click.group()
 def delete():
@@ -24,3 +25,4 @@ delete.add_command(jumpbox)
 delete.add_command(esrs)
 delete.add_command(cee)
 delete.add_command(router)
+delete.add_command(windows)
