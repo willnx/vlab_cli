@@ -5,7 +5,7 @@ This module centralizes the logging logic of the vLab CLI app
 import logging
 
 
-def get_logger(name, verbose=False):
+def get_logger(name, verbose=False, debug=False):
     """Factory function for obtaining logging object
 
     :Returns: logging.Logger
@@ -17,10 +17,12 @@ def get_logger(name, verbose=False):
     :type verbose: Boolean
     """
     logger = logging.getLogger(__name__)
-    if verbose:
+    if debug:
         logger.setLevel('DEBUG')
-    else:
+    elif verbose:
         logger.setLevel('INFO')
+    else:
+        logger.setLevel('ERROR')
 
     if not logger.handlers:
         handler = logging.StreamHandler()

@@ -156,8 +156,8 @@ def create(username, vlab_url, verify):
         return new_token, decryption_key, algorithm
 
 
-def truncate():
-    """Empty all content within the token file
+def destroy():
+    """Destroy the token file, and all of it's contents.
 
     :Returns: None
 
@@ -166,9 +166,7 @@ def truncate():
     manually touching that file. So don't waste time trying to programmically fix
     the JSON, just nuke the contents (deleting their tokens) and start over.
     """
-    with open(TOKEN_FILE, 'w'):
-        # opening auto-truncates the file
-        pass
+    os.remove(TOKEN_FILE)
 
 
 def delete(vlab_url):

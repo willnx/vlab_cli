@@ -17,6 +17,7 @@ from vlab_cli.lib.widgets import Spinner
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 USER_AGENT = 'vLab CLI {}'.format(version.__version__)
 
+
 class vLabApi(object):
     """A small wrapper around requests.Session to handle boiler-plate code in API calls.
 
@@ -36,14 +37,30 @@ class vLabApi(object):
 
     .. code-block:: python
 
-       vlab = vLabApi(server='vlab.corp', token='asdf.asdf.asdf', verify=False)
+       vlab = vLabApi(server='vlab.corp', token='asdf.asdf.asdf', verify=False, log=log)
        resp = vlab.post('/api/1/inf/network', json={'some': 'payload'})
+
+    :param server: The URL of the vLab server to connect to
+    :type server: String
+
+    :param token: The encoded JWT from the vLab Auth server
+    :type token: String
+
+    :param verify: Perform TLS host certificate validation
+    :type verify: Boolean
+
+    :param log: The logging object to aid in debugging
+    :type log: logging.Logger
     """
-    def __init__(self, server, token, verify=False):
+    def __init__(self, server, token, verify=False, log=None):
         self._server = server
         self._session = requests.Session()
         self._header = {'X-Auth': token, 'User-Agent': USER_AGENT}
         self._verify = verify if verify is False else True
+        if log is None:
+            raise ValueError('Must supply a log object')
+        else:
+            self._log = log
 
     def _call(self, method, endpoint, auto_check=True, **kwargs):
         """Does the actual HTTP API calling
@@ -65,11 +82,15 @@ class vLabApi(object):
         :type **kwargs: Dictionary
         """
         url = build_url(self._server, endpoint)
+        self._log.debug('Calling {} on {}'.format(method.upper(), url))
         headers = kwargs.get('headers', {})
         headers.update(self._header)
         caller = getattr(self._session, method)
         resp = caller(url, headers=headers, verify=self._verify, **kwargs)
         if not resp.ok and auto_check:
+            self._log.debug("Call Failed: HTTP {}".format(resp.status_code))
+            self._log.debug("Reponse Headers:\n\t{}".format('\n\t'.join('{}: {}'.format(k, v) for k, v in resp.headers.items())))
+            self._log.debug("Response body:\n\t{}\n".format(resp.content))
             try:
                 error = resp.json()['error']
                 if error is None:
