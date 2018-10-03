@@ -11,6 +11,8 @@ from vlab_cli.subcommands.show.esrs import esrs
 from vlab_cli.subcommands.show.cee import cee
 from vlab_cli.subcommands.show.router import router
 from vlab_cli.subcommands.show.windows import windows
+from vlab_cli.subcommands.show.winserver import winserver
+
 
 @click.group()
 def show():
@@ -26,3 +28,4 @@ show.add_command(esrs)
 show.add_command(cee)
 show.add_command(router)
 show.add_command(windows)
+show.add_command(winserver)
