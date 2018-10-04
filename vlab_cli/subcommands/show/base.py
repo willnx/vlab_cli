@@ -12,7 +12,7 @@ from vlab_cli.subcommands.show.cee import cee
 from vlab_cli.subcommands.show.router import router
 from vlab_cli.subcommands.show.windows import windows
 from vlab_cli.subcommands.show.winserver import winserver
-
+from vlab_cli.subcommands.show.centos import centos
 
 @click.group()
 def show():
@@ -29,3 +29,4 @@ show.add_command(cee)
 show.add_command(router)
 show.add_command(windows)
 show.add_command(winserver)
+show.add_command(centos)
