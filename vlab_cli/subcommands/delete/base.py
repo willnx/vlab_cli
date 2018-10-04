@@ -12,6 +12,7 @@ from vlab_cli.subcommands.delete.cee import cee
 from vlab_cli.subcommands.delete.router import router
 from vlab_cli.subcommands.delete.windows import windows
 from vlab_cli.subcommands.delete.winserver import winserver
+from vlab_cli.subcommands.delete.centos import centos
 
 
 @click.group()
@@ -29,3 +30,4 @@ delete.add_command(cee)
 delete.add_command(router)
 delete.add_command(windows)
 delete.add_command(winserver)
+delete.add_command(centos)
