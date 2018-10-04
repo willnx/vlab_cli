@@ -9,7 +9,7 @@ from vlab_cli.lib.versions import Version
 
 @click.command()
 @click.option('-i', '--images', is_flag=True,
-              help='Display the available versions of OneFS to deploy')
+              help='Display the available versions of CEE to deploy')
 @click.pass_context
 def cee(ctx, images):
     """Display information about EMC Common Event Enabler instances in your lab"""
