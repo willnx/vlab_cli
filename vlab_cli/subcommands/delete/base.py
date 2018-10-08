@@ -13,6 +13,7 @@ from vlab_cli.subcommands.delete.router import router
 from vlab_cli.subcommands.delete.windows import windows
 from vlab_cli.subcommands.delete.winserver import winserver
 from vlab_cli.subcommands.delete.centos import centos
+from vlab_cli.subcommands.delete.icap import icap
 
 
 @click.group()
@@ -31,3 +32,4 @@ delete.add_command(router)
 delete.add_command(windows)
 delete.add_command(winserver)
 delete.add_command(centos)
+delete.add_command(icap)

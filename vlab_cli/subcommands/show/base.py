@@ -13,6 +13,8 @@ from vlab_cli.subcommands.show.router import router
 from vlab_cli.subcommands.show.windows import windows
 from vlab_cli.subcommands.show.winserver import winserver
 from vlab_cli.subcommands.show.centos import centos
+from vlab_cli.subcommands.show.icap import icap
+
 
 @click.group()
 def show():
@@ -30,3 +32,4 @@ show.add_command(router)
 show.add_command(windows)
 show.add_command(winserver)
 show.add_command(centos)
+show.add_command(icap)
