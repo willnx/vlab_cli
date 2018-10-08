@@ -12,6 +12,7 @@ from vlab_cli.subcommands.create.router import router
 from vlab_cli.subcommands.create.windows import windows
 from vlab_cli.subcommands.create.winserver import winserver
 from vlab_cli.subcommands.create.centos import centos
+from vlab_cli.subcommands.create.icap import icap
 
 
 @click.group()
@@ -30,3 +31,4 @@ create.add_command(router)
 create.add_command(windows)
 create.add_command(winserver)
 create.add_command(centos)
+create.add_command(icap)
