@@ -13,6 +13,7 @@ from vlab_cli.subcommands.create.windows import windows
 from vlab_cli.subcommands.create.winserver import winserver
 from vlab_cli.subcommands.create.centos import centos
 from vlab_cli.subcommands.create.icap import icap
+from vlab_cli.subcommands.create.claritynow import claritynow
 
 
 @click.group()
@@ -32,3 +33,4 @@ create.add_command(windows)
 create.add_command(winserver)
 create.add_command(centos)
 create.add_command(icap)
+create.add_command(claritynow)
