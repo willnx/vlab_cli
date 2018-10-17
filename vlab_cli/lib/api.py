@@ -2,6 +2,7 @@
 """
 A small abstraction to reduce boiler plate when working with the vLab RESTful API
 """
+import uuid
 import copy
 import time
 import urllib3
@@ -55,7 +56,14 @@ class vLabApi(object):
     def __init__(self, server, token, verify=False, log=None):
         self._server = server
         self._session = requests.Session()
-        self._header = {'X-Auth': token, 'User-Agent': USER_AGENT}
+        self._header = {'X-Auth': token,
+                        'User-Agent': USER_AGENT,
+                        # Creates a random ID
+                        # This object is only ever created once per invocation
+                        # of a CLI command, regardless of how many API calls
+                        # are made. This enables us to see how a simple CLI
+                        # command might depend on multiple backend services.
+                        'X-REQUEST-ID' : uuid.uuid4().hex}
         self._verify = verify if verify is False else True
         if log is None:
             raise ValueError('Must supply a log object')
@@ -89,7 +97,8 @@ class vLabApi(object):
         resp = caller(url, headers=headers, verify=self._verify, **kwargs)
         if not resp.ok and auto_check:
             self._log.debug("Call Failed: HTTP {}".format(resp.status_code))
-            self._log.debug("Reponse Headers:\n\t{}".format('\n\t'.join('{}: {}'.format(k, v) for k, v in resp.headers.items())))
+            self._log.debug("Request ID: {}".format(self._header['X-REQUEST-ID']))
+            self._log.debug("Response Headers:\n\t{}".format('\n\t'.join('{}: {}'.format(k, v) for k, v in resp.headers.items())))
             self._log.debug("Response body:\n\t{}\n".format(resp.content))
             try:
                 error = resp.json()['error']
