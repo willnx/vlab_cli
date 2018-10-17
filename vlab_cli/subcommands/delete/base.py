@@ -15,6 +15,7 @@ from vlab_cli.subcommands.delete.winserver import winserver
 from vlab_cli.subcommands.delete.centos import centos
 from vlab_cli.subcommands.delete.icap import icap
 from vlab_cli.subcommands.delete.claritynow import claritynow
+from vlab_cli.subcommands.delete.ecs import ecs
 
 
 @click.group()
@@ -35,3 +36,4 @@ delete.add_command(winserver)
 delete.add_command(centos)
 delete.add_command(icap)
 delete.add_command(claritynow)
+delete.add_command(ecs)
