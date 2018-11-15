@@ -4,9 +4,88 @@ This module contains handy CLI widgets
 """
 import sys
 import time
+import random
+import string
 import threading
 
 import click
+
+
+def prompt(message, boolean=False):
+    typewriter(message, newline=False)
+    answer =  input(' ')
+    if boolean:
+        return True if answer.lower().startswith('y') else False
+    else:
+        return answer
+
+def do_easter_egg(message):
+    """This fun little gem purposefully mis-types a message, then fixes it.
+
+    :Returns: None
+
+    :param message: What to (normally) say to the user
+    :type message: String
+    """
+    fun_times = random.randint(1, 500) == 42
+    if fun_times:
+        chars = len(message)
+        derp_point = int(chars/2)
+        derps = max(1, min(3, derp_point / 2))
+        for idx, char in enumerate(message):
+            if idx == derp_point:
+                random_chars = []
+                for _ in range(derps):
+                    derp_char = random.choice(string.ascii_letters)
+                    random_chars.append(derp_char)
+                    sys.stdout.write(derp_char)
+                    sys.stdout.flush()
+                time.sleep(1)
+                for backup in reversed(range(derps)):
+                    random_chars[backup] = ' '
+                    one_less_derp = '{}{}'.format(message[:derp_point], ''.join(random_chars))
+                    sys.stdout.write('\r{}'.format(one_less_derp))
+                    sys.stdout.flush()
+                    time.sleep(0.2)
+                sys.stdout.write('\r{}{}'.format(message[:idx], char))
+                sys.stdout.flush()
+            else:
+                sys.stdout.write(char)
+                sys.stdout.flush()
+                time.sleep(0.05)
+    return fun_times
+
+
+def typewriter(message, newline=True, indent=False):
+    """Output a message one character at a time
+
+    The point of this function is to help draw a user's eye to what's being noted
+    on the screen. The idea is that the movement will draw their attention, which
+    will increase the chances they'll actually read the output.
+
+    :Returns: None
+
+    :param message: The information to print to the terminal
+    :type message: String
+
+    :param newline: Automatically insert the newline char after the message
+    :type newline: Boolean
+
+    :param indent: Add a few extra spaces before the message
+    :type indent: Boolean
+    """
+    if indent:
+        message = indenter(message)
+    if do_easter_egg(message):
+        pass
+    else:
+        for idx, char in enumerate(message):
+            sys.stdout.write(char)
+            sys.stdout.flush()
+            time.sleep(0.05)
+    if newline:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
 
 def indenter(text, spaces=4):
@@ -52,6 +131,9 @@ class Spinner:
 
     def __enter__(self):
         """Enables use of ``with`` statement"""
+        typewriter(self.message, newline=False)
+        sys.stdout.write('\r')
+        sys.stdout.flush()
         self.start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):

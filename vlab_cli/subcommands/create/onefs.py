@@ -1,52 +1,234 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for creating OneFS nodes"""
+import random
 from collections import OrderedDict
 
 import click
 
-from vlab_cli.lib.widgets import Spinner
-from vlab_cli.lib.api import block_on_tasks
-from vlab_cli.lib.click_extras import MandatoryOption
+from vlab_cli.lib.api import block_on_tasks, consume_task
+from vlab_cli.lib.clippy import invoke_onefs_clippy
 from vlab_cli.lib.ascii_output import vm_table_view
+from vlab_cli.lib.click_extras import MandatoryOption
+from vlab_cli.lib.widgets import Spinner, prompt, typewriter
 
 
 @click.command()
-@click.option('-i', '--image', cls=MandatoryOption,
-              help='The version of OneFS to create')
-@click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the vOneFS node in your lab')
-@click.option('-c', '--node-count', default=1, type=int,
+@click.option('-i', '--image',
+              help='The version of OneFS to create [required]')
+@click.option('-n', '--name',
+              help='The name of the vOneFS node in your lab [required]')
+@click.option('-c', '--node-count', default=1, type=int, show_default=True,
               help='The number of nodes to create')
-@click.option('-e', '--external', default='frontend',
+@click.option('-e', '--external', default='frontend', show_default=True,
               help='The public/external network to connect the node to')
-@click.option('-t', '--internal', default='backend',
+@click.option('-t', '--internal', default='backend', show_default=True,
               help='The private/backend network to connect the node to')
+@click.option('-x', '--external-ip-range', nargs=2,
+              help='The range of IPs to assign to the public/external network [required]')
+@click.option('-b', '--internal-ip-range', nargs=2, default='RANDOM', show_default=True,
+              help='The range of IPs to assign to the private/backend network')
+@click.option('-g', '--default-gateway', default='192.168.1.1', show_default=True,
+              help='The default gateway of the public/external network')
+@click.option('-s', '--smartconnect-ip', default='',
+              help='Optionally provide the SmartConnect IP to be configured [optional]')
+@click.option('-z', '--sc-zonename', default='',
+              help='Optionally supply the SmartConnect Zone name to configure [optional]')
+@click.option('-d', '--dns-servers', default=['10.7.190.6'], multiple=True, show_default=True,
+              help='The DNS servers to use on the public/external network')
+@click.option('-o', '--encoding', default='utf-8', show_default=True,
+              help='The file system encoding to use on the new OneFS cluster')
+@click.option('-m', '--external-netmask', default='255.255.255.0', show_default=True,
+              help='The subnet mask to use on the public/external network')
+@click.option('-a', '--internal-netmask', default='255.255.255.0', show_default=True,
+              help='The subnet mask to use on the private/backend network')
+@click.option('--skip-config', is_flag=True, show_default=True,
+              help='Do not auto-configure the new OneFS cluster')
 @click.pass_context
-def onefs(ctx, name, image, node_count, external, internal):
-    """Create a vOneFS node"""
+def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
+          internal_ip_range, default_gateway, smartconnect_ip, sc_zonename, dns_servers,
+          encoding, external_netmask, internal_netmask, skip_config):
+    """Create a vOneFS cluster. You will be prompted for any missing required parameters."""
     if node_count > 5:
         raise click.ClickException('You can only deploy a maximum of 5 nodes at a time')
     tasks = {}
-    with Spinner('Deploying {} nodes running {}'.format(node_count, image)):
+    if skip_config and (name and image):
+        bail = False
+    elif not (name and image and external_ip_range):
+        name, image, external_ip_range, bail = invoke_onefs_clippy(ctx.obj.username,
+                                                                   name,
+                                                                   image,
+                                                                   external_ip_range,
+                                                                   node_count,
+                                                                   skip_config)
+    else:
+        bail = False
+    if bail:
+        raise click.ClickException('Not enough information supplied')
+    info = create_nodes(username=ctx.obj.username,
+                        name=name,
+                        image=image,
+                        node_count=node_count,
+                        external='{}_{}'.format(ctx.obj.username, external),
+                        internal='{}_{}'.format(ctx.obj.username, internal),
+                        vlab_api=ctx.obj.vlab_api)
+    if not skip_config:
+        config_nodes(cluster_name=name,
+                     nodes=info.keys(),
+                     image=image,
+                     external_ip_range=external_ip_range,
+                     internal_ip_range=internal_ip_range,
+                     default_gateway=default_gateway,
+                     smartconnect_ip=smartconnect_ip,
+                     sc_zonename=sc_zonename,
+                     dns_servers=dns_servers,
+                     encoding=encoding,
+                     external_netmask=external_netmask,
+                     internal_netmask=internal_netmask,
+                     vlab_api=ctx.obj.vlab_api)
+    table = generate_table(vlab_api=ctx.obj.vlab_api, info=info)
+    click.echo('\n{}\n'.format(table))
+
+
+def create_nodes(username, name, image, external, internal, node_count, vlab_api):
+    """Concurrently make all nodes
+
+    :Returns: Dictionary
+
+    :param username: The user who owns the new nodes
+    :type username: String
+
+    :param image: The image/version of OneFS node to create
+    :type image: String
+
+    :param external: The base name of the external network to connect the node(s) to
+    :type external: String
+
+    :param internal: The base name of the internal network to connect the node(s) to
+    :type external: String
+
+    :param node_count: The number of OneFS nodes to make
+    :type node_count: Integer
+
+    :param vlab_api: An instantiated connection to the vLab server
+    :type vlab_api: vlab_cli.lib.api.vLabApi
+    """
+    tasks = {}
+    node_v_nodes = 'node' if node_count == 1 else 'nodes'
+    with Spinner('Deploying {} {} running {}'.format(node_count, node_v_nodes, image)):
         for idx in range(node_count):
             node_name = '{}-{}'.format(name, idx +1) # +1 so we don't have node-0
             body = {'name' : node_name,
                     'image': image,
-                    'frontend': '{}_{}'.format(ctx.obj.username, external),
-                    'backend': '{}_{}'.format(ctx.obj.username, internal)}
-            resp = ctx.obj.vlab_api.post('/api/1/inf/onefs', json=body)
+                    'frontend': external,
+                    'backend': internal,
+                    }
+            resp = vlab_api.post('/api/1/inf/onefs', json=body)
             tasks[node_name] = '/api/1/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
-        info = block_on_tasks(ctx.obj.vlab_api, tasks)
+        info = block_on_tasks(vlab_api, tasks)
+    return info
 
-    # Order the output by node; reduces instances of making node-5 really node 1
-    # because humans tend to configure the nodes from top to bottom in the grid output
+
+def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_range,
+                 default_gateway, smartconnect_ip, sc_zonename, dns_servers,
+                 encoding, external_netmask, internal_netmask, vlab_api):
+    """Take raw/new nodes, and turn them into a functional OneFS cluster
+
+    :Returns: None
+    """
+    sorted_nodes = sorted(nodes, key=node_sorter)
+    config_payload = make_config_payload(cluster_name=cluster_name,
+                                         node_name=sorted_nodes.pop(0),
+                                         image=image,
+                                         external_ip_range=external_ip_range,
+                                         internal_ip_range=internal_ip_range,
+                                         default_gateway=default_gateway,
+                                         smartconnect_ip=smartconnect_ip,
+                                         sc_zonename=sc_zonename,
+                                         dns_servers=dns_servers,
+                                         encoding=encoding,
+                                         external_netmask=external_netmask,
+                                         internal_netmask=internal_netmask)
+    join_payload = {'name' : '', 'cluster_name': cluster_name, 'join': True}
+    consume_task(vlab_api,
+                 endpoint='/api/1/inf/onefs/config',
+                 message='Initializing new OneFS cluster',
+                 body=config_payload,
+                 timeout=900,
+                 base_endpoint=False,
+                 pause=5)
+    for idx, node in enumerate(sorted_nodes):
+        join_payload['name'] = node
+        consume_task(vlab_api,
+                     endpoint='/api/1/inf/onefs/config',
+                     message='Joining node {} to cluster {}'.format(idx + 2, cluster_name),
+                     body=join_payload,
+                     timeout=900,
+                     base_endpoint=False,
+                     pause=5)
+
+
+
+def make_config_payload(cluster_name, node_name, image, external_ip_range, internal_ip_range,
+                        default_gateway, smartconnect_ip, sc_zonename, dns_servers,
+                        encoding, external_netmask, internal_netmask):
+    """Construct the request body content for making a new OneFS cluster
+
+    :Returns: Dictionary
+    """
+    if ''.join(internal_ip_range).lower() == 'random':
+        internal_ip_range = get_int_ips()
+    payload = {"name": node_name,
+               "cluster_name": cluster_name,
+               "encoding": encoding,
+               "version": image,
+               "ext_ip_high": max(external_ip_range),
+               "ext_ip_low": min(external_ip_range),
+               "ext_netmask": external_netmask,
+               "int_ip_high": max(internal_ip_range),
+               "int_ip_low": min(internal_ip_range),
+               "int_netmask": internal_netmask,
+               "dns_servers": dns_servers,
+               "sc_zonename": sc_zonename,
+               "smartconnect_ip": smartconnect_ip,
+               "gateway": default_gateway,
+              }
+    return payload
+
+
+def get_int_ips():
+    """Create a random range of backend/internal IPs to configure in OneFS
+
+    :Returns: Tuple
+    """
+    a = random.randint(1, 254)
+    while a in (10, 192, 127):
+        a = random.randint(1, 254)
+    b = random.randint(1, 254)
+    c = random.randint(1, 254)
+    d = random.randint(1, 244)
+    int_ip_low = '{}.{}.{}.{}'.format(a, b, c, d)
+    int_ip_high = '{}.{}.{}.{}'.format(a, b, c, d + 10)
+    return int_ip_low, int_ip_high
+
+
+def generate_table(vlab_api, info):
+    """Convert the new node information into a human friendly table
+
+    :Returns: String
+
+    :param vlab_api: An instantiated connection to the vLab server
+    :type vlab_api: vlab_cli.lib.api.vLabApi
+
+    :param info: A mapping of OneFS node names to node information
+    :type info: Dictionary
+    """
     ordered_nodes = OrderedDict()
     node_names = info.keys()
     ordered_names = sorted(node_names, key=node_sorter)
     for node_name in ordered_names:
         ordered_nodes[node_name] = info[node_name]['content'][node_name]
-    table = vm_table_view(ctx.obj.vlab_api, ordered_nodes)
-    click.echo('\n{}\n'.format(table))
+    table = vm_table_view(vlab_api, ordered_nodes)
+    return table
 
 
 def node_sorter(node_name):
