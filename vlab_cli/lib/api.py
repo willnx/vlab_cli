@@ -89,7 +89,12 @@ class vLabApi(object):
         :param **kwargs: Additional key-word arguments to send
         :type **kwargs: Dictionary
         """
-        url = build_url(self._server, endpoint)
+        # API response contain the Links header. Testing for http here makes
+        # it much easier for consume_task to rely on that header value.
+        if endpoint.startswith('http'):
+            url = endpoint
+        else:
+            url = build_url(self._server, endpoint)
         self._log.debug('Calling {} on {}'.format(method.upper(), url))
         headers = kwargs.get('headers', {})
         headers.update(self._header)
@@ -230,9 +235,7 @@ def consume_task(vlab_api, endpoint, message, method='POST', body=None, params=N
         if base_endpoint:
             url = '{}/task/{}'.format(endpoint, task)
         else:
-            # strip /image off the URL; using the rstrip method would convert
-            # /api/1/inf/cee/image to /api/1/inf/c
-            url = '{}/task/{}'.format(endpoint[:len(endpoint) - 6], task)
+            url = resp.links['status']['url']
         for _ in range(0, timeout, pause):
             resp = vlab_api.get(url)
             if resp.status_code == 202:
