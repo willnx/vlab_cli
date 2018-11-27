@@ -37,6 +37,75 @@ TOKEN_DIR = os.path.join(os.path.expanduser('~'), '.vlab')
 TOKEN_FILE = os.path.join(TOKEN_DIR, 'token.json')
 
 
+def get_token(vlab_url, vlab_username, verify, log):
+    """Obtain an auth token and user information stored within
+
+    Tokens are securely stored in a user's home directory. This avoid the client
+    from having to obtain a new token with every invocation of the tool. This
+    function handles the following conditions::
+
+       1. Bootstrapping when no locally saved token exists
+       2. A malformed token file
+       3. An expired token
+
+    :Returns: Tuple
+
+    :param vlab_url: The URL of the vLab server
+    :type vlab_url: String
+
+    :param vlab_username: The name of the person accessing vLab
+    :type vlab_username: String
+
+    :param verify: Set to False if the server does not have a valid TLS certificate
+    :type verify: Boolean,
+
+    :param log: A logging object to aid in debugging
+    :type log: logging.Logger
+    """
+    # Get the token and decode it, assuming everything is OK
+    token, token_contents = None, None
+    try:
+        log.info('Looking for a locally saved token')
+        token, decryption_key, algorithm = read(vlab_url)
+        token_contents = decode(token, vlab_url, decryption_key, algorithm)
+    except (FileNotFoundError, jwt.PyJWTError, KeyError) as doh:
+        log.info('No local token found')
+        try:
+            # Can't assume everything will go well here; might get file permission error
+            # or user could enter a bad password
+            log.info('Attempting to acquire new token')
+            token, decryption_key, algorithm  = create(vlab_username, vlab_url, verify)
+            log.info('Token acquired, decrypting it now')
+            token_contents = decode(token, vlab_url, decryption_key, algorithm)
+            log.info('Successfully decrypted token. Saving token to local file.')
+            write(token, vlab_url, decryption_key, algorithm)
+        except ValueError as doh:
+            raise doh
+        except Exception as doh:
+            log.debug(doh, exc_info=True)
+            raise doh
+    except json.JSONDecodeError:
+        log.info('Token file contains invalid JSON, automatically deleting file')
+        destroy() # Not going to even try to fix the invalid JSON
+        try:
+            # Like before, can't assume everything will go OK...
+            log.info("Successfully deleted token file")
+            log.info('Attempting to acquire new token')
+            token, decryption_key, algorithm  = create(vlab_username, vlab_url, verify)
+            log.info('Success! Attempting to decode token')
+            token_contents = decode(token, vlab_url, decryption_key, algorithm)
+            log.info('Success! Attempting to write out new token')
+            write(token, vlab_url, decryption_key, algorithm)
+        except Exception as doh:
+            log.info('Failed to automatically fix malformed token file')
+            log.debug(doh, exc_info=True)
+            raise doh
+    except Exception as doh:
+        log.debug(doh, exc_info=True)
+        raise doh
+    return token, token_contents
+
+
 def read(vlab_url):
     """Obtain the auth token, decryption key and algorithm for the supplied vLab server
 

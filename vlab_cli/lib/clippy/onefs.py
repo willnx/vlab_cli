@@ -1,29 +1,12 @@
 # -*- coding: UTF-8 -*-
 """
-This module helps walk users through providing correct input to the CLI
+This module helps walk users through providing correct input to the CLI for
+creating a OneFS cluster.
 """
 from time import sleep
 
 from vlab_cli.lib.widgets import typewriter, prompt
-
-
-def _prompt_and_confirm(prompt_msg, confirm_msg):
-    """Ask a question, and confirm the response
-
-    :Returns: String
-
-    :param prompt_msg: The question to ask the user.
-    :type prompt_msg: String
-
-    :param comfirm_msg: The question to ask to ensure the response is OK.
-    :param confirm_msg: String
-    """
-    prompt_answer = prompt(prompt_msg)
-    answer_ok = prompt(confirm_msg.format(prompt_answer), boolean=True)
-    while not answer_ok:
-        prompt_answer = prompt(prompt_msg)
-        answer_ok = prompt(confirm_msg.format(prompt_answer), boolean=True)
-    return prompt_answer
+from vlab_cli.lib.clippy.utils import prompt_and_confirm
 
 
 def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node_count, skip_config):
@@ -31,15 +14,17 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
 
     :Returns: Tuple
     """
+    bail = False
     typewriter("\nHi {}! Looks like you're trying to make a OneFS cluster.".format(username))
     sleep(0.5)
     typewriter("To do that, I'm going to need some more information.\n")
     typewriter("You can avoid this prompt in the future by suppling values for the")
     typewriter("--name, --image, and --external-ip-range arguments\n")
     sleep(0.5)
-    keep_going = prompt("Do you want me to continue prompting you for this information now? [yes/no]", boolean=True)
+    keep_going = prompt("Do you want me to continue prompting you for this information now? [yes/No]", boolean=True)
     if not keep_going:
-        return cluster_name, version, external_ip_range, keep_going
+        bail = True
+        return cluster_name, version, external_ip_range, bail
     typewriter("\nGreat!")
     typewriter("I'll help walk you thought the deployment this time.")
     typewriter("Make sure to supply those arguments in the future.")
@@ -47,8 +32,8 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
     typewriter("you should ask a vLab admin for some help because you're doing it \"the hard way.\"\n")
     if not cluster_name:
         new_cluster_question = "So, what would you like to name your cluster?"
-        new_cluster_confirm = "Your new cluster will be named {}, OK? [yes/no]"
-        cluster_name = _prompt_and_confirm(new_cluster_question, new_cluster_confirm)
+        new_cluster_confirm = "Your new cluster will be named {}, OK? [yes/No]"
+        cluster_name = prompt_and_confirm(new_cluster_question, new_cluster_confirm)
     if not version:
         typewriter("\nOK, now I need to know the version of OneFS to create.")
         typewriter("\nProtip: You can list all available versions in the future with the command:", indent=True)
@@ -64,7 +49,7 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
         typewriter('Most OneFS clusters have 1 IP for each node, and you are')
         typewriter('deploying {} node(s).'.format(node_count))
         external_ip_range = _get_ext_ips()
-    return cluster_name, version, external_ip_range, not keep_going
+    return cluster_name, version, external_ip_range, bail
 
 
 def _get_version():
@@ -73,7 +58,7 @@ def _get_version():
     :Returns: String
     """
     new_version_question = "Now, what version would you like?"
-    new_version_ok = "Deploy OneFS {}, correct? [yes/no]"
+    new_version_ok = "Deploy OneFS {}, correct? [yes/No]"
     answer = prompt(new_version_question)
     if answer.strip() == 'vlab show onefs --images':
         typewriter("When I said \"you can run [that] command in the future\", I meant a much later future ;)")
@@ -82,7 +67,7 @@ def _get_version():
     else:
         ok = prompt(new_version_ok.format(answer), boolean=True)
     if not ok:
-        answer = _prompt_and_confirm(new_version_question, new_version_ok)
+        answer = prompt_and_confirm(new_version_question, new_version_ok)
     return answer
 
 

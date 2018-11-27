@@ -2,16 +2,15 @@
 """
 Defines the CLI for initializing a virtual lab
 """
-import time
-import textwrap
-
 import click
 
-from vlab_cli.lib import ssh
-from vlab_cli.lib.api import consume_task, block_on_tasks
-from vlab_cli.lib.widgets import Spinner
-from vlab_cli.lib.ascii_output import format_machine_info
 from vlab_cli.lib.click_extras import HiddenOption
+from vlab_cli.lib.widgets import Spinner, typewriter
+from vlab_cli.lib.ascii_output import format_machine_info
+from vlab_cli.lib.api import consume_task, block_on_tasks
+from vlab_cli.lib.configurizer import set_config, CONFIG_SECTIONS
+from vlab_cli.lib.clippy.connect import invoke_connect_help, invoke_config
+from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invoke_init_done_help
 
 
 @click.command()
@@ -22,31 +21,15 @@ from vlab_cli.lib.click_extras import HiddenOption
 def init(ctx, start_over, switch, wan):
     """Initialize the virtual lab"""
     if start_over:
-        click.secho('This will delete everything you own!', bold=True)
-        click.confirm('Are you sure you want to continue?', abort=True)
-        nuke_lab(ctx.obj.vlab_api, ctx.obj.username, switch, wan)
+        nuke_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
     else:
-        init_lab(ctx.obj.vlab_api, ctx.obj.username, switch, wan)
+        invoke_greeting(username=ctx.obj.username)
+        invoke_tutorial()
+        init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
+    invoke_connect_help()
 
-    resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/gateway',
-                        message='Collecting info about your new lab',
-                        method='GET')
-    ips = [x for x in resp.json()['content']['ips'] if not ':' in x and not x.startswith('192.168.1')]
-    if ips:
-        ip = ips[0]
-    else:
-        ip = 'Error'
-    msg = """
-    Your lab is ready!
 
-    To connect to your lab, SSH or RDP to {}
-    You username will be {} and your default password is the letter "a"
-    """.format(ip, ctx.obj.username)
-    click.echo(textwrap.dedent(msg))
-    click.secho("\nDon't be stupid. Change your password to something else when you login.\n", bold=True)
-
-def nuke_lab(vlab_api, username, switch, wan):
+def nuke_lab(vlab_api, username, wan, switch, config, log):
     """Delete all VMs and Networks a user owns, and create a new one.
 
     :Returns: None
@@ -62,6 +45,12 @@ def nuke_lab(vlab_api, username, switch, wan):
 
     :param wan: The name of the Wide Area Network their new lab should connect to
     :type wan: String
+
+    :param config: The parsed configuration file used by the vLab CLI
+    :type config: configparser.ConfigParser
+
+    :param log: A logging object
+    :type log: logging.Logger
     """
     consume_task(vlab_api,
                  endpoint='/api/1/inf/power',
@@ -82,39 +71,14 @@ def nuke_lab(vlab_api, username, switch, wan):
     with Spinner('Deleting networks'):
         for vlan in vlans.keys():
             resp = vlab_api.delete('/api/1/inf/vlan', json={'vlan-name': vlan})
-            tasks[vlan] = '/api/1/inf/vlan/task/{}'.format(resp.json()['content']['task-id'])
+            tasks[vlan] = resp.links['status']['url']
         block_on_tasks(vlab_api, tasks, pause=1)
-    # old lab gone, make new lab
-    click.echo('Finished deleting old lab. Initializing a new lab.')
-    init_lab(vlab_api, username, switch, wan)
+    typewriter('Finished deleting old lab. Initializing a new lab.')
+    init_lab(vlab_api, username, wan, switch, config=config, log=log)
 
 
-def init_lab(vlab_api, username, switch, wan):
-    """Create a brand new virtual lab!
-
-    :Returns: None
-
-    :param vlab_api: A valid API connection to vLab
-    :type vlab_api: vlab_cli.lib.api.vLabApi
-
-    :param username: The name of the user deleting their lab
-    :type username: String
-
-    :param switch: The name of the network switch their networks are connected to
-    :type switch: String
-
-    :param wan: The name of the Wide Area Network their new lab should connect to
-    :type wan: String
-    """
-    click.secho('This process can take upwards of 20 minutes', bold=True)
-    with Spinner('Building your virtual lab'):
-        _deploy_base(vlab_api, username, switch)
-        _deploy_vms(vlab_api, username, wan)
-    click.echo('OK!')
-
-
-def _deploy_base(vlab_api, username, switch):
-    """Create the inventory, and basic networks the user will need.
+def init_lab(vlab_api, username, wan, switch, config, log):
+    """Initialize the inventory, default networks, and gateway/firewall
 
     :Returns: None
 
@@ -126,41 +90,48 @@ def _deploy_base(vlab_api, username, switch):
 
     :param switch: The name of the network switch their networks are connected to
     :type switch: String
+
+    :param config: The parsed configuration file used by the vLab CLI
+    :type config: configparser.ConfigParser
+
+    :param log: A logging object
+    :type log: logging.Logger
     """
-    tasks = {}
-    resp = vlab_api.post('/api/1/inf/inventory', auto_check=False)
-    tasks['inventory'] = '/api/1/inf/inventory/task/{}'.format(resp.json()['content']['task-id'])
+    if not config:
+        bad_config = True
+    elif set(config.sections()) != CONFIG_SECTIONS:
+        bad_config = True
+    else:
+        bad_config = False
+    if bad_config:
+        try:
+            new_info = invoke_config()
+        except Exception as doh:
+            log.debug(doh, exc_info=True)
+            raise click.ClickException(doh)
+        else:
+            set_config(new_info)
 
-    body = {'vlan-name': '{}_frontend'.format(username), 'switch-name': switch}
-    resp = vlab_api.post('/api/1/inf/vlan', json=body)
-    tasks['frontend_network'] = '/api/1/inf/vlan/task/{}'.format(resp.json()['content']['task-id'])
+    with Spinner('Initializing your lab'):
+        tasks = {}
+        resp1 = vlab_api.post('/api/1/inf/inventory', auto_check=False)
+        tasks['inventory'] = resp1.links['status']['url']
 
-    body = {'vlan-name': '{}_backend'.format(username), 'switch-name': switch}
-    resp = vlab_api.post('/api/1/inf/vlan', json=body)
-    tasks['backend_network'] = '/api/1/inf/vlan/task/{}'.format(resp.json()['content']['task-id'])
-    block_on_tasks(vlab_api, tasks, auto_check=False, pause=1)
+        body2 = {'vlan-name': '{}_frontend'.format(username), 'switch-name': switch}
+        resp2 = vlab_api.post('/api/1/inf/vlan', json=body2)
+        tasks['frontend_network'] = resp2.links['status']['url']
 
+        body3 = {'vlan-name': '{}_backend'.format(username), 'switch-name': switch}
+        resp3 = vlab_api.post('/api/1/inf/vlan', json=body3)
+        tasks['backend_network'] = resp3.links['status']['url']
+        block_on_tasks(vlab_api, tasks, auto_check=False, pause=1)
 
-def _deploy_vms(vlab_api, username, wan):
-    """Create the defalt gateway and jumpbox so users can access their new lab
-
-    :Returns: None
-
-    :param vlab_api: A valid API connection to vLab
-    :type vlab_api: vlab_cli.lib.api.vLabApi
-
-    :param username: The name of the user deleting their lab
-    :type username: String
-
-    :param wan: The name of the Wide Area Network their new lab should connect to
-    :type wan: String
-    """
-    tasks = {}
-    body = {'wan': wan, 'lan': '{}_frontend'.format(username)}
-    resp = vlab_api.post('/api/1/inf/gateway', json=body)
-    tasks['gateway'] = '/api/1/inf/gateway/task/{}'.format(resp.json()['content']['task-id'])
-
-    body = {'network': '{}_frontend'.format(username)}
-    resp = vlab_api.post('/api/1/inf/jumpbox', json=body)
-    tasks['jumpbox'] = '/api/1/inf/jumpbox/task/{}'.format(resp.json()['content']['task-id'])
-    block_on_tasks(vlab_api, tasks, auto_check=False)
+    body4 = {'wan': wan, 'lan': '{}_frontend'.format(username)}
+    consume_task(vlab_api,
+                 endpoint='/api/1/inf/gateway',
+                 message='Deploying gateway',
+                 method='POST',
+                 body=body4,
+                 timeout=1500,
+                 pause=5)
+    invoke_init_done_help()

@@ -151,7 +151,7 @@ def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_rang
     join_payload = {'name' : '', 'cluster_name': cluster_name, 'join': True}
     consume_task(vlab_api,
                  endpoint='/api/1/inf/onefs/config',
-                 message='Initializing new OneFS cluster',
+                 message='Initializing cluster {}'.format(cluster_name),
                  body=config_payload,
                  timeout=900,
                  base_endpoint=False,

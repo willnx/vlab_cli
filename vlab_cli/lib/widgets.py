@@ -11,13 +11,29 @@ import threading
 import click
 
 
-def prompt(message, boolean=False):
-    typewriter(message, newline=False)
+def prompt(question, boolean=False, boolean_default=False):
+    """TODO
+
+    :Returns: Boolean or String
+
+    :param question: What to prompt the user about.
+    :type question: String
+
+    :param boolean: Set to True if the question has a yes/no answer
+    :type boolean: Boolean
+
+    :param boolean_default: Only applies when boolean is True. Defines what is
+                            returned if the user simply presses the "enter" key.
+    :type boolean_default: Boolean
+    """
+    typewriter(question, newline=False)
     answer =  input(' ')
     if boolean:
-        return True if answer.lower().startswith('y') else False
-    else:
-        return answer
+        if answer == '':
+            answer = boolean_default
+        else:
+            answer = True if answer.lower().startswith('y') else False
+    return answer
 
 def do_easter_egg(message):
     """This fun little gem purposefully mis-types a message, then fixes it.
