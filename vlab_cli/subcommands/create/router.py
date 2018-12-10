@@ -8,7 +8,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
 
 
 @click.command()
-@click.option('-i', '--image', default='1.1.8',
+@click.option('-i', '--image', default='1.1.8', show_default=True,
               help='The specific type & version of router to create')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name to give your new router')

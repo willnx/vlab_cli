@@ -8,11 +8,11 @@ from vlab_cli.lib.ascii_output import format_machine_info
 
 
 @click.command()
-@click.option('-i', '--image', cls=MandatoryOption,
+@click.option('-i', '--image', default='2.11.0', show_default=True,
               help='The version of ClarityNow to create')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the ClarityNow instance in your lab')
-@click.option('-e', '--external-network', default='frontend',
+@click.option('-e', '--external-network', default='frontend', show_default=True,
               help='The public network to connect the new ClarityNow instance to')
 @click.pass_context
 def claritynow(ctx, name, image, external_network):

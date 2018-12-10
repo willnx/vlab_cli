@@ -8,11 +8,11 @@ from vlab_cli.lib.ascii_output import format_machine_info
 
 
 @click.command()
-@click.option('-i', '--image', cls=MandatoryOption,
+@click.option('-i', '--image', default='3.28', show_default=True,
               help='The version of ESRS to create')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the ESRS instance in your lab')
-@click.option('-e', '--external-network', default='frontend',
+@click.option('-e', '--external-network', default='frontend', show_default=True,
               help='The public network to connect the new ESRS instance to')
 @click.pass_context
 def esrs(ctx, name, image, external_network):
