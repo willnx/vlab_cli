@@ -2,7 +2,7 @@
 """
 This module provides additional functionality for the click library
 """
-from click import command, option, Option, UsageError
+from click import command, option, Option, UsageError, ClickException
 
 
 class MutuallyExclusiveOption(Option):
@@ -74,3 +74,32 @@ class GlobalContext(object):
 
     def __delattr__(self, attr):
         raise AttributeError("can't set attribute")
+
+
+def get_portmap_ip(ips, ip_address):
+    """Determines which (if any) IP address to use in a port mapping rule.
+
+    :Returns: String
+
+    :Raises: click.ClickException
+
+    :param ips: The IPs owned/assigned to the VM
+    :type ips: List
+
+    :param ip_address: An explicit IP to use, supplied by the user, or None
+    :type ip_address: Enum(None, String)
+    """
+    if not (ip_address is None):
+        if not ip_address in ips:
+            error = 'Supplied IP is not owned by VM. VM has {}'.format(ips)
+            raise ClickException(error)
+        else:
+            return ip_address
+    elif len(ips) == 1:
+        return ips[0]
+    elif len(ips) > 1:
+        error = 'Must supply `--ip-address` when VM has mutiple IPs. Found: {}'.format(ips)
+        raise ClickException(error)
+    else:
+        error = "VM has no IPs. Unable to map a port"
+        raise ClickException(error)
