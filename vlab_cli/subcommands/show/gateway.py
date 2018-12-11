@@ -11,7 +11,7 @@ from vlab_cli.lib.api import consume_task
 def gateway(ctx):
     """Display information about network lab gateway"""
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/gateway',
+                        endpoint='/api/2/inf/gateway',
                         message='Looking up your default gateway',
                         method='GET')
     info = resp.json()['content']

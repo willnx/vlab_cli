@@ -7,8 +7,10 @@ from vlab_cli.lib.api import consume_task
 
 
 @click.command()
-@click.option('-w', '--wan', default='WAN-DHCP', help='The name of the public network')
-@click.option('-l', '--lan', default='frontend', help='The name of the private network')
+@click.option('-w', '--wan', default='WAN-DHCP', show_default=True,
+              help='The name of the public network')
+@click.option('-l', '--lan', default='frontend', show_default=True,
+              help='The name of the private network')
 @click.pass_context
 def gateway(ctx, wan, lan):
     """Create a network gateway to your virtual lab"""
@@ -16,7 +18,7 @@ def gateway(ctx, wan, lan):
     click.secho('**NOTE**: Gateways can take 10-15 minutes to be created', bold=True)
     body = {'wan': wan, 'lan': '{}_{}'.format(ctx.obj.username, lan)}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/gateway',
+                        endpoint='/api/2/inf/gateway',
                         message='Creating a new default gateway',
                         body=body,
                         timeout=900,
