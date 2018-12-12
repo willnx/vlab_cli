@@ -1,0 +1,126 @@
+# -*- coding: UTF-8 -*-
+"""Centralized logic for mapping a component port number to a specific network protocol"""
+import ipaddress
+
+import click
+
+
+def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state):
+    """Ensure that there is a valid IP to create a port mapping rule for.
+
+    :Returns: None
+
+    :Raises: click.ClickException
+
+    :param vm_name: The name of the virtual machine (for better error messaging)
+    :type vm_name: String
+
+    :param vm_type: The kind of component to create a port mapping rule for
+    :type vm_type: String
+
+    :param requested_ip: An explicit IP the supplied by the user
+    :type requested_ip: Enum(None, String)
+
+    :param vm_power_state: Is the VM is poweredOn or poweredOff
+    :type vm_power_state: String
+    """
+    if requested_ip is not None:
+        try:
+            ipaddress.ip_address(requested_ip)
+        except ValueError as doh:
+            raise click.ClickException(doh)
+
+    if vm_type.lower() != 'onefs':
+        if not vm_ips:
+            # everything else has VMTools installed, so the server should return
+            # an IP unless the VM isn't even powered on
+            if vm_power_state == 'poweredoff':
+                error = 'The VM must be powered on to create a rule. Try `vlab power on --name {}`'.format(vm_name)
+                raise click.ClickException(error)
+            else:
+                error = 'Unable to map a port to a VM that has no IPs assigned.'
+                raise click.ClickException(error)
+        elif requested_ip and not (requested_ip in vm_ips):
+            error = 'IP {} not owned by VM {}. VM has: {}'.format(requested_ip, vm_name, vm_ips)
+            raise click.ClickException(error)
+    elif requested_ip == None:
+        error = 'Must provdie an IP to create a port mapping rule for a OneFS node'
+        raise click.ClickException(error)
+
+
+def determine_which_ip(vm_ips, requested_ip):
+    """Determine which IP to create a mapping rule for
+
+    :Returns: String (IP Address)
+
+    :param vm_ips: All the IPs assigned to a virtual machine
+    :type vm_ips: List
+
+    :param requested_ip: An explicit IP the supplied by the user
+    :type requested_ip: Enum(None, String)
+    """
+    if requested_ip:
+        return requested_ip
+    else:
+        vm_ips[0]
+
+def get_component_protocols(vm_type):
+    """Lookup what protocols a specific component supports
+
+    :Returns: List
+
+    :param vm_type: The category of component (i.e. OneFS, InsightIQ, etc)
+    :type vm_type: String
+    """
+    proto_map = {
+        'cee' : ['rdp'],
+        'centos': ['ssh'],
+        'claritynow': ['ssh', 'https', 'rdp'],
+        'ecs' : ['ssh', 'https'],
+        'esrs' : ['ssh', 'https'],
+        'icap': ['rdp'],
+        'insightiq': ['ssh', 'https'],
+        'onefs': ['ssh', 'https'],
+        'router': ['ssh'],
+        'windows': ['rdp'],
+        'winserver': ['rdp']
+    }
+    return proto_map[vm_type.lower()]
+
+
+def get_protocol_port(vm_type, protocol):
+    """Return the specific network port a component uses for a provided protocol
+
+    :Returns: Integer
+
+    :param vm_type: The category of component (i.e. OneFS, InsightIQ, etc)
+    :type vm_type: String
+
+    :param protocol: The network protocol in question
+    :type protocol: String
+    """
+    if protocol == 'https':
+        port = https_to_port(vm_type)
+    elif protocol == 'ssh':
+        port = 22
+    elif protocol == 'rdp':
+        port = 3389
+    return port
+
+
+def https_to_port(vm_type):
+    """Because some component run HTTPS on an unprivileged port (i.e. not 443)
+
+    :Returns: Integer
+
+    :param vm_type: The category of component (i.e. OneFS, InsightIQ, etc)
+    :type vm_type: String
+    """
+    port_map = {
+        'claritynow' : 443,
+        'ecs' : 9443,
+        'esrs' : 443,
+        'insightiq' : 443,
+        'onefs' : 8080,
+    }
+    return port_map[vm_type.lower()]

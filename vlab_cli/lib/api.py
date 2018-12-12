@@ -179,12 +179,33 @@ class vLabApi(object):
         return self._call(method='delete', endpoint=endpoint, auto_check=auto_check, **kwargs)
 
     def unmap_port(self, target_addr, target_port):
-        """TODO"""
+        """Delete a port mapping/forwarding rule
+
+        :Returns: None
+
+        :Raises: ValueError
+
+        :param target_addr: The IP address of the VM that owns the rule to delete
+        :type target_addr: String
+
+        :param target_port: The network port on the VM that will be un-mapped
+        :type target_port: Integer
+        """
         if self._ipam_ip is None:
             self._ipam_ip = self._find_ipam()
         url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
-        resp = self.get(url, auto_check=False)
-
+        resp = self.get(url)
+        firewall_rules = resp.json()['content']
+        for rule_id in firewall_rules.keys():
+            target_ip = firewall_rules[rule_id]['target_addr']
+            target_port_number = firewall_rules[rule_id]['target_port']
+            if target_ip == target_addr and target_port == target_port_number:
+                conn_port = firewall_rules[rule_id]['conn_port']
+                break
+        else:
+            error = 'No rule found for IP {} and Port {}'.format(target_addr, target_port)
+            raise ValueError(error)
+        self.delete(url, json={'conn_port' : conn_port})
 
     def map_port(self, target_addr, target_port, target_name, target_component):
         """Create a port mapping rule in the IPAM server
@@ -212,8 +233,7 @@ class vLabApi(object):
                    'target_port' : target_port,
                    'target_name' : target_name,
                    'target_component' : target_component}
-        resp = self.post(url, json=payload, auto_check=False)
-        resp.raise_for_status()
+        resp = self.post(url, json=payload)
 
 
     def _find_ipam(self):

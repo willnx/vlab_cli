@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for creating a network port mapping/forwarding rule"""
+"""Defines the CLI for destroying a port mapping/forwarding rule"""
 import click
+
 
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.widgets import Spinner, typewriter
@@ -14,12 +15,12 @@ from vlab_cli.lib.portmap_helpers import (get_component_protocols, get_protocol_
 @click.option('-a', '--ip-address',
               help='Explicitly supply the IP of the target VM')
 @click.option('-p', '--protocol', type=click.Choice(['ssh', 'https', 'rdp']),
-              help='The protocol to create a mapping rule for')
+              help='The protocol of the mapping rule to destory')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the VM to create a rule for')
+              help='The name of the VM that owns the rule')
 @click.pass_context
 def portmap(ctx, name, protocol, ip_address):
-    """Create a network port mapping/forwarding rule"""
+    """Destroy a port mapping rule"""
     info = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/inventory',
                         message='Collecting information about your inventory',
@@ -37,6 +38,8 @@ def portmap(ctx, name, protocol, ip_address):
         protocol = invoke_portmap_clippy(ctx.obj.username, vm_type, valid_protocols)
     target_port = get_protocol_port(vm_type, protocol)
 
-    with Spinner('Creating port mapping rule to {} for {}'.format(name, protocol)):
-        ctx.obj.vlab_api.map_port(target_addr, target_port, name, vm_type)
-    typewriter("OK! Use 'vlab connect {} --protocol {}' to access that machine".format(vm_type.lower(), protocol))
+    with Spinner('Deleting port mapping rule to {} for {}'.format(name, protocol)):
+        try:
+            ctx.obj.vlab_api.unmap_port(target_addr, target_port)
+        except ValueError as doh:
+            raise click.ClickException(doh)

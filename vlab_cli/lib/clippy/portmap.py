@@ -4,7 +4,7 @@ from vlab_cli.lib.clippy.utils import prompt_and_confirm
 from vlab_cli.lib.widgets import typewriter, prompt
 
 def invoke_portmap_clippy(username, vm_type, available_protocols):
-    """Help the human choose a protocol when creating a port mapping/fowarding rule.
+    """Help the human choose a protocol when creating/deleting a port mapping/fowarding rule.
 
     :Returns: String
 
@@ -18,7 +18,7 @@ def invoke_portmap_clippy(username, vm_type, available_protocols):
     :type available_protocols: List
     """
     typewriter("Hi {}, looks like you forgot or provided an invalid protocol".format(username))
-    typewriter("to create a port mapping/forwarding rule.\n")
+    typewriter("of a port mapping/forwarding rule.\n")
     typewriter("Honestly, I don't blame you; I have to look it up what protocols")
     typewriter("are supported by the different components, and I'm a robot!\n")
     typewriter("Looks like the {} component supports these protocols:".format(vm_type))
