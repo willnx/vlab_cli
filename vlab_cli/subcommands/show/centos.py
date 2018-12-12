@@ -21,14 +21,17 @@ def centos(ctx, images):
         rows = []
         for img in info['image']:
             rows.append(img)
-        table = get_formatted_table(sorted(rows))
-        click.echo('\n{}\n'.format(table))
+        output = get_formatted_table(sorted(rows))
+        click.echo('\n{}\n'.format(output))
     else:
         info = consume_task(ctx.obj.vlab_api,
                             endpoint='/api/1/inf/centos',
                             message='Collecting information about your CentOS instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = 'You do not own Centos instances'
+        click.echo(output)
 
 
 def get_formatted_table(images):

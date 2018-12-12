@@ -22,15 +22,17 @@ def cee(ctx, images):
         rows = []
         for img in info['image']:
             rows.append(Version(img, name='CEE'))
-        table = get_formatted_table(sorted(rows))
-        click.echo('\n{}\n'.format(table))
+        output = get_formatted_table(sorted(rows))
+        click.echo('\n{}\n'.format(output))
     else:
         info = consume_task(ctx.obj.vlab_api,
                             endpoint='/api/1/inf/cee',
                             message='Collecting information about your CEE instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
-
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = 'You do not own any CEE instances'
+        click.echo(output)
 
 def get_formatted_table(images):
     """A human handy table of the different variants of CEE, and versions

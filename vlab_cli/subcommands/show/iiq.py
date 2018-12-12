@@ -29,7 +29,10 @@ def insightiq(ctx, images):
                             endpoint='/api/1/inf/insightiq',
                             message='Collecting information about your InsightIQ instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = "You do not own any InsightIQ instances"
+        click.echo(output)
 
 
 def get_formatted_table(images):

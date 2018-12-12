@@ -49,7 +49,10 @@ def vm_table_view(vlab_api, info):
         power = data['state'].replace('powered', '')
         row = [vm, '\n'.join(data['ips']), kind, version, power, shorter_link]
         vm_body.append(row)
-    table = tabulate(vm_body, headers=vm_header, tablefmt='presto')
+    if not vm_body:
+        table = None
+    else:
+        table = tabulate(vm_body, headers=vm_header, tablefmt='presto')
     return table
 
 
