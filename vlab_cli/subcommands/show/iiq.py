@@ -11,7 +11,7 @@ from vlab_cli.lib.versions import Version
 @click.option('-i', '--images', is_flag=True,
               help='Display the available versions of InsightIQ to deploy')
 @click.pass_context
-def iiq(ctx, images):
+def insightiq(ctx, images):
     """Display information about InsightIQ instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,

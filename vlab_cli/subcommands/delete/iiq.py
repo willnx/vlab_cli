@@ -10,7 +10,7 @@ from vlab_cli.lib.click_extras import MandatoryOption
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the InsightIQ instance in your lab')
 @click.pass_context
-def iiq(ctx, name):
+def insightiq(ctx, name):
     """Delete an instance of InsightIQ"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
