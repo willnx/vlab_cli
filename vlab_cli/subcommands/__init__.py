@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from vlab_cli.subcommands.info import info
+from vlab_cli.subcommands.status import status
 from vlab_cli.subcommands.token import token
 from vlab_cli.subcommands.init import init
 from vlab_cli.subcommands.create import create
