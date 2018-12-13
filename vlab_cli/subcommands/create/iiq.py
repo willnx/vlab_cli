@@ -15,7 +15,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
 @click.option('-e', '--external-network', default='frontend', show_default=True,
               help='The public network to connect the new IIQ instance to')
 @click.pass_context
-def iiq(ctx, name, image, external_network):
+def insightiq(ctx, name, image, external_network):
     """Create an instance of InsightIQ"""
     body = {'network': "{}_{}".format(ctx.obj.username, external_network),
             'name': name,

@@ -11,7 +11,7 @@ from vlab_cli.lib.api import consume_task
 
 @click.command()
 @click.pass_context
-def info(ctx):
+def status(ctx):
     """Display general information about your virtual lab"""
 
     resp = consume_task(ctx.obj.vlab_api,
@@ -34,15 +34,14 @@ def info(ctx):
     else:
         jumpbox_ip = None
     vm_body = []
-    vm_header = ['Name', 'IPs', 'Type', 'Version', 'Console']
+    vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Console']
     for vm, data in vm_info.items():
         shorter_link = ctx.obj.vlab_api.post('/api/1/link',
                                              json={'url': data['console']}).json()['content']['url']
-        try:
-            kind, version = data['note'].split('=')
-        except:
-            kind, version = None, None
-        row = [vm, '\n'.join(data['ips']), kind, version, shorter_link]
+        kind = data['meta']['component']
+        version = data['meta']['version']
+        power = data['state'].replace('powered', '')
+        row = [vm, '\n'.join(data['ips']), kind, version, power, shorter_link]
         vm_body.append(row)
 
     heading = '\nUsername: {}\nGateway : {}\nJumpBox : {}\n'.format(ctx.obj.username, gateway_ip, jumpbox_ip)

@@ -31,7 +31,10 @@ def onefs(ctx, images):
                             message='Collecting information about your OneFS nodes',
                             method='GET').json()
         ordered_nodes = sort_node_list(info['content'])
-        click.echo(vm_table_view(ctx.obj.vlab_api, ordered_nodes))
+        output = vm_table_view(ctx.obj.vlab_api, ordered_nodes)
+        if not output:
+            output = 'You do not own any OneFS nodes'
+        click.echo(output)
 
 
 def get_formatted_table(images):

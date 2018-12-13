@@ -4,7 +4,7 @@ import click
 
 from vlab_cli.subcommands.delete.onefs import onefs
 from vlab_cli.subcommands.delete.gateway import gateway
-from vlab_cli.subcommands.delete.iiq import iiq
+from vlab_cli.subcommands.delete.iiq import insightiq
 from vlab_cli.subcommands.delete.network import network
 from vlab_cli.subcommands.delete.jumpbox import jumpbox
 from vlab_cli.subcommands.delete.esrs import esrs
@@ -16,6 +16,7 @@ from vlab_cli.subcommands.delete.centos import centos
 from vlab_cli.subcommands.delete.icap import icap
 from vlab_cli.subcommands.delete.claritynow import claritynow
 from vlab_cli.subcommands.delete.ecs import ecs
+from vlab_cli.subcommands.delete.portmap import portmap
 
 
 @click.group()
@@ -25,7 +26,7 @@ def delete():
 
 delete.add_command(onefs)
 delete.add_command(gateway)
-delete.add_command(iiq)
+delete.add_command(insightiq)
 delete.add_command(network)
 delete.add_command(jumpbox)
 delete.add_command(esrs)
@@ -37,3 +38,4 @@ delete.add_command(centos)
 delete.add_command(icap)
 delete.add_command(claritynow)
 delete.add_command(ecs)
+delete.add_command(portmap)

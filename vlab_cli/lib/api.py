@@ -54,6 +54,7 @@ class vLabApi(object):
     :type log: logging.Logger
     """
     def __init__(self, server, token, verify=False, log=None):
+        self._ipam_ip = None
         self._server = server
         self._session = requests.Session()
         self._header = {'X-Auth': token,
@@ -176,6 +177,93 @@ class vLabApi(object):
         :type **kwargs: Dictionary
         """
         return self._call(method='delete', endpoint=endpoint, auto_check=auto_check, **kwargs)
+
+    def unmap_port(self, target_addr, target_port):
+        """Delete a port mapping/forwarding rule
+
+        :Returns: None
+
+        :Raises: ValueError
+
+        :param target_addr: The IP address of the VM that owns the rule to delete
+        :type target_addr: String
+
+        :param target_port: The network port on the VM that will be un-mapped
+        :type target_port: Integer
+        """
+        if self._ipam_ip is None:
+            self._ipam_ip = self._find_ipam()
+        url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
+        resp = self.get(url)
+        firewall_rules = resp.json()['content']
+        for rule_id in firewall_rules.keys():
+            target_ip = firewall_rules[rule_id]['target_addr']
+            target_port_number = firewall_rules[rule_id]['target_port']
+            if target_ip == target_addr and target_port == target_port_number:
+                conn_port = firewall_rules[rule_id]['conn_port']
+                break
+        else:
+            error = 'No rule found for IP {} and Port {}'.format(target_addr, target_port)
+            raise ValueError(error)
+        self.delete(url, json={'conn_port' : conn_port})
+
+    def map_port(self, target_addr, target_port, target_name, target_component):
+        """Create a port mapping rule in the IPAM server
+
+        :Returns: None
+
+        :Raises: requests.HTTPError
+
+        :param target_addr: The IP address of the VM to create a mapping rule for
+        :type target_addr: String
+
+        :param target_port: The network port on the VM to create the mapping rule to
+        :type target_port: Integer
+
+        :param target_name: The name of the VM
+        :type target_name: String
+
+        :param target_component: The type of VM, i.e OneFS, InsightIQ, etc
+        :type target_component: String
+        """
+        if self._ipam_ip is None:
+            self._ipam_ip = self._find_ipam()
+        url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
+        payload = {'target_addr' : target_addr,
+                   'target_port' : target_port,
+                   'target_name' : target_name,
+                   'target_component' : target_component}
+        resp = self.post(url, json=payload)
+
+
+    def _find_ipam(self):
+        """Discovers the IP of the IPAM server"""
+        resp1 = self.get(endpoint='/api/2/inf/gateway', auto_check=False)
+        status_url = resp1.links['status']['url']
+        for _ in range(0, 300, 1):
+            resp2 = self.get(status_url, auto_check=False)
+            if resp2.status_code == 202:
+                time.sleep(1)
+            else:
+                break
+        else:
+            error = 'Timed out trying to discovery Gateway IP'.format(task)
+            raise RuntimeError(error)
+        all_ips = resp2.json()['content']['ips']
+        ips = []
+        for ip in all_ips:
+            if ':' in ip:
+                continue
+            elif ip.startswith('127'):
+                continue
+            elif ip.startswith('192.168.'):
+                continue
+            else:
+                ips.append(ip)
+        if len(ips) != 1:
+            error = "Unexpected IP(s) found on gateway: {}".format(ips)
+            raise RuntimeError(error)
+        return ips[0]
 
 
 def build_url(base, *args):

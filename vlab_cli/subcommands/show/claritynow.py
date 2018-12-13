@@ -28,8 +28,10 @@ def claritynow(ctx, images):
                             endpoint='/api/1/inf/claritynow',
                             message='Collecting information about your ClarityNow instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
-
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = 'You do not own any ClarityNow instances'
+        click.echo(output)
 
 def get_formatted_table(images):
     """Obtain a human-friendly table of available ClarityNow versions

@@ -29,7 +29,10 @@ def esrs(ctx, images):
                             endpoint='/api/1/inf/esrs',
                             message='Collecting information about your ESRS instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = 'You do not own any ESRS instances'
+        click.echo(output)
 
 
 def get_formatted_table(images):

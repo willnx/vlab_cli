@@ -4,7 +4,7 @@ import click
 
 from vlab_cli.subcommands.show.onefs import onefs
 from vlab_cli.subcommands.show.gateway import gateway
-from vlab_cli.subcommands.show.iiq import iiq
+from vlab_cli.subcommands.show.iiq import insightiq
 from vlab_cli.subcommands.show.network import network
 from vlab_cli.subcommands.show.jumpbox import jumpbox
 from vlab_cli.subcommands.show.esrs import esrs
@@ -25,7 +25,7 @@ def show():
 
 show.add_command(onefs)
 show.add_command(gateway)
-show.add_command(iiq)
+show.add_command(insightiq)
 show.add_command(network)
 show.add_command(jumpbox)
 show.add_command(esrs)

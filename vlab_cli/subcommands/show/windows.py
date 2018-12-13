@@ -28,7 +28,10 @@ def windows(ctx, images):
                             endpoint='/api/1/inf/windows',
                             message='Collecting information about your Windows clients',
                             method='GET').json()['content']
-        click.echo(vm_table_view(ctx.obj.vlab_api, info))
+        output = vm_table_view(ctx.obj.vlab_api, info)
+        if not output:
+            output = 'You do not own any Windows Desktop clients'
+        click.echo(output)
 
 
 def to_number(value):

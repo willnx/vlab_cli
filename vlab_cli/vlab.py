@@ -18,7 +18,7 @@ from vlab_cli.lib.logger import get_logger
 from vlab_cli.lib.tokenizer import get_token
 from vlab_cli.lib.configurizer import get_config, set_config
 from vlab_cli.lib.click_extras import GlobalContext, HiddenOption
-from vlab_cli.subcommands import info, token, init, create, delete, show, power, connect
+from vlab_cli.subcommands import status, token, init, create, delete, show, power, connect
 
 # Setting these environment vars b/c Click needs it: http://click.pocoo.org/5/python3/
 environ['LC_ALL'] = environ.get('LC_ALL', 'C.UTF-8')
@@ -26,7 +26,7 @@ environ['LANG'] = environ.get('LC_ALL', 'C.UTF-8')
 
 # Settings and defaults
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-VLAB_URL = 'https://vlab-dev.igs.corp'
+VLAB_URL = 'https://localhost'
 VLAB_VERSION = version.__version__
 VLAB_VERIFY_HOSTNAME = True
 VLAB_USER = getuser()
@@ -69,7 +69,8 @@ def cli(ctx, vlab_url, verify, vlab_username, verbose, debug):
                             vlab_config=config)
     log.info('Calling sub-command')
 
-cli.add_command(info)
+
+cli.add_command(status)
 cli.add_command(token)
 cli.add_command(init)
 cli.add_command(create)

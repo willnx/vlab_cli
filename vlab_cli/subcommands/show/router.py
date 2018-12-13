@@ -29,7 +29,10 @@ def router(ctx, images):
                             endpoint='/api/1/inf/router',
                             message='Collecting information about the network routers in your lab',
                             method='GET').json()['content']
-        click.echo(vm_table_view(ctx.obj.vlab_api, info))
+        output = vm_table_view(ctx.obj.vlab_api, info)
+        if not output:
+            output = 'You do not own any network Routers'
+        click.echo(output)
 
 
 def get_formatted_table(images):

@@ -11,7 +11,7 @@ from vlab_cli.lib.versions import Version
 @click.option('-i', '--images', is_flag=True,
               help='Display the available versions of InsightIQ to deploy')
 @click.pass_context
-def iiq(ctx, images):
+def insightiq(ctx, images):
     """Display information about InsightIQ instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
@@ -29,7 +29,10 @@ def iiq(ctx, images):
                             endpoint='/api/1/inf/insightiq',
                             message='Collecting information about your InsightIQ instances',
                             method='GET').json()
-        click.echo(vm_table_view(ctx.obj.vlab_api, info['content']))
+        output = vm_table_view(ctx.obj.vlab_api, info['content'])
+        if not output:
+            output = "You do not own any InsightIQ instances"
+        click.echo(output)
 
 
 def get_formatted_table(images):
