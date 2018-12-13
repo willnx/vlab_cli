@@ -2,6 +2,7 @@
 """Defines the CLI for destroying a network router"""
 import click
 
+from vlab_cli.lib.widgets import Spinner
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.click_extras import MandatoryOption
 
@@ -18,4 +19,6 @@ def router(ctx, name):
                  message='Destroying network router: {}'.format(name),
                  body=body,
                  method='DELETE')
+    with Spinner('Deleting port mapping rules'):
+        ctx.obj.vlab_api.delete_all_ports(name)
     click.echo('OK!')

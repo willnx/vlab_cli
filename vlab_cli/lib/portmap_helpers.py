@@ -124,3 +124,22 @@ def https_to_port(vm_type):
         'onefs' : 8080,
     }
     return port_map[vm_type.lower()]
+
+
+def get_ipv4_addrs(ips):
+    """Obtain only the IPv4 addresses from a list of IPv4 and IPv6 addresses
+
+    :Returns: List
+
+    :param ips: The list of IPs a VM owns
+    :type ips: List
+    """
+    ipv4_addrs = []
+    for ip in ips:
+        try:
+            ipaddress.IPv4Address(ip)
+        except ValueError:
+            continue
+        else:
+            ipv4_addrs.append(ip)
+    return ipv4_addrs

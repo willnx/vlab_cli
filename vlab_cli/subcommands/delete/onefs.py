@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""TODO"""
+"""Defines the CLI for deleting a OneFS node or cluster"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -32,7 +32,10 @@ def delete_node(vlab_api, name):
                  body=body,
                  message='Destroying OneFS node {}'.format(name),
                  method='DELETE')
+    with Spinner('Deleting port mapping rules'):
+        ctx.obj.vlab_api.delete_all_ports(name)
     click.echo('OK!')
+
 
 def delete_cluster(vlab_api, cluster):
     """Destroy an entire OneFS cluster"""
@@ -50,6 +53,9 @@ def delete_cluster(vlab_api, cluster):
             resp = vlab_api.delete('/api/1/inf/onefs', json=body)
             tasks[node] = '/api/1/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
         block_on_tasks(vlab_api, tasks)
+    with Spinner('Deleting port mapping rules'):
+        for node in nodes:
+            ctx.obj.vlab_api.delete_all_ports(node)
     click.echo('OK!')
 
 

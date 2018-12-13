@@ -19,7 +19,8 @@ def format_machine_info(vlab_api, info):
     shorter_link = vlab_api.post('/api/1/link',
                                  json={'url': info['console']}).json()['content']['url']
     rows = []
-    kind, version = info['note'].split('=')
+    kind = info['meta']['component']
+    version = info['meta']['version']
     rows.append(['Type', ':', kind])
     rows.append(['Version', ':', version])
     rows.append(['State', ':', info['state']])

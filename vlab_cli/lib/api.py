@@ -196,21 +196,48 @@ class vLabApi(object):
         url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
         resp = self.get(url)
         firewall_rules = resp.json()['content']
-        for rule_id in firewall_rules.keys():
-            target_ip = firewall_rules[rule_id]['target_addr']
+        for conn_port in firewall_rules.keys():
+            target_ip = firewall_rules[conn_port]['target_addr']
             target_port_number = firewall_rules[rule_id]['target_port']
             if target_ip == target_addr and target_port == target_port_number:
-                conn_port = firewall_rules[rule_id]['conn_port']
                 break
         else:
             error = 'No rule found for IP {} and Port {}'.format(target_addr, target_port)
             raise ValueError(error)
         self.delete(url, json={'conn_port' : conn_port})
 
-    def map_port(self, target_addr, target_port, target_name, target_component):
-        """Create a port mapping rule in the IPAM server
+    def get_port_map(self):
+        """Obtain all the port mapping/forwarding rules defined on the gateway
+
+        :Returns: Dictionary
+        """
+        if self._ipam_ip is None:
+            self._ipam_ip = self._find_ipam()
+        url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
+        resp = self.get(url)
+        return resp.json()['content']
+
+    def delete_all_ports(self, vm_name):
+        """Delete all the port mapping rules owned by a specific VM
 
         :Returns: None
+
+        :param vm_name: The name of the VM
+        :type vm_name: String
+        """
+        if self._ipam_ip is None:
+            self._ipam_ip = self._find_ipam()
+        url = 'https://{}/api/1/ipam/portmap'.format(self._ipam_ip)
+        params = {'name': vm_name}
+        all_ports = self.get(url, params=params).json()['content']
+        for port in all_ports.keys():
+            self.delete(url, json={'conn_port': port})
+
+    def map_port(self, target_addr, target_port, target_name, target_component):
+        """Create a port mapping rule in the IPAM server, and return the connection
+        port.
+
+        :Returns: Integer
 
         :Raises: requests.HTTPError
 
@@ -234,14 +261,15 @@ class vLabApi(object):
                    'target_name' : target_name,
                    'target_component' : target_component}
         resp = self.post(url, json=payload)
-
+        conn_port = resp.json()['content']['conn_port']
+        return conn_port
 
     def _find_ipam(self):
         """Discovers the IP of the IPAM server"""
         resp1 = self.get(endpoint='/api/2/inf/gateway', auto_check=False)
         status_url = resp1.links['status']['url']
         for _ in range(0, 300, 1):
-            resp2 = self.get(status_url, auto_check=False)
+            resp2 = self.get(status_url)
             if resp2.status_code == 202:
                 time.sleep(1)
             else:

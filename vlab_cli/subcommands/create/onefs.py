@@ -5,10 +5,13 @@ from collections import OrderedDict
 
 import click
 
-from vlab_cli.lib.api import block_on_tasks, consume_task
+from vlab_cli.lib.widgets import Spinner
+from vlab_cli.lib.widgets import typewriter
 from vlab_cli.lib.clippy import invoke_onefs_clippy
 from vlab_cli.lib.ascii_output import vm_table_view
 from vlab_cli.lib.click_extras import MandatoryOption
+from vlab_cli.lib.portmap_helpers import https_to_port
+from vlab_cli.lib.api import block_on_tasks, consume_task
 from vlab_cli.lib.widgets import Spinner, prompt, typewriter
 
 
@@ -85,8 +88,56 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                      external_netmask=external_netmask,
                      internal_netmask=internal_netmask,
                      vlab_api=ctx.obj.vlab_api)
+        map_ips(vlab_api=ctx.obj.vlab_api, nodes=info.keys(), ip_range=external_ip_range)
     table = generate_table(vlab_api=ctx.obj.vlab_api, info=info)
     click.echo('\n{}\n'.format(table))
+    if not skip_config:
+        typewriter("Use 'vlab connect onefs --name {}' to connect to a specific node".format(list(info.keys())[0]))
+
+
+def map_ips(vlab_api, nodes, ip_range):
+    """TODO"""
+    low_ip = min(ip_range)
+    high_ip = max(ip_range)
+    ips = _generate_ips(low_ip, high_ip)
+    https_port = https_to_port('onefs')
+    with Spinner('Creating SSH and HTTPS mapping rules for each node'):
+        for ip, node in zip(ips, nodes):
+            vlab_api.map_port(target_addr=ip,
+                              target_port=22,
+                              target_name=node,
+                              target_component='OneFS')
+            vlab_api.map_port(target_addr=ip,
+                              target_port=https_port,
+                              target_name=node,
+                              target_component='OneFS')
+
+def _generate_ips(start_ip, end_ip):
+    """Given a starting and ending IP, return a list of all IPs within that range
+
+    :Returns: List
+
+    :param start_ip: The low end of the IP range
+    :type start_ip: String
+
+    :param end_ip: The high end of the IP range
+    :type end_ip: String
+    """
+    start = list(map(int, start_ip.split(".")))
+    end = list(map(int, end_ip.split(".")))
+    temp = start
+    ip_range = []
+
+    ip_range.append(start_ip)
+    while temp != end:
+       start[3] += 1
+       for i in (3, 2, 1):
+          if temp[i] == 256:
+             temp[i] = 0
+             temp[i-1] += 1
+       ip_range.append(".".join(map(str, temp)))
+
+    return ip_range
 
 
 def create_nodes(username, name, image, external, internal, node_count, vlab_api):
