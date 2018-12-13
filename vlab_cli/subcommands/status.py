@@ -28,11 +28,6 @@ def status(ctx):
             gateway_ip = None
     else:
         gateway_ip = None
-    jumpbox = vm_info.pop('jumpBox', None)
-    if jumpbox:
-        jumpbox_ip = ' '.join(jumpbox['ips'])
-    else:
-        jumpbox_ip = None
     vm_body = []
     vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Console']
     for vm, data in vm_info.items():
@@ -44,7 +39,7 @@ def status(ctx):
         row = [vm, '\n'.join(data['ips']), kind, version, power, shorter_link]
         vm_body.append(row)
 
-    heading = '\nUsername: {}\nGateway : {}\nJumpBox : {}\n'.format(ctx.obj.username, gateway_ip, jumpbox_ip)
+    heading = '\nUsername: {}\nGateway : {}\n'.format(ctx.obj.username, gateway_ip)
     vm_table = tabulate(vm_body, headers=vm_header, tablefmt='presto')
     click.echo(heading)
     click.echo('Machines:\n\n{}\n'.format(vm_table))
