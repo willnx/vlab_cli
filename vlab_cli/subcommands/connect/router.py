@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for connecting to a OneFS node"""
+"""Defines the CLI for connecting to an InsightIQ instance"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -9,15 +9,15 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'https']),
-              default='https', show_default=True,
+@click.option('-p', '--protocol', type=click.Choice(['ssh']),
+              default='ssh', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the node to connect to')
+              help='The name of the network Router to connect to')
 @click.pass_context
-def onefs(ctx, name, protocol):
-    """Connect to a OneFS node"""
-    target_port = get_protocol_port('onefs', protocol)
+def router(ctx, name, protocol):
+    """Connect to an InsightIQ instance"""
+    target_port = get_protocol_port('router', protocol)
     with Spinner('Lookin up connection information for {}'.format(name)):
         conn_port = None
         ports = ctx.obj.vlab_api.get_port_map()

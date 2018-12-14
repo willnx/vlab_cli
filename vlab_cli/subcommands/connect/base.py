@@ -7,6 +7,17 @@ from vlab_cli.lib.configurizer import CONFIG_SECTIONS, set_config
 from vlab_cli.lib.clippy.connect import invoke_bad_missing_config, invoke_config
 
 from vlab_cli.subcommands.connect.onefs import onefs
+from vlab_cli.subcommands.connect.iiq import insightiq
+from vlab_cli.subcommands.connect.esrs import esrs
+from vlab_cli.subcommands.connect.cee import cee
+from vlab_cli.subcommands.connect.router import router
+from vlab_cli.subcommands.connect.windows import windows
+from vlab_cli.subcommands.connect.winserver import winserver
+from vlab_cli.subcommands.connect.centos import centos
+from vlab_cli.subcommands.connect.icap import icap
+from vlab_cli.subcommands.connect.claritynow import claritynow
+from vlab_cli.subcommands.connect.ecs import ecs
+
 
 @click.group()
 @click.pass_context
@@ -30,9 +41,20 @@ def connect(ctx):
             try:
                 new_config = invoke_config()
                 set_config(new_config)
+                ctx.obj.vlab_config = get_config()
             except Exception as doh:
                 ctx.obj.log.debug(doh, exc_info=True)
                 raise click.ClickException(doh)
 
 
 connect.add_command(onefs)
+connect.add_command(insightiq)
+connect.add_command(esrs)
+connect.add_command(cee)
+connect.add_command(router)
+connect.add_command(windows)
+connect.add_command(winserver)
+connect.add_command(centos)
+connect.add_command(icap)
+connect.add_command(claritynow)
+connect.add_command(ecs)

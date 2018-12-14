@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for connecting to a OneFS node"""
+"""Defines the CLI for connecting to a Windows Desktop client"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -9,15 +9,15 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'https']),
-              default='https', show_default=True,
+@click.option('-p', '--protocol', type=click.Choice(['rdp']),
+              default='rdp', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the node to connect to')
+              help='The name of the Windows Desktop client to connect to')
 @click.pass_context
-def onefs(ctx, name, protocol):
-    """Connect to a OneFS node"""
-    target_port = get_protocol_port('onefs', protocol)
+def windows(ctx, name, protocol):
+    """Connect to a Windows Desktop client"""
+    target_port = get_protocol_port('windows', protocol)
     with Spinner('Lookin up connection information for {}'.format(name)):
         conn_port = None
         ports = ctx.obj.vlab_api.get_port_map()
@@ -29,12 +29,4 @@ def onefs(ctx, name, protocol):
         raise click.ClickException(error)
 
     conn = Connectorizer(ctx.obj.vlab_config)
-    if protocol == 'ssh':
-        conn.ssh(ip_addr=ctx.obj._ipam_ip, port=conn_port)
-    elif protocol == 'https':
-        conn.https(ip_addr=ctx.obj._ipam_ip, port=conn_port)
-    elif protocol == 'scp':
-        conn.scp(ip_addr=ctx.obj._ipam_ip, port=conn_port)
-    else:
-        error = 'Unexpected protocol requested: {}'.format(protocol)
-        raise RuntimeError(error)
+    conn.rdp(ip_addr=ctx.obj._ipam_ip, port=conn_port)
