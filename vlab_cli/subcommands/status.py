@@ -2,11 +2,11 @@
 """
 Defines the CLI for a little status page of your vLab inventory
 """
-import time
 import click
 from tabulate import tabulate
 
 from vlab_cli.lib.api import consume_task
+from vlab_cli.lib.widgets import typewriter
 
 
 @click.command()
@@ -28,11 +28,6 @@ def status(ctx):
             gateway_ip = None
     else:
         gateway_ip = None
-    jumpbox = vm_info.pop('jumpBox', None)
-    if jumpbox:
-        jumpbox_ip = ' '.join(jumpbox['ips'])
-    else:
-        jumpbox_ip = None
     vm_body = []
     vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Console']
     for vm, data in vm_info.items():
@@ -44,7 +39,11 @@ def status(ctx):
         row = [vm, '\n'.join(data['ips']), kind, version, power, shorter_link]
         vm_body.append(row)
 
-    heading = '\nUsername: {}\nGateway : {}\nJumpBox : {}\n'.format(ctx.obj.username, gateway_ip, jumpbox_ip)
+    heading = '\nUsername: {}\nGateway : {}\n'.format(ctx.obj.username, gateway_ip)
     vm_table = tabulate(vm_body, headers=vm_header, tablefmt='presto')
     click.echo(heading)
-    click.echo('Machines:\n\n{}\n'.format(vm_table))
+    if vm_body:
+        click.echo('Machines:\n\n{}\n'.format(vm_table))
+    else:
+        typewriter("Looks like there's nothing in your lab.")
+        typewriter("Use 'vlab create -h' to start deploying some machines")
