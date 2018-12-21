@@ -19,6 +19,4 @@ def router(ctx, name):
                  message='Destroying network router: {}'.format(name),
                  body=body,
                  method='DELETE')
-    with Spinner('Deleting port mapping rules'):
-        ctx.obj.vlab_api.delete_all_ports(name)
     click.echo('OK!')

@@ -128,7 +128,7 @@ def init_lab(vlab_api, username, wan, switch, config, log):
 
     body4 = {'wan': wan, 'lan': '{}_frontend'.format(username)}
     consume_task(vlab_api,
-                 endpoint='/api/1/inf/gateway',
+                 endpoint='/api/2/inf/gateway',
                  message='Deploying gateway',
                  method='POST',
                  body=body4,

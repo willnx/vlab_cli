@@ -25,7 +25,7 @@ def ecs(ctx, name, image, external_network):
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/ecs',
-                        message='Creating new instance of ECS running {}'.format(image),
+                        message='Creating a new instance of ECS running {}'.format(image),
                         body=body,
                         timeout=900,
                         pause=5)

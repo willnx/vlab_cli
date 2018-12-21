@@ -30,11 +30,11 @@ def esrs(ctx, name, protocol):
 
     conn = Connectorizer(ctx.obj.vlab_config)
     if protocol == 'ssh':
-        conn.ssh(ip_addr=ctx.obj._ipam_ip, port=conn_port)
+        conn.ssh(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
     elif protocol == 'https':
-        conn.https(ip_addr=ctx.obj._ipam_ip, port=conn_port)
+        conn.https(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
     elif protocol == 'scp':
-        conn.scp(ip_addr=ctx.obj._ipam_ip, port=conn_port)
+        conn.scp(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
     else:
         error = 'Unexpected protocol requested: {}'.format(protocol)
         raise RuntimeError(error)

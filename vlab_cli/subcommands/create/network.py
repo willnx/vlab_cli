@@ -15,6 +15,6 @@ def network(ctx, name, switch):
     body = {'vlan-name': '{}_{}'.format(ctx.obj.username, name), 'switch-name': switch}
     consume_task(ctx.obj.vlab_api,
                  endpoint='/api/1/inf/vlan',
-                 message='Createing network: {}'.format(name),
+                 message='Createing a new network named {}'.format(name),
                  body=body)
     click.echo('OK!')

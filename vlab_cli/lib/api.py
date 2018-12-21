@@ -204,7 +204,7 @@ class vLabApi(object):
         else:
             error = 'No rule found for IP {} and Port {}'.format(target_addr, target_port)
             raise ValueError(error)
-        self.delete(url, json={'conn_port' : conn_port})
+        self.delete(url, json={'conn_port' : int(conn_port)})
 
     def get_port_map(self):
         """Obtain all the port mapping/forwarding rules defined on the gateway
@@ -231,7 +231,7 @@ class vLabApi(object):
         params = {'name': vm_name}
         all_ports = self.get(url, params=params).json()['content']
         for port in all_ports.keys():
-            self.delete(url, json={'conn_port': port})
+            self.delete(url, json={'conn_port': int(port)})
 
     def map_port(self, target_addr, target_port, target_name, target_component):
         """Create a port mapping rule in the IPAM server, and return the connection

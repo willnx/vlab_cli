@@ -25,7 +25,7 @@ def windows(ctx, name, image, external_network):
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/windows',
-                        message='Creating new instance of Windows {}'.format(image),
+                        message='Creating a new instance of Windows {}'.format(image),
                         body=body,
                         timeout=900,
                         pause=5)

@@ -26,7 +26,7 @@ environ['LANG'] = environ.get('LC_ALL', 'C.UTF-8')
 
 # Settings and defaults
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-VLAB_URL = 'https://localhost'
+VLAB_URL = 'https://vlab-dev.igs.corp'
 VLAB_VERSION = version.__version__
 VLAB_VERIFY_HOSTNAME = True
 VLAB_USER = getuser()

@@ -16,7 +16,7 @@ def gateway(ctx, wan, lan):
     click.secho('**NOTE**: Gateways can take 10-15 minutes to be created', bold=True)
     body = {'wan': wan, 'lan': '{}_{}'.format(ctx.obj.username, lan)}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/gateway',
+                        endpoint='/api/2/inf/gateway',
                         message='Creating a new default gateway',
                         body=body,
                         timeout=900,
