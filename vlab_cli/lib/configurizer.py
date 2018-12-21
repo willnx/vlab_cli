@@ -97,5 +97,5 @@ def find_programs():
                 location = os.path.join(root, the_file)
                 found_programs[agent.lower()] = location
     if this_os == 'windows':
-        found_programs['rdp'] = 'C:\\Windows\\System32\\mstsc.exe'
+        found_programs['mstsc'] = 'C:\\Windows\\System32\\mstsc.exe'
     return found_programs
