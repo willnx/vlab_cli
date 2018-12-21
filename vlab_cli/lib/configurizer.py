@@ -35,7 +35,7 @@ def _get_platform_progs():
     if this_os == 'windows':
         base += ['putty', 'mstsc', 'winscp']
     else:
-        base += ['ssh', 'remmina', 'scp']
+        base += ['gnome-terminal', 'remmina', 'scp']
     return base
 
 SUPPORTED_PROGS = _get_platform_progs()
@@ -87,7 +87,7 @@ def find_programs():
         support_programs = {'putty.exe', 'mstsc.exe', 'firefox.exe', 'chrome.exe', 'winscp.exe'}
     else:
         search_root = '/'
-        support_programs = {'ssh', 'remmina', 'firefox', 'chrome', 'scp'}
+        support_programs = {'gnome-terminal', 'remmina', 'firefox', 'chrome', 'scp'}
 
     found_programs = {}
     for root, dirs, files in os.walk(search_root):

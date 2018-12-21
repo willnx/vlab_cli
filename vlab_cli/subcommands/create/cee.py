@@ -25,7 +25,7 @@ def cee(ctx, name, image, external_network):
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/cee',
-                        message='Creating new instance of CEE running {}'.format(image),
+                        message='Creating a new instance of CEE running {}'.format(image),
                         body=body,
                         timeout=900,
                         pause=5)

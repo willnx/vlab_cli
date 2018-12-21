@@ -40,19 +40,25 @@ def invoke_config():
 
 
 def _make_config(found_programs):
-    """TODO"""
+    """Create the config file data structure
+
+    :Returns: Dictionary
+
+    :param found_programs: The result of walking the user's filesystem
+    :type found_programs: Dictionary
+    """
     new_config = {}
     for agent, prog_path in found_programs.items():
-        if agent in ('putty', 'ssh'):
-            new_config['SSH'] = {agent: prog_path}
+        if agent in ('putty', 'gnome-terminal'):
+            new_config['SSH'] = {'agent': agent, 'location': prog_path}
         elif agent in ('firefox', 'chrome'):
-            new_config['BROWSER'] = {agent: prog_path}
+            new_config['BROWSER'] = {'agent' : agent, 'location': prog_path}
         elif agent in ('scp', 'winscp'):
-            new_config['SCP'] = {agent: prog_path}
+            new_config['SCP'] = {'agent': agent, 'location': prog_path}
         elif agent in ('mstsc', 'remmina'):
-            new_config['RDP'] = {agent: prog_path}
+            new_config['RDP'] = {'agent': agent, 'location': prog_path}
         else:
-            raise RuntimeError('Unexpected value for config: {} and {}'.foramt(agent, prog_path))
+            raise RuntimeError('Unexpected value for config: {} and {}'.format(agent, prog_path))
     return new_config
 
 

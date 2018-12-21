@@ -33,7 +33,7 @@ def delete_node(vlab_api, name):
                  message='Destroying OneFS node {}'.format(name),
                  method='DELETE')
     with Spinner('Deleting port mapping rules'):
-        ctx.obj.vlab_api.delete_all_ports(name)
+        vlab_api.delete_all_ports(name)
     click.echo('OK!')
 
 
@@ -55,7 +55,7 @@ def delete_cluster(vlab_api, cluster):
         block_on_tasks(vlab_api, tasks)
     with Spinner('Deleting port mapping rules'):
         for node in nodes:
-            ctx.obj.vlab_api.delete_all_ports(node)
+            vlab_api.delete_all_ports(node)
     click.echo('OK!')
 
 
