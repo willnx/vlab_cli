@@ -101,7 +101,7 @@ def get_protocol_port(vm_type, protocol):
     """
     if protocol == 'https':
         port = https_to_port(vm_type)
-    elif protocol == 'ssh':
+    elif protocol == 'ssh' or protocol == 'scp':
         port = 22
     elif protocol == 'rdp':
         port = 3389
