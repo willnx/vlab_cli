@@ -13,7 +13,7 @@ setup(name="vlab-cli",
       version=version.__version__,
       packages=find_packages(),
       classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: System Administration',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
