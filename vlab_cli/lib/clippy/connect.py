@@ -49,13 +49,13 @@ def _make_config(found_programs):
     """
     new_config = {}
     for agent, prog_path in found_programs.items():
-        if agent in ('putty', 'gnome-terminal'):
+        if agent.lower() in ('putty', 'gnome-terminal'):
             new_config['SSH'] = {'agent': agent, 'location': prog_path}
         elif agent in ('firefox', 'chrome'):
             new_config['BROWSER'] = {'agent' : agent, 'location': prog_path}
-        elif agent in ('scp', 'winscp'):
+        elif agent.lower() in ('scp', 'winscp'):
             new_config['SCP'] = {'agent': agent, 'location': prog_path}
-        elif agent in ('mstsc', 'remmina'):
+        elif agent.lower() in ('mstsc', 'remmina'):
             new_config['RDP'] = {'agent': agent, 'location': prog_path}
         else:
             raise RuntimeError('Unexpected value for config: {} and {}'.format(agent, prog_path))
