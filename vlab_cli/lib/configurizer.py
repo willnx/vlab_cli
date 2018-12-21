@@ -95,5 +95,7 @@ def find_programs():
             if the_file.lower() in support_programs:
                 agent = os.path.splitext(the_file)[0] # remove file extension
                 location = os.path.join(root, the_file)
-                found_programs[agent] = location
+                found_programs[agent.lower()] = location
+    if this_os == 'windows':
+        found_programs['rdp'] = 'C:\\Windows\\System32\\mstsc.exe'
     return found_programs
