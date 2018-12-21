@@ -25,7 +25,7 @@ def winserver(ctx, name, image, external_network):
             'image': image.upper()} # upper in case they supply 2012r2
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/winserver',
-                        message='Creating new instance of Microsoft Server {}'.format(image),
+                        message='Creating a new instance of Microsoft Server {}'.format(image),
                         body=body,
                         timeout=900,
                         pause=5)

@@ -25,7 +25,7 @@ def insightiq(ctx, name, image, external_network):
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/insightiq',
-                        message='Creating new instance of InsightIQ running {}'.format(image),
+                        message='Creating a new instance of InsightIQ running {}'.format(image),
                         body=body,
                         timeout=900,
                         pause=5)
