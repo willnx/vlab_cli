@@ -251,7 +251,9 @@ def get_int_ips():
 
     :Returns: Tuple
     """
-    a = random.randint(1, 254)
+    # Stopping before 224 to avoid using reserved IP
+    # https://en.wikipedia.org/wiki/Reserved_IP_addresses
+    a = random.randint(1, 223)
     while a in (10, 192, 127):
         a = random.randint(1, 254)
     b = random.randint(1, 254)
