@@ -2,13 +2,15 @@
 """Help users with the ``vlab connect`` command"""
 import platform
 
+import click
+
 from vlab_cli.lib import configurizer
 from vlab_cli.lib.clippy.utils import prompt_and_confirm
 from vlab_cli.lib.widgets import typewriter, prompt, Spinner
 
 
 def invoke_bad_missing_config(username, vlab_url):
-    """TODO"""
+    """Helps a user fix their vlab.ini config file"""
     typewriter("Hi {}, looks like your vLab configuration file has a problem.".format(username))
     typewriter("The file is located at {}".format(configurizer.CONFIG_FILE))
     typewriter("In order to use the 'vlab connect' commands, we'll have to fix it.")
@@ -18,14 +20,16 @@ def invoke_bad_missing_config(username, vlab_url):
     return prompt("Do you want me to try and fix your config file? [Yes/no]", boolean=True, boolean_default=True)
 
 def invoke_config():
+    """Initial config setup help"""
+    the_os = platform.system().lower()
     typewriter("In order for 'vlab connect' to work, you'll need to have a")
     typewriter("browser, an SSH client, and an SCP client installed.")
     typewriter("Based on your OS, I can use the following:")
     typewriter(", ".join(configurizer.SUPPORTED_PROGS))
-    if platform.system().lower() == 'windows':
+    if the_os == 'windows':
         typewriter("\nNote: mstsc is the default RDP client that comes with Windows")
-    typewriter('\nIf you do not have one of the browsers, SSH, and SCP clients installed')
-    typewriter("you'll be wasting time by continuing with this config setup.")
+    typewriter('\nIf you do not have the SSH, RDP, and SCP clients as well as a supported browser')
+    typewriter("installed you'll be wasting time by continuing with this config setup.")
     keep_going = prompt("Continue with config setup? [Yes/no]", boolean=True, boolean_default=True)
     if not keep_going:
         raise RuntimeError("vlab connect prerequisites not met")
@@ -36,6 +40,16 @@ def invoke_config():
     if firefox and chrome:
         forget_browser = which_browser()
         found_programs.pop(forget_browser)
+    if len(found_programs) != 4:
+        # They are missing some dependency...
+        if the_os == 'windows':
+            scanned_drive = 'C:\\'
+        else:
+            scanned_drive = '/ (i.e. root)'
+        typewriter("\nUh oh, there's a problem. I wasn't able to find everything under {}.".format(scanned_drive))
+        typewriter("Here are the programs I was able to locate:\n\t{}".format(' '.join(found_programs.keys())))
+        typewriter("Please install the missing software, then re-run the 'vlab init' command.")
+        raise click.ClickException('Missing required dependencies')
     return _make_config(found_programs)
 
 
@@ -73,7 +87,3 @@ def which_browser():
         return 'chrome'
     else:
         return 'firefox'
-
-
-def invoke_connect_help():
-    pass
