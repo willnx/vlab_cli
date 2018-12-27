@@ -58,7 +58,7 @@ def _change_power_state(api, power_state, machine_name):
     else:
         msg = 'Powering {} {}'.format(power_state, machine_name)
     body = {'machine': machine_name, 'power': power_state}
-    consume_task(api, endpoint='/api/1/inf/power', message=msg, body=body)
+    consume_task(api, endpoint='/api/1/inf/power', message=msg, body=body, timeout=600, pause=5)
     click.echo('OK!')
 
 

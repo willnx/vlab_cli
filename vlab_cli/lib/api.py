@@ -264,6 +264,28 @@ class vLabApi(object):
         conn_port = resp.json()['content']['conn_port']
         return conn_port
 
+    def get_addrs(self, target_name=None, target_addr='', target_component=None):
+        """Look up address records from the IPAM server. Supplying parameter
+        values filters the results to only include the specific param value.
+
+        :Returns: Dictionary
+
+        :param target_name: The name of the VM
+        :type target_name: String
+
+        :param target_addr: The IP of a specific VM
+        :type taret_addr: STring
+
+        :param target_component: The type of VM, i.e OneFS, InsightIQ, etc
+        :type target_component: String
+        """
+        if self._ipam_ip is None:
+            self._ipam_ip = self._find_ipam()
+        url = 'https://{}/api/1/ipam/addr'.format(self._ipam_ip)
+        params = {'name': target_name, 'addr' : target_addr, 'component': target_component}
+        resp = self.get(url, params=params)
+        return resp.json()['content']
+
     def _find_ipam(self):
         """Discovers the IP of the IPAM server"""
         resp1 = self.get(endpoint='/api/2/inf/gateway', auto_check=False)
