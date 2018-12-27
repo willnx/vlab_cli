@@ -108,6 +108,28 @@ def get_protocol_port(vm_type, protocol):
     return port
 
 
+def port_to_protocol(vm_type, port_number):
+    """Return the protocol when supplied with a given port value
+
+    :Returns: String
+
+    :param vm_type: The category of component (i.e. OneFS, InsightIQ, etc)
+    :type vm_type: String
+
+    :param port_number: The well-defined port number
+    :type port_number: Integer
+    """
+    https = https_to_port(vm_type)
+    if port_number == 22:
+        return 'SSH/SCP'
+    elif port_number == 3389:
+        return 'RDP'
+    elif port_number == https:
+        return 'HTTPS'
+    else:
+        raise RuntimeError('Unexpected port number: {}'.format(port_number))
+
+
 def https_to_port(vm_type):
     """Because some component run HTTPS on an unprivileged port (i.e. not 443)
 
