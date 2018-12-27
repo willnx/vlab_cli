@@ -9,7 +9,7 @@ from vlab_cli.lib.widgets import Spinner, typewriter
 from vlab_cli.lib.ascii_output import format_machine_info
 from vlab_cli.lib.api import consume_task, block_on_tasks
 from vlab_cli.lib.configurizer import set_config, CONFIG_SECTIONS
-from vlab_cli.lib.clippy.connect import invoke_connect_help, invoke_config
+from vlab_cli.lib.clippy.connect import invoke_config
 from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invoke_init_done_help
 
 
@@ -26,7 +26,6 @@ def init(ctx, start_over, switch, wan):
         invoke_greeting(username=ctx.obj.username)
         invoke_tutorial()
         init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
-    invoke_connect_help()
 
 
 def nuke_lab(vlab_api, username, wan, switch, config, log):
