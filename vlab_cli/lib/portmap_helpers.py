@@ -145,7 +145,11 @@ def https_to_port(vm_type):
         'insightiq' : 443,
         'onefs' : 8080,
     }
-    return port_map[vm_type.lower()]
+    try:
+        answer =  port_map[vm_type.lower()]
+    except KeyError:
+        answer = None
+    return answer
 
 
 def get_ipv4_addrs(ips):
