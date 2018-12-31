@@ -19,15 +19,14 @@ def gateway(ctx):
                                          json={'url': info['console']}).json()['content']['url']
     ip = [x for x in info['ips'] if not x.startswith('192.168.')]
     if ip:
-        admin_url = 'https://{}:444'.format(ip[0])
+        gateway_ip = ip[0]
     else:
-        admin_url = None
+        gateway_ip = 'None'
     rows = []
-    kind = info['content']['meta']['component']
-    version = info['content']['meta']['version']
-    rows.append(['Type', ':', kind])
-    rows.append(['Version', ':', version])
+    kind = info['meta']['component']
+    version = info['meta']['version']
+    rows.append(['IP', ':', gateway_ip])
     rows.append(['State', ':', info['state']])
-    rows.append(['Admin Page', ':', admin_url])
-    rows.append(['Console', ':', shorter_link])
+    rows.append(['Version', ':', version])
+    rows.append(['Type', ':', kind])
     click.echo(tabulate(rows, tablefmt='plain'))
