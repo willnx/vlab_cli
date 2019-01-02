@@ -44,6 +44,6 @@ def get_formatted_table(images):
     :param images: The available versions of network routers, ordered by version number
     :type images: List
     """
-    header = ['ToffeeMocha Router (and WAN Emulator)']
-    table = columned_table(header, images)
+    header = ['VyOS Router']
+    table = columned_table(header, [images])
     return table
