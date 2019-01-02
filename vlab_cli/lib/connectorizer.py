@@ -33,9 +33,14 @@ class Connectorizer(object):
         syntax = self._ssh_str.format(ip_addr, port)
         subprocess.Popen(syntax.split(' '))
 
-    def https(self, ip_addr, port):
+    def https(self, ip_addr, port, url=None):
         """Open a session via HTTPS in a new client"""
-        syntax = self._https_str.format(ip_addr, port)
+        if url:
+            url = url[8:] # strip of redundant https://
+            syntax = self._https_str.format(url, '')
+            syntax = syntax[:-1] # strip off tailing :
+        else:
+            syntax = self._https_str.format(ip_addr, port)
         subprocess.Popen(syntax.split(' '))
 
     def rdp(self, ip_addr, port):
