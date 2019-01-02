@@ -36,3 +36,4 @@ def router(ctx, image, name, networks):
     data = resp.json()['content'][name]
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
+    typewriter("\nUse 'vlab connect router --name {}' to access your new network Router".format(name))
