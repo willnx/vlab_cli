@@ -227,7 +227,7 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
     :Returns: Dictionary
     """
     if ''.join(internal_ip_range).lower() == 'random':
-        internal_ip_range = get_int_ips()
+        int_ip_low, int_ip_high = get_int_ips()
     payload = {"name": node_name,
                "cluster_name": cluster_name,
                "encoding": encoding,
@@ -235,8 +235,8 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
                "ext_ip_high": max(external_ip_range),
                "ext_ip_low": min(external_ip_range),
                "ext_netmask": external_netmask,
-               "int_ip_high": max(internal_ip_range),
-               "int_ip_low": min(internal_ip_range),
+               "int_ip_high": int_ip_high,
+               "int_ip_low": int_ip_low,
                "int_netmask": internal_netmask,
                "dns_servers": dns_servers,
                "sc_zonename": sc_zonename,
