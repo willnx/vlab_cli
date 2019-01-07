@@ -67,6 +67,9 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
         bail = False
     if bail:
         raise click.ClickException('Not enough information supplied')
+    if '192.168.1.1' in _generate_ips(external_ip_range[0], external_ip_range[1]):
+        error = 'IP 192.168.1.1 is reserved for the gateway. Unable to assign to OneFS external network'
+        raise click.ClickException(error)
     info = create_nodes(username=ctx.obj.username,
                         name=name,
                         image=image,
