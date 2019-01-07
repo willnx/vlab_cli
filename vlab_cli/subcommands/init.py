@@ -10,7 +10,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
 from vlab_cli.lib.api import consume_task, block_on_tasks
 from vlab_cli.lib.configurizer import set_config, CONFIG_SECTIONS
 from vlab_cli.lib.clippy.connect import invoke_config
-from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invoke_init_done_help
+from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invoke_init_done_help, invoke_eula
 
 
 @click.command()
@@ -24,8 +24,11 @@ def init(ctx, start_over, switch, wan):
         nuke_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
     else:
         invoke_greeting(username=ctx.obj.username)
+        accepts_terms = invoke_eula()
+        if not accepts_terms:
+            raise click.ClickException("Must agree to \"not ruin this for others\" to use vLab")
         invoke_tutorial()
-        init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
+        #init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
 
 
 def nuke_lab(vlab_api, username, wan, switch, config, log):

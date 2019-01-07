@@ -2,6 +2,8 @@
 """Gives a brief tutorial of how to use vLab"""
 import time
 
+import click
+
 from vlab_cli.lib.widgets import typewriter, prompt
 
 VLAB_ASCII = """\
@@ -19,6 +21,28 @@ def invoke_greeting(username):
     for line in VLAB_ASCII.split('\n'):
         print(line)
         time.sleep(0.5)
+
+
+def invoke_eula():
+    typewriter("Before we get started, let's go over the one basic rule with")
+    typewriter("using vLab:\n")
+    time.sleep(0.6)
+    click.secho("\tDon't ruin this for others\n", bold=True)
+    time.sleep(1)
+    typewriter("It's a simple rule, right? Well, \"they\" (you know, the ominous")
+    typewriter("\"they\") say I should provide a bit more detail. So without")
+    typewriter("further ado here's a list of things, not limited to, that")
+    typewriter("constitutes \"ruining this for others\":\n")
+    typewriter("\t* Creating a bot net")
+    typewriter("\t* Mining cryptocurrency (ex Bitcoin)")
+    typewriter("\t* Running non-work related software in your lab")
+    typewriter("\t* Using lab resources for production anything")
+    typewriter("\t* Hacking or general maliciousness of any kind\n")
+    typewriter("Violating this one very basic rule will result in, but not limited to,")
+    typewriter("being banned from using vLab. Please do not be that person who")
+    typewriter("\"ruins this for others.\"\n")
+    accepts_terms = prompt("Do you understand and agree to follow this one basic rule? [y/N]", boolean=True)
+    return accepts_terms
 
 
 def invoke_tutorial():
@@ -73,4 +97,5 @@ def invoke_init_done_help():
 
 
 if __name__ == '__main__':
-    invoke_init_done_help()
+    invoke_eula()
+    invoke_tutorial()
