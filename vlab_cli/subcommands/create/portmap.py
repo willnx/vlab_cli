@@ -39,4 +39,4 @@ def portmap(ctx, name, protocol, ip_address):
 
     with Spinner('Creating a port mapping rule to {} for {}'.format(name, protocol)):
         ctx.obj.vlab_api.map_port(target_addr, target_port, name, vm_type)
-    typewriter("OK! Use 'vlab connect {} --protocol {}' to access that machine".format(vm_type.lower(), protocol))
+    typewriter("OK! Use 'vlab connect {} --name {} --protocol {}' to access that machine".format(vm_type.lower(), name, protocol))
