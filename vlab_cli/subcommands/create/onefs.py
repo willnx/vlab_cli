@@ -231,6 +231,12 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
     """
     if ''.join(internal_ip_range).lower() == 'random':
         int_ip_low, int_ip_high = get_int_ips()
+    else:
+        try:
+            int_ip_low, in_ip_high = internal_ip_range.split(' ')
+        except ValueError:
+            error = "Malformed value for Internal IPs supplied."
+            raise click.ClickException(error)
     payload = {"name": node_name,
                "cluster_name": cluster_name,
                "encoding": encoding,
