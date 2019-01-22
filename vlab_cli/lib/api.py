@@ -375,7 +375,7 @@ def consume_task(vlab_api, endpoint, message, method='POST', body=None, params=N
         else:
             url = resp.links['status']['url']
         for _ in range(0, timeout, pause):
-            resp = vlab_api.get(url)
+            resp = vlab_api.get(url, auto_check=auto_check)
             if resp.status_code == 202:
                 time.sleep(pause)
             else:

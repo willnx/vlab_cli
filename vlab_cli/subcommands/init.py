@@ -135,5 +135,6 @@ def init_lab(vlab_api, username, wan, switch, config, log):
                  method='POST',
                  body=body4,
                  timeout=1500,
-                 pause=5)
+                 pause=5,
+                 auto_check=False)
     invoke_init_done_help()
