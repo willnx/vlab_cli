@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for creating OneFS nodes"""
 import random
+import ipaddress
 from collections import OrderedDict
 
 import click
@@ -233,7 +234,7 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
         int_ip_low, int_ip_high = get_int_ips()
     else:
         try:
-            int_ip_low, in_ip_high = internal_ip_range.split(' ')
+            int_ip_low, int_ip_high = internal_ip_range
         except ValueError:
             error = "Malformed value for Internal IPs supplied."
             raise click.ClickException(error)
@@ -241,8 +242,8 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
                "cluster_name": cluster_name,
                "encoding": encoding,
                "version": image,
-               "ext_ip_high": str(max([ipaddress.ip_address[x] for x in external_ip_range])),
-               "ext_ip_low": str(min([ipaddress.ip_address[x] for x in external_ip_range])),
+               "ext_ip_high": str(max([ipaddress.ip_address(x) for x in external_ip_range])),
+               "ext_ip_low": str(min([ipaddress.ip_address(x) for x in external_ip_range])),
                "ext_netmask": external_netmask,
                "int_ip_high": int_ip_high,
                "int_ip_low": int_ip_low,
@@ -253,11 +254,6 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
                "gateway": default_gateway,
               }
     return payload
-
-
-def foo():
-    """TODO"""
-    pass
 
 
 def get_int_ips():
