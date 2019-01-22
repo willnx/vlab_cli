@@ -37,6 +37,7 @@ def portmap(ctx, name, protocol, ip_address):
     if not protocol or protocol not in valid_protocols:
         protocol = invoke_portmap_clippy(ctx.obj.username, vm_type, valid_protocols)
     target_port = get_protocol_port(vm_type, protocol)
+    import pdb; pdb.set_trace()
 
     with Spinner('Deleting port mapping rule to {} for {}'.format(name, protocol)):
         try:

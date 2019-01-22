@@ -62,7 +62,7 @@ def determine_which_ip(vm_ips, requested_ip):
     if requested_ip:
         return requested_ip
     else:
-        vm_ips[0]
+        return vm_ips[0]
 
 def get_component_protocols(vm_type):
     """Lookup what protocols a specific component supports

@@ -198,7 +198,7 @@ class vLabApi(object):
         firewall_rules = resp.json()['content']
         for conn_port in firewall_rules.keys():
             target_ip = firewall_rules[conn_port]['target_addr']
-            target_port_number = firewall_rules[rule_id]['target_port']
+            target_port_number = firewall_rules[conn_port]['target_port']
             if target_ip == target_addr and target_port == target_port_number:
                 break
         else:
