@@ -19,11 +19,12 @@ def winserver(ctx, name, protocol):
     """Connect to a Microsoft Server instance"""
     target_port = get_protocol_port('winserver', protocol)
     with Spinner('Lookin up connection information for {}'.format(name)):
-        conn_port = None
-        ports = ctx.obj.vlab_api.get_port_map()
-        for port, details in ports.items():
-            if details['name'] == name and details['target_port'] == target_port:
-                conn_port = port
+        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name' : name, 'target_port' : target_port})
+        try:
+            conn_port = list(resp.json()['content'].keys())[0]
+        except Exception as doh:
+            ctx.obj.log.debug(doh, exc_info=True)
+            conn_port = None
     if not conn_port:
         error = 'No mapping rule for {} to {} exists'.format(protocol, name)
         raise click.ClickException(error)
