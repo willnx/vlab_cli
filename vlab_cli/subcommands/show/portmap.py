@@ -12,6 +12,19 @@ from vlab_cli.lib.portmap_helpers import port_to_protocol
 @click.pass_context
 def portmap(ctx):
     """Display configured port mapping/forwarding rules"""
+    resp = consume_task(ctx.obj.vlab_api,
+                        endpoint='/api/2/inf/gateway',
+                        message='Looking up gateway IP',
+                        method='GET').json()['content']
+    gateway_ip = None
+    for ip in resp['ips']:
+        if ':' in ip:
+            continue
+        elif ip == '192.168.1.1':
+            continue
+        else:
+            gateway_ip = ip
+            break
     table = "No portmap rules exist"
     with Spinner('Looking up port mapping rules'):
         rules = ctx.obj.vlab_api.get('/api/1/ipam/portmap').json()['content']
@@ -24,5 +37,5 @@ def portmap(ctx):
             protocol = port_to_protocol(vm_type, vm_port)
             rows.append([name, vm_type, conn_port, protocol])
             table = tabulate(rows, headers=header, tablefmt='presto', numalign="center")
-    click.echo('\nGateway IP: {}'.format(ctx.obj.vlab_api.vga_ip()))
+    click.echo('\nGateway IP: {}'.format(gateway_ip))
     click.echo(table)

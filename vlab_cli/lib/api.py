@@ -178,35 +178,6 @@ class vLabApi(object):
         """
         return self._call(method='delete', endpoint=endpoint, auto_check=auto_check, **kwargs)
 
-    def vga_ip(self):
-        """Discovers the IP of the IPAM server"""
-        resp1 = self.get(endpoint='/api/2/inf/gateway', auto_check=False)
-        status_url = resp1.links['status']['url']
-        for _ in range(0, 300, 1):
-            resp2 = self.get(status_url)
-            if resp2.status_code == 202:
-                time.sleep(1)
-            else:
-                break
-        else:
-            error = 'Timed out trying to discovery Gateway IP'.format(task)
-            raise RuntimeError(error)
-        all_ips = resp2.json()['content']['ips']
-        ips = []
-        for ip in all_ips:
-            if ':' in ip:
-                continue
-            elif ip.startswith('127'):
-                continue
-            elif ip.startswith('192.168.'):
-                continue
-            else:
-                ips.append(ip)
-        if len(ips) != 1:
-            error = "Unexpected IP(s) found on gateway: {}".format(ips)
-            raise RuntimeError(error)
-        return ips[0]
-
 
 def build_url(base, *args):
     """Construct a valid URL from independent parts.
