@@ -58,19 +58,7 @@ class HiddenOption(Option):
 
 
 class GlobalContext(object):
-    """Enables sharing of arbitrary data across the CLI app
-
-    *IMPORTANT* This data should be considered read-only. You cannot rebind
-                attributes, but this is Python so you *could* modify the attribute
-                value provided it's a mutable data type (i.e. list, dict, etc.).
-                Please don't do that, you'll regret it; trust me :D
-    """
+    """Enables sharing of arbitrary data across the CLI app"""
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
             object.__setattr__(self, str(k), v)
-
-    def __setattr__(self, attr, value):
-        raise AttributeError("can't set attribute")
-
-    def __delattr__(self, attr):
-        raise AttributeError("can't set attribute")
