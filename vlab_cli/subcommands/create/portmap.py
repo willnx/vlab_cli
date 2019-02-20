@@ -36,7 +36,11 @@ def portmap(ctx, name, protocol, ip_address):
     if not protocol or protocol not in valid_protocols:
         protocol = invoke_portmap_clippy(ctx.obj.username, vm_type, valid_protocols)
     target_port = get_protocol_port(vm_type, protocol)
+    payload = {'target_addr' : target_addr,
+               'target_port' : target_port,
+               'target_name' : name,
+               'target_component' : vm_type}
 
     with Spinner('Creating a port mapping rule to {} for {}'.format(name, protocol)):
-        ctx.obj.vlab_api.map_port(target_addr, target_port, name, vm_type)
+        ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=payload)
     typewriter("OK! Use 'vlab connect {} --name {} --protocol {}' to access that machine".format(vm_type.lower(), name, protocol))

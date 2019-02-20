@@ -30,7 +30,8 @@ def gateway(ctx, wan, lan):
     else:
         admin_url = None
     rows = []
-    kind, version = info['note'].split('=')
+    kind = info['meta']['component']
+    version = info['meta']['version']
     rows.append(['Type', ':', kind])
     rows.append(['Version', ':', version])
     rows.append(['State', ':', info['state']])
