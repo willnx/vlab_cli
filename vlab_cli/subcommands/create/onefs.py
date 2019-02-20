@@ -66,7 +66,9 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                                                                    skip_config)
     else:
         bail = False
-        if '192.168.1.1' in _generate_ips(external_ip_range[0], external_ip_range[1]):
+        low_ip = str(min([ipaddress.ip_address(x) for x in external_ip_range]))
+        high_ip = str(max([ipaddress.ip_address(x) for x in external_ip_range]))
+        if '192.168.1.1' in _generate_ips(low_ip, high_ip):
             error = 'IP 192.168.1.1 is reserved for the gateway. Unable to assign to OneFS external network'
             raise click.ClickException(error)
     if bail:
@@ -101,8 +103,8 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
 
 def map_ips(vlab_api, nodes, ip_range):
     """Create the port mapping rules for each node"""
-    low_ip = min(ip_range)
-    high_ip = max(ip_range)
+    low_ip = str(min([ipaddress.ip_address(x) for x in external_ip_range]))
+    high_ip = str(max([ipaddress.ip_address(x) for x in external_ip_range]))
     ips = _generate_ips(low_ip, high_ip)
     https_port = https_to_port('onefs')
     with Spinner('Creating SSH and HTTPS mapping rules for each node'):
