@@ -39,7 +39,6 @@ def portmap(ctx, name, protocol, ip_address):
     target_port = get_protocol_port(vm_type, protocol)
 
     with Spinner('Deleting port mapping rule to {} for {}'.format(name, protocol)):
-        try:
-            ctx.obj.vlab_api.unmap_port(target_addr, target_port)
-        except ValueError as doh:
-            raise click.ClickException(doh)
+        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name, 'target_port' : target_port})
+        conn_port = list(resp.json()['content'].keys())[0]
+        ctx.obj.vlab_api.delete('/api/1/ipam/portmap', json={'conn_port': int(conn_port)})
