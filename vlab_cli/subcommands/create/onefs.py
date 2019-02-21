@@ -66,7 +66,9 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                                                                    skip_config)
     else:
         bail = False
-        if '192.168.1.1' in _generate_ips(external_ip_range[0], external_ip_range[1]):
+        low_ip = str(min([ipaddress.ip_address(x) for x in external_ip_range]))
+        high_ip = str(max([ipaddress.ip_address(x) for x in external_ip_range]))
+        if '192.168.1.1' in _generate_ips(low_ip, high_ip):
             error = 'IP 192.168.1.1 is reserved for the gateway. Unable to assign to OneFS external network'
             raise click.ClickException(error)
     if bail:
@@ -100,21 +102,21 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
 
 
 def map_ips(vlab_api, nodes, ip_range):
-    """TODO"""
-    low_ip = min(ip_range)
-    high_ip = max(ip_range)
+    """Create the port mapping rules for each node"""
+    low_ip = str(min([ipaddress.ip_address(x) for x in ip_range]))
+    high_ip = str(max([ipaddress.ip_address(x) for x in ip_range]))
     ips = _generate_ips(low_ip, high_ip)
     https_port = https_to_port('onefs')
     with Spinner('Creating SSH and HTTPS mapping rules for each node'):
         for ip, node in zip(ips, nodes):
-            vlab_api.map_port(target_addr=ip,
-                              target_port=22,
-                              target_name=node,
-                              target_component='OneFS')
-            vlab_api.map_port(target_addr=ip,
-                              target_port=https_port,
-                              target_name=node,
-                              target_component='OneFS')
+            portmap_payload = {'target_addr': ip,
+                               'target_port': https_port,
+                               'target_name': node,
+                               'target_component' : 'OneFS'}
+            vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+            portmap_payload['target_port'] = 22
+            vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+
 
 def _generate_ips(start_ip, end_ip):
     """Given a starting and ending IP, return a list of all IPs within that range

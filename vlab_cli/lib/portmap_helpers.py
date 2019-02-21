@@ -26,7 +26,7 @@ def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state):
     """
     if requested_ip is not None:
         try:
-            ipaddress.ip_address(requested_ip)
+            ipaddress.IPv4Address(requested_ip)
         except ValueError as doh:
             raise click.ClickException(doh)
 
@@ -61,8 +61,20 @@ def determine_which_ip(vm_ips, requested_ip):
     """
     if requested_ip:
         return requested_ip
+    found_ip = None
+    for ip in vm_ips:
+        try:
+            ipaddress.IPv4Address(ip)
+        except:
+            continue
+        else:
+            found_ip = ip
+            break
+    if found_ip:
+        return found_ip
     else:
-        return vm_ips[0]
+        raise ClickException("Unable to find valid IPv4 address in {}".format(vm_ips))
+
 
 def get_component_protocols(vm_type):
     """Lookup what protocols a specific component supports

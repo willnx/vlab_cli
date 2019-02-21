@@ -31,7 +31,8 @@ def status(ctx):
         vm_body = []
         vm_header = ['Name', 'IPs', 'Connectable', 'Type', 'Version', 'Powered', 'Console']
         for vm in sorted(vm_info.keys()):
-            addr_info = ctx.obj.vlab_api.get_addrs(target_name=vm)
+            params = {'name' : vm}
+            addr_info = ctx.obj.vlab_api.get('/api/1/ipam/addr', params=params).json()['content']
             connectable = addr_info.get(vm, {}).get('routable', 'initializing')
             shorter_link = ctx.obj.vlab_api.post('/api/1/link',
                                                  json={'url': vm_info[vm]['console']}).json()['content']['url']

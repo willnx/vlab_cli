@@ -45,18 +45,23 @@ def get_formatted_table(images):
     :param images: The different images available, sorted by version number
     :type images: List
     """
-    header = ['8.0.0 (Riptide)',
-              '8.0.1 (Halfpipe)',
-              '8.1.0 (FreightTrain)',
-              '8.1.1 (Niijima)',
-              '8.1.2 (Kanagawa)',
-             ]
+    header_a = ['8.0.0 (Riptide)',
+                '8.0.1 (Halfpipe)',
+                '8.1.0 (FreightTrain)',
+                '8.1.1 (Niijima)',
+               ]
+    header_b = ['8.1.2 (Kanagawa)',
+                '8.1.3 (Seismic)',
+               ]
     riptide = sorted([x for x in images if '7.2' < x < '8.0.1'])
     halfpipe = sorted([x for x in images if '8.0.0' < x < '8.1.0'])
     freight_train = sorted([x for x in images if '8.0.1'< x < '8.1.1'])
     niijima = sorted([x for x in images if '8.1.0' < x < '8.1.2'])
-    kanagawa = sorted([x for x in images if '8.1.1' < x < '8.2.0'])
-    table = columned_table(header, [riptide, halfpipe, freight_train, niijima, kanagawa])
+    kanagawa = sorted([x for x in images if '8.1.1' < x < '8.1.3'])
+    seismic = sorted([x for x in images if '8.1.2' < x])
+    table_a = columned_table(header_a, [riptide, halfpipe, freight_train, niijima])
+    table_b = columned_table(header_b, [kanagawa, seismic])
+    table = '{}\n\n{}'.format(table_a, table_b)
     return table
 
 

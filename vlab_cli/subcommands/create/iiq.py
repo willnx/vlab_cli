@@ -32,14 +32,17 @@ def insightiq(ctx, name, image, external_network):
     data = resp.json()['content'][name]
     ipv4_addrs = get_ipv4_addrs(data['ips'])
     if ipv4_addrs:
-        vm_type = data['meta']['component']
-        https_port = https_to_port(vm_type.lower())
-        with Spinner('Creating SSH and HTTPS port mapping rules'):
-            for ipv4 in ipv4_addrs:
-                ctx.obj.vlab_api.map_port(target_addr=ipv4, target_port=22,
-                                          target_name=name, target_component=vm_type)
-                ctx.obj.vlab_api.map_port(target_addr=ipv4, target_port=https_port,
-                                          target_name=name, target_component=vm_type)
+        with Spinner("Creating port mapping rules for HTTPS and SSH"):
+            vm_type = data['meta']['component']
+            https_port = https_to_port(vm_type.lower())
+            portmap_payload = {'target_addr': ipv4_addrs[0],
+                               'target_port': https_port,
+                               'target_name': name,
+                               'target_component' : 'InsightIQ'}
+            ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+            portmap_payload['target_port'] = 22
+            ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
     if ipv4_addrs:

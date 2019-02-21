@@ -36,12 +36,16 @@ def claritynow(ctx, name, image, external_network):
         https_port = https_to_port(vm_type.lower())
         with Spinner('Creating an SSH, RDP, and HTTPS port mapping rules'):
             for ipv4 in ipv4_addrs:
-                ctx.obj.vlab_api.map_port(target_addr=ipv4, target_port=22,
-                                          target_name=name, target_component=vm_type)
-                ctx.obj.vlab_api.map_port(target_addr=ipv4, target_port=3389,
-                                          target_name=name, target_component=vm_type)
-                ctx.obj.vlab_api.map_port(target_addr=ipv4, target_port=https_port,
-                                          target_name=name, target_component=vm_type)
+                portmap_payload = {'target_addr' : ipv4, 'target_port' : 22,
+                                   'target_name' : name, 'target_component' : vm_type}
+                ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+
+                portmap_payload['target_port'] = 3389
+                ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+
+                portmap_payload['target_port'] = https_port
+                ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
     info = """\n    ***IMPORTANT***

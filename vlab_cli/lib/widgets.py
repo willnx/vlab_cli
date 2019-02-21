@@ -43,7 +43,7 @@ def do_easter_egg(message):
     :param message: What to (normally) say to the user
     :type message: String
     """
-    fun_times = random.randint(1, 500) == 42
+    fun_times = random.randint(1, 1000) == 42
     if fun_times:
         chars = len(message)
         derp_point = int(chars/2)

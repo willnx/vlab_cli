@@ -20,5 +20,7 @@ def cee(ctx, name):
                  body=body,
                  method='DELETE')
     with Spinner('Deleting port mapping rules'):
-        ctx.obj.vlab_api.delete_all_ports(name)
+        all_ports = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name}).json()['content']
+        for port in all_ports.keys():
+            ctx.obj.vlab_api.delete('/api/1/ipam/portmap', json={'conn_port': int(port)})
     click.echo('OK!')
