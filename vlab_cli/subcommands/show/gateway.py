@@ -17,9 +17,9 @@ def gateway(ctx):
     info = resp.json()['content']
     shorter_link = ctx.obj.vlab_api.post('/api/1/link',
                                          json={'url': info['console']}).json()['content']['url']
-    ip = [x for x in info['ips'] if not x.startswith('192.168.')]
+    ip = [x for x in info['ips'] if not x.startswith('192.168.') and not ':' in x]
     if ip:
-        gateway_ip = ip[0]
+        gateway_ip = ','.join(ip)
     else:
         gateway_ip = 'None'
     rows = []
