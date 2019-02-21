@@ -103,19 +103,19 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
 
 def map_ips(vlab_api, nodes, ip_range):
     """Create the port mapping rules for each node"""
-    low_ip = str(min([ipaddress.ip_address(x) for x in external_ip_range]))
-    high_ip = str(max([ipaddress.ip_address(x) for x in external_ip_range]))
+    low_ip = str(min([ipaddress.ip_address(x) for x in ip_range]))
+    high_ip = str(max([ipaddress.ip_address(x) for x in ip_range]))
     ips = _generate_ips(low_ip, high_ip)
     https_port = https_to_port('onefs')
     with Spinner('Creating SSH and HTTPS mapping rules for each node'):
         for ip, node in zip(ips, nodes):
             portmap_payload = {'target_addr': ip,
                                'target_port': https_port,
-                               'target_name': name,
-                               'target_component' : 'InsightIQ'}
-            ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+                               'target_name': node,
+                               'target_component' : 'OneFS'}
+            vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
             portmap_payload['target_port'] = 22
-            ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
+            vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
 
 
 def _generate_ips(start_ip, end_ip):
