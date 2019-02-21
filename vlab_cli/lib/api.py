@@ -54,7 +54,6 @@ class vLabApi(object):
     :type log: logging.Logger
     """
     def __init__(self, server, token, verify=False, log=None):
-        self._ipam_ip = None
         self._server = server
         self._session = requests.Session()
         self._header = {'X-Auth': token,

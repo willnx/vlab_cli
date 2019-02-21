@@ -26,6 +26,6 @@ def router(ctx, name, protocol):
     if not vm:
         error = 'You have no router named {}'.format(name)
         raise click.ClickException(error)
-    conn = Connectorizer(ctx.obj.vlab_config)
+    conn = Connectorizer(ctx.obj.vlab_config, ctx.obj.vlab_api)
     url = vm['console']
-    conn.https(ip_addr=None, port=None, url=url)
+    conn.https(port=None, url=url)

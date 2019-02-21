@@ -29,5 +29,5 @@ def cee(ctx, name, protocol):
         error = 'No mapping rule for {} to {} exists'.format(protocol, name)
         raise click.ClickException(error)
 
-    conn = Connectorizer(ctx.obj.vlab_config)
-    conn.rdp(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
+    conn = Connectorizer(ctx.obj.vlab_config, ctx.obj.vlab_api)
+    conn.rdp(port=conn_port)

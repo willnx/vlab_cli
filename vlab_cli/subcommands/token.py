@@ -50,8 +50,8 @@ def handle_show(token_contents):
     Client IP  : {}
     """.format(token_contents['username'],
                token_contents['iss'],
-               time.strftime('%m/%d/%Y %H:%M:%s', time.gmtime(token_contents['iat'])),
-               time.strftime('%m/%d/%Y %H:%M:%s', time.gmtime(token_contents['exp'])),
+               time.strftime('%m/%d/%Y %H:%M', time.gmtime(token_contents['iat'])),
+               time.strftime('%m/%d/%Y %H:%M', time.gmtime(token_contents['exp'])),
                token_contents['version'],
                token_contents['client_ip'])
     click.echo(textwrap.dedent(info))

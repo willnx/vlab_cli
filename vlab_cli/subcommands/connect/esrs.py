@@ -29,13 +29,13 @@ def esrs(ctx, name, protocol):
         error = 'No mapping rule for {} to {} exists'.format(protocol, name)
         raise click.ClickException(error)
 
-    conn = Connectorizer(ctx.obj.vlab_config)
+    conn = Connectorizer(ctx.obj.vlab_config, ctx.obj.vlab_api)
     if protocol == 'ssh':
-        conn.ssh(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
+        conn.ssh(port=conn_port)
     elif protocol == 'https':
-        conn.https(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
+        conn.https(port=conn_port)
     elif protocol == 'scp':
-        conn.scp(ip_addr=ctx.obj.vlab_api._ipam_ip, port=conn_port)
+        conn.scp(port=conn_port)
     else:
         error = 'Unexpected protocol requested: {}'.format(protocol)
         raise RuntimeError(error)
