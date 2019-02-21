@@ -35,10 +35,10 @@ def centos(ctx, name, image, external_network):
         vm_type = data['meta']['component']
         with Spinner('Creating an SSH port mapping rule'):
             for ipv4 in ipv4_addrs:
-                portmap_payload = {'target_addr' : ipv4, 'target_port' : 2,
+                portmap_payload = {'target_addr' : ipv4, 'target_port' : 22,
                                    'target_name' : name, 'target_component' : vm_type}
                 ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=portmap_payload)
-                
+
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
     if ipv4_addrs:
