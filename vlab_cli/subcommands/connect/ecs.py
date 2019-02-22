@@ -19,9 +19,9 @@ def ecs(ctx, name, protocol):
     """Connect to an ECS instances"""
     target_port = get_protocol_port('ecs', protocol)
     with Spinner('Lookin up connection information for {}'.format(name)):
-        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name' : name, 'target_port' : target_port})
+        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name' : name, 'target_port' : target_port}).json()
         try:
-            conn_port = list(resp.json()['content'].keys())[0]
+            conn_port = list(resp['content']['ports'].keys())[0]
         except Exception as doh:
             ctx.obj.log.debug(doh, exc_info=True)
             conn_port = None
@@ -29,13 +29,13 @@ def ecs(ctx, name, protocol):
         error = 'No mapping rule for {} to {} exists'.format(protocol, name)
         raise click.ClickException(error)
 
-    conn = Connectorizer(ctx.obj.vlab_config, ctx.obj.vlab_api)
+    conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
     if protocol == 'ssh':
-        conn.ssh(port=conn_port)
+        conn.ssh(gateway_ip, port=conn_port)
     elif protocol == 'https':
-        conn.https(port=conn_port)
+        conn.https(gateway_ip, port=conn_port)
     elif protocol == 'scp':
-        conn.scp(port=conn_port)
+        conn.scp(gateway_ip, port=conn_port)
     else:
         error = 'Unexpected protocol requested: {}'.format(protocol)
         raise RuntimeError(error)

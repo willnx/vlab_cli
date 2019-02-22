@@ -4,8 +4,6 @@ import subprocess
 
 import click
 
-from vlab_cli.lib.api import consume_task
-
 
 class Connectorizer(object):
     """Handles opening the specific protocol client with the correct syntax regardless
@@ -14,7 +12,8 @@ class Connectorizer(object):
     :param config: The vLab config file
     :type config: configparser.ConfigParser
     """
-    def __init__(self, config, vlab_api):
+    def __init__(self, config, gateway_ip):
+        self._gateway_ip = gateway_ip
         if config['SSH']['agent'] == 'putty':
             self._ssh_str = '%s -ssh {} -P {}' % config['SSH']['location']
         else:
@@ -31,26 +30,6 @@ class Connectorizer(object):
             self._rdp_str = '%s /v:{}:{} /w:1920 /h:1080' % config['RDP']['location']
         else:
             self._rdp_str = '%s --server {}:{}' % config['RDP']['location']
-        self._gateway_ip = self._find_gateway_ip(vlab_api)
-
-    def _find_gateway_ip(self, vlab_api):
-        """Connecting requires knowledge of the user's IPAM gateway address"""
-        resp = consume_task(vlab_api,
-                            endpoint='/api/2/inf/gateway',
-                            message='Looking up gateway IP',
-                            method='GET').json()['content']
-        gateway_ip = None
-        for ip in resp['ips']:
-            if ':' in ip:
-                continue
-            elif ip == '192.168.1.1':
-                continue
-            else:
-                gateway_ip = ip
-                break
-        else:
-            raise click.ClickException("Unable to locate gateway IP from values: {}".format(resp['ips']))
-        return gateway_ip
 
     def ssh(self, port):
         """Open a session via SSH in a new client"""
