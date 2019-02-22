@@ -39,9 +39,9 @@ def portmap(ctx, name, protocol, ip_address):
     target_port = get_protocol_port(vm_type, protocol)
 
     with Spinner('Deleting port mapping rule to {} for {}'.format(name, protocol)):
-        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name, 'target_port' : target_port})
+        resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name, 'target_port' : target_port}).json()
         try:
-            conn_port = list(resp.json()['content'].keys())[0]
+            conn_port = list(resp['content']['ports'].keys())[0]
         except IndexError:
             # No such rule, but who cares? The target state (i.e. no rule) is true
             pass

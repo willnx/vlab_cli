@@ -20,7 +20,7 @@ def ecs(ctx, name):
                  body=body,
                  method='DELETE')
     with Spinner('Deleting port mapping rules'):
-        all_ports = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name}).json()['content']
+        all_ports = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name}).json()['content']['ports']
         for port in all_ports.keys():
             ctx.obj.vlab_api.delete('/api/1/ipam/portmap', json={'conn_port': int(port)})
     click.echo('OK!')
