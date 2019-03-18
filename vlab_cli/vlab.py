@@ -26,9 +26,9 @@ environ['LANG'] = environ.get('LC_ALL', 'C.UTF-8')
 
 # Settings and defaults
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-VLAB_URL = 'https://vlab-dev.igs.corp'
+VLAB_URL = 'https://vlab.emc.com'
 VLAB_VERSION = version.__version__
-VLAB_VERIFY_HOSTNAME = True
+VLAB_SKIP_VERIFY_HOSTNAME = False
 VLAB_USER = getuser()
 
 
@@ -36,17 +36,17 @@ VLAB_USER = getuser()
 @click.version_option(version=VLAB_VERSION)
 @click.option('--vlab-url', default=VLAB_URL, show_default=True,
               help='The URL of the vLab server')
-@click.option('--verify', is_flag=True, default=VLAB_VERIFY_HOSTNAME, show_default=True,
+@click.option('--skip-verify', is_flag=True, default=VLAB_SKIP_VERIFY_HOSTNAME, show_default=True,
               help='Use this arg if the vLab server has a self-signed TLS cert')
 @click.option('--vlab-username', default=VLAB_USER, show_default=True,
               help="In case the username you are logged in as is different from your corp name")
 @click.option('--verbose', is_flag=True, help='Increase logging output')
 @click.option('--debug', is_flag=True, cls=HiddenOption)
 @click.pass_context
-def cli(ctx, vlab_url, verify, vlab_username, verbose, debug):
+def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, debug):
     """CLI tool for interacting with your virtual lab"""
     log = get_logger(__name__, verbose=verbose, debug=debug)
-    verify = not verify # invert for Beta
+    verify = not skip_verify # inverted because ``requests`` is 'opt-out' of hostname verification
     if not vlab_url.startswith('https://'):
         # might have entered IP, or DNS FQDN
         vlab_url = 'https://{}'.format(vlab_url)
