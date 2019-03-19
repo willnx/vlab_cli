@@ -28,7 +28,7 @@ def init(ctx, start_over, switch, wan):
         if not accepts_terms:
             raise click.ClickException("Must agree to \"not ruin this for others\" to use vLab")
         invoke_tutorial()
-        #init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
+        init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
 
 
 def nuke_lab(vlab_api, username, wan, switch, config, log):
