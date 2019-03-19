@@ -7,7 +7,7 @@ from vlab_cli.lib.api import consume_task
 
 
 @click.command()
-@click.option('-w', '--wan', default='WAN-DHCP', help='The name of the public network')
+@click.option('-w', '--wan', default='corpNetwork', help='The name of the public network')
 @click.option('-l', '--lan', default='frontend', help='The name of the private network')
 @click.pass_context
 def gateway(ctx, wan, lan):

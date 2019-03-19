@@ -16,7 +16,7 @@ from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invo
 @click.command()
 @click.option('--start-over', is_flag=True, help='Nuke your lab, and start all over')
 @click.option('--switch', cls=HiddenOption, default='vLabSwitch')
-@click.option('--wan', cls=HiddenOption, default='WAN-DHCP')
+@click.option('--wan', cls=HiddenOption, default='corpNetwork')
 @click.pass_context
 def init(ctx, start_over, switch, wan):
     """Initialize the virtual lab"""
