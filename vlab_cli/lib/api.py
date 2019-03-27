@@ -10,13 +10,22 @@ import pkg_resources
 
 import click
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.ssl_ import create_urllib3_context
 
 from vlab_cli import version
 from vlab_cli.lib.widgets import Spinner
 
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 USER_AGENT = 'vLab CLI {}'.format(version.__version__)
+
+
+class SSLContextAdapter(HTTPAdapter):
+    def init_poolmanager(self, *args, **kwargs):
+        context = create_urllib3_context()
+        kwargs['ssl_context'] = context
+        context.load_default_certs() # this loads the OS defaults on Windows
+        return super(SSLContextAdapter, self).init_poolmanager(*args, **kwargs)
 
 
 class vLabApi(object):
@@ -56,6 +65,7 @@ class vLabApi(object):
     def __init__(self, server, token, verify=False, log=None):
         self._server = server
         self._session = requests.Session()
+        self._session.mount(server, SSLContextAdapter())
         self._header = {'X-Auth': token,
                         'User-Agent': USER_AGENT,
                         # Creates a random ID
