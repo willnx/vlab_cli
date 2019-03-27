@@ -2,6 +2,7 @@
 """
 Entry point logic for the vLab CLI application
 """
+import atexit
 import pkg_resources
 from os import environ
 from os.path import join
@@ -63,6 +64,7 @@ def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, debug):
     config = get_config()
     log.info('Initializing the vLab API object')
     vlab_api = vLabApi(server=vlab_url, token=the_token, verify=verify, log=log)
+    atexit.register(vlab_api.close)
     ctx.obj = GlobalContext(log=log, vlab_api=vlab_api, vlab_url=vlab_url, token=the_token,
                             username=token_contents['username'], verify=verify,
                             token_contents=token_contents,

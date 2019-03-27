@@ -124,6 +124,10 @@ class vLabApi(object):
             raise click.ClickException(error)
         return resp
 
+    def close(self):
+        """Terminate the TCP connection with the vLab server"""
+        self._session.close()
+
     def get(self, endpoint, auto_check=True, **kwargs):
         """Perform an HTTP GET on an API end point
 
