@@ -28,7 +28,6 @@ from getpass import getpass
 
 import jwt
 import requests
-from requests.packages.urllib3.util.ssl_ import create_urllib3_context
 
 from vlab_cli.lib.api import USER_AGENT, SSLContextAdapter
 
@@ -211,20 +210,20 @@ def create(username, vlab_url, verify):
                          json={'username': username, 'password': password},
                          headers={'User-Agent': USER_AGENT},
                          verify=verify)
-    if resp.status_code == 401:
-        error = 'Invalid password supplied for user {}'.format(username)
-        raise ValueError(error)
-    elif not resp.ok:
-        resp.raise_for_status()
-    else:
-        new_token = resp.json()['content']['token']
-        resp = requests.get(vlab_url + '/api/1/auth/key',
-                            headers={'User-Agent': USER_AGENT},
-                            verify=verify)
-        data = resp.json()
-        decryption_key = data['content']['key']
-        algorithm = data['content']['algorithm']
-        return new_token, decryption_key, algorithm
+        if resp.status_code == 401:
+            error = 'Invalid password supplied for user {}'.format(username)
+            raise ValueError(error)
+        elif not resp.ok:
+            resp.raise_for_status()
+        else:
+            new_token = resp.json()['content']['token']
+            resp = conn.get(vlab_url + '/api/1/auth/key',
+                                headers={'User-Agent': USER_AGENT},
+                                verify=verify)
+            data = resp.json()
+            decryption_key = data['content']['key']
+            algorithm = data['content']['algorithm']
+            return new_token, decryption_key, algorithm
 
 
 def destroy():
