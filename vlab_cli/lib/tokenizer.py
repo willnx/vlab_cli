@@ -205,7 +205,7 @@ def create(username, vlab_url, verify):
 
     # Now obtain a token
     password = getpass('Please enter your CORP domain password: ')
-    with requests.Sesion() as conn:
+    with requests.Session() as conn:
         conn.mount(vlab_url,  SSLContextAdapter())
         resp = conn.post(vlab_url + '/api/2/auth/token',
                          json={'username': username, 'password': password},
