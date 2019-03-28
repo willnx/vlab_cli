@@ -28,10 +28,10 @@ from getpass import getpass
 
 import jwt
 import requests
+from requests.packages.urllib3.util.ssl_ import create_urllib3_context
 
-from vlab_cli.lib.api import USER_AGENT
+from vlab_cli.lib.api import USER_AGENT, SSLContextAdapter
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Creates path like /home/alice/.vlab/; must work with windows
 TOKEN_DIR = os.path.join(os.path.expanduser('~'), '.vlab')
 TOKEN_FILE = os.path.join(TOKEN_DIR, 'token.json')
@@ -205,7 +205,9 @@ def create(username, vlab_url, verify):
 
     # Now obtain a token
     password = getpass('Please enter your CORP domain password: ')
-    resp = requests.post(vlab_url + '/api/2/auth/token',
+    with requests.Sesion() as conn:
+        conn.mount(vlab_url,  SSLContextAdapter())
+        resp = conn.post(vlab_url + '/api/2/auth/token',
                          json={'username': username, 'password': password},
                          headers={'User-Agent': USER_AGENT},
                          verify=verify)
