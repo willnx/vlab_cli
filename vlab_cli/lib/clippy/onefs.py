@@ -44,7 +44,7 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
     if (not external_ip_range) and (not skip_config):
         typewriter('\nYour new cluster will need some external IPs configured.')
         typewriter('The syntax for the --external-ip-range argument is:')
-        typewriter('--external-ip-range 1.2.3.4 1.2.3.5', indent=True)
+        typewriter('--external-ip-range 192.168.1.20 192.168.1.25', indent=True)
         typewriter('just replace those example IPs with the actual ones you want to use.')
         typewriter('Most OneFS clusters have 1 IP for each node, and you are')
         typewriter('deploying {} node(s).'.format(node_count))

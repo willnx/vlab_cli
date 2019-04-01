@@ -37,7 +37,7 @@ from vlab_cli.lib.widgets import Spinner, prompt, typewriter
               help='Optionally provide the SmartConnect IP to be configured [optional]')
 @click.option('-z', '--sc-zonename', default='',
               help='Optionally supply the SmartConnect Zone name to configure [optional]')
-@click.option('-d', '--dns-servers', default=['10.7.190.6'], multiple=True, show_default=True,
+@click.option('-d', '--dns-servers', default=['192.168.1.1'], multiple=True, show_default=True,
               help='The DNS servers to use on the public/external network')
 @click.option('-o', '--encoding', default='utf-8', show_default=True,
               help='The file system encoding to use on the new OneFS cluster')
