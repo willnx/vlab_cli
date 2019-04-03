@@ -15,7 +15,8 @@ def network(ctx, name):
                         endpoint='/api/1/inf/vlan',
                         message='Collecting your networks',
                         method='GET')
-    networks = [x.split('_')[1] for x in resp.json()['content'].keys()]
+    user_tag = "{}_".format(ctx.obj.username)
+    networks = [x.replace(user_tag, '') for x in resp.json()['content'].keys()]
     if name:
         networks = [x for x in networks if x == name]
     if networks:
