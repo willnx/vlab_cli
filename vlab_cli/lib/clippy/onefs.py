@@ -18,7 +18,7 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
     typewriter("\nHi {}! Looks like you're trying to make a OneFS cluster.".format(username))
     sleep(0.5)
     typewriter("To do that, I'm going to need some more information.\n")
-    typewriter("You can avoid this prompt in the future by suppling values for the")
+    typewriter("You can avoid this prompt in the future by supplying values for the")
     typewriter("--name, --image, and --external-ip-range arguments\n")
     sleep(0.5)
     keep_going = prompt("Do you want me to continue prompting you for this information now? [yes/No]", boolean=True)
@@ -26,7 +26,7 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
         bail = True
         return cluster_name, version, external_ip_range, bail
     typewriter("\nGreat!")
-    typewriter("I'll help walk you thought the deployment this time.")
+    typewriter("I'll help walk you through the deployment this time.")
     typewriter("Make sure to supply those arguments in the future.")
     typewriter("If you find I keep prompting you for this information,")
     typewriter("you should ask a vLab admin for some help because you're doing it \"the hard way.\"\n")
