@@ -52,8 +52,8 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
           internal_ip_range, default_gateway, smartconnect_ip, sc_zonename, dns_servers,
           encoding, external_netmask, internal_netmask, skip_config):
     """Create a vOneFS cluster. You will be prompted for any missing required parameters."""
-    if node_count > 5:
-        raise click.ClickException('You can only deploy a maximum of 5 nodes at a time')
+    if node_count > 6:
+        raise click.ClickException('You can only deploy a maximum of 6 nodes at a time')
     tasks = {}
     if skip_config and (name and image):
         bail = False
