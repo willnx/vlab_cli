@@ -45,23 +45,33 @@ def get_formatted_table(images):
     :param images: The different images available, sorted by version number
     :type images: List
     """
-    header_a = ['8.0.0 (Riptide)',
+    header_a = ['7.2.1 (Orca)',
+                '8.0.0 (Riptide)',
                 '8.0.1 (Halfpipe)',
                 '8.1.0 (FreightTrain)',
-                '8.1.1 (Niijima)',
                ]
-    header_b = ['8.1.2 (Kanagawa)',
+    header_b = ['8.1.1 (Niijima)',
+                '8.1.2 (Kanagawa)',
                 '8.1.3 (Seismic)',
+                '8.2.0 (Pipeline)'
                ]
-    riptide = sorted([x for x in images if '7.2' < x < '8.0.1'])
+    header_c = ['Update your vLab CLI']
+    orca = sorted([x for x in images if '7.2.0' < x < '8.0.0' ])
+    riptide = sorted([x for x in images if '7.2.1' < x < '8.0.1'])
     halfpipe = sorted([x for x in images if '8.0.0' < x < '8.1.0'])
     freight_train = sorted([x for x in images if '8.0.1'< x < '8.1.1'])
     niijima = sorted([x for x in images if '8.1.0' < x < '8.1.2'])
     kanagawa = sorted([x for x in images if '8.1.1' < x < '8.1.3'])
-    seismic = sorted([x for x in images if '8.1.2' < x])
-    table_a = columned_table(header_a, [riptide, halfpipe, freight_train, niijima])
-    table_b = columned_table(header_b, [kanagawa, seismic])
-    table = '{}\n\n{}'.format(table_a, table_b)
+    seismic = sorted([x for x in images if '8.1.2' < x < '8.2.0'])
+    pipeline = sorted([x for x in images if '8.2.0.0' <= x < '8.2.1'])
+    net_new = sorted([x for x in images if '8.2.1' <= x])
+    table_a = columned_table(header_a, [orca, riptide, halfpipe, freight_train])
+    table_b = columned_table(header_b, [niijima, kanagawa, seismic, pipeline])
+    if net_new:
+        table_c = columned_table(header_c, [net_new])
+        table = '{}\n\n{}\n\n{}'.format(table_a, table_b, table_c)
+    else:
+        table = '{}\n\n{}'.format(table_a, table_b)
     return table
 
 
