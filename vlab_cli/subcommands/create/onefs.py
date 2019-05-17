@@ -47,10 +47,12 @@ from vlab_cli.lib.widgets import Spinner, prompt, typewriter
               help='The subnet mask to use on the private/backend network')
 @click.option('--skip-config', is_flag=True, show_default=True,
               help='Do not auto-configure the new OneFS cluster')
+@click.option('--compliance', is_flag=True, show_default=True,
+              help='Create a Smartlock Compliance cluster')
 @click.pass_context
 def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
           internal_ip_range, default_gateway, smartconnect_ip, sc_zonename, dns_servers,
-          encoding, external_netmask, internal_netmask, skip_config):
+          encoding, external_netmask, internal_netmask, skip_config, compliance):
     """Create a vOneFS cluster. You will be prompted for any missing required parameters."""
     if node_count > 6:
         raise click.ClickException('You can only deploy a maximum of 6 nodes at a time')
@@ -93,6 +95,7 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                      encoding=encoding,
                      external_netmask=external_netmask,
                      internal_netmask=internal_netmask,
+                     compliance=compliance,
                      vlab_api=ctx.obj.vlab_api)
         map_ips(vlab_api=ctx.obj.vlab_api, nodes=info.keys(), ip_range=external_ip_range)
     table = generate_table(vlab_api=ctx.obj.vlab_api, info=info)
@@ -187,7 +190,7 @@ def create_nodes(username, name, image, external, internal, node_count, vlab_api
 
 def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_range,
                  default_gateway, smartconnect_ip, sc_zonename, dns_servers,
-                 encoding, external_netmask, internal_netmask, vlab_api):
+                 encoding, external_netmask, internal_netmask, compliance, vlab_api):
     """Take raw/new nodes, and turn them into a functional OneFS cluster
 
     :Returns: None
@@ -203,9 +206,10 @@ def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_rang
                                          sc_zonename=sc_zonename,
                                          dns_servers=dns_servers,
                                          encoding=encoding,
+                                         compliance=compliance,
                                          external_netmask=external_netmask,
                                          internal_netmask=internal_netmask)
-    join_payload = {'name' : '', 'cluster_name': cluster_name, 'join': True}
+    join_payload = {'name' : '', 'cluster_name': cluster_name, 'join': True, 'compliance' : compliance}
     consume_task(vlab_api,
                  endpoint='/api/1/inf/onefs/config',
                  message='Initializing cluster {}'.format(cluster_name),
@@ -227,7 +231,7 @@ def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_rang
 
 def make_config_payload(cluster_name, node_name, image, external_ip_range, internal_ip_range,
                         default_gateway, smartconnect_ip, sc_zonename, dns_servers,
-                        encoding, external_netmask, internal_netmask):
+                        encoding, compliance, external_netmask, internal_netmask):
     """Construct the request body content for making a new OneFS cluster
 
     :Returns: Dictionary
@@ -252,6 +256,7 @@ def make_config_payload(cluster_name, node_name, image, external_ip_range, inter
                "int_netmask": internal_netmask,
                "dns_servers": dns_servers,
                "sc_zonename": sc_zonename,
+               "compliance": compliance,
                "smartconnect_ip": smartconnect_ip,
                "gateway": default_gateway,
               }
