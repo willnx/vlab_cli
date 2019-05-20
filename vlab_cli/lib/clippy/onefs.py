@@ -5,8 +5,12 @@ creating a OneFS cluster.
 """
 from time import sleep
 
+from vlab_cli.lib.validators import ext_network_ok
 from vlab_cli.lib.widgets import typewriter, prompt
 from vlab_cli.lib.clippy.utils import prompt_and_confirm
+
+
+IP_STATIC_RANGE = ('192.168.1.2', '192.168.1.149')
 
 
 def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node_count, skip_config):
@@ -52,6 +56,35 @@ def invoke_onefs_clippy(username, cluster_name, version, external_ip_range, node
     return cluster_name, version, external_ip_range, bail
 
 
+def invoke_onefs_network_clippy(username, default_gateway, external_netmask, external_ip_range):
+    """TODO"""
+    typewriter("Hi {}!\n".format(username))
+    typewriter("Looks like those network values aren't going to work:")
+    typewriter("Gateway: {}".format(default_gateway))
+    typewriter("Netmask: {}".format(external_netmask))
+    typewriter("IPs: {} to {}\n".format(external_ip_range[0], external_ip_range[1]))
+    typewriter("If I didn't bug you now, configuring that cluster would fail and")
+    typewriter("you'd be frustrated with the poor person that made this software :P\n")
+    if default_gateway == '192.168.1.1':
+        typewriter("This looks like a standard deployment, so pick some IPs between:")
+        typewriter("{} and {}".format(IP_STATIC_RANGE[0], IP_STATIC_RANGE[1]))
+    else:
+        typewriter("Hmm... the only reason to use a different default gateway")
+        typewriter("is because you've deployed additional networks in your lab")
+        typewriter("and have already configured routing...")
+        typewriter("Doing that sort of implies that you already have the skills")
+        typewriter("to choose some IPs within a subnet.\n")
+        typewriter("Well, good luck! I can't provide direction, but I can keep")
+        typewriter("bugging you when the IPs are not within the subnet ;)")
+    range_ok = False
+    while not range_ok:
+        external_ip_range = _get_ext_ips()
+        if ext_network_ok(default_gateway, external_netmask, external_ip_range):
+            range_ok = True
+        else:
+            typewriter("Yeah, those IPs don't work either")
+    return external_ip_range
+
 def _get_version():
     """A cheeky interaction to get the correct version of OneFS to create
 
@@ -89,6 +122,7 @@ def _get_ext_ips():
             if not ok:
                 typewriter('Invalid value of {} supplied'.format(answer))
     return sanitized
+
 
 def _check_ip_answer(answer):
     """Validate the user's answer about "which IPS to use"

@@ -8,7 +8,8 @@ import click
 
 from vlab_cli.lib.widgets import Spinner
 from vlab_cli.lib.widgets import typewriter
-from vlab_cli.lib.clippy import invoke_onefs_clippy
+from vlab_cli.lib.validators import ext_network_ok
+from vlab_cli.lib.clippy import invoke_onefs_clippy, invoke_onefs_network_clippy
 from vlab_cli.lib.ascii_output import vm_table_view
 from vlab_cli.lib.click_extras import MandatoryOption
 from vlab_cli.lib.portmap_helpers import https_to_port
@@ -75,6 +76,10 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
             raise click.ClickException(error)
     if bail:
         raise click.ClickException('Not enough information supplied')
+    if not skip_config:
+        ips_ok = ext_network_ok(default_gateway, external_netmask, external_ip_range)
+        if not ips_ok:
+            external_ip_range = invoke_onefs_network_clippy(ctx.obj.username, default_gateway, external_netmask, external_ip_range)
     info = create_nodes(username=ctx.obj.username,
                         name=name,
                         image=image,
