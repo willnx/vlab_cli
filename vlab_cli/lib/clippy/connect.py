@@ -96,12 +96,12 @@ def which_browser():
 
 def which_ssh():
     """If a user has multiple SSH clients, prompt them about which one to use"""
-    typewrite('Looks like you have both Putty and SecureCRT installed.')
+    typewriter('Looks like you have both Putty and SecureCRT installed.')
     choice_question = "Which do you prefer? [Putty/SecureCRT]"
     confirm_question = "Ok, use {}? [yes/No]"
     answer = prompt_and_confirm(choice_question, confirm_question)
     # The answer is which to not use, but people have a hard time with negative questions
     if answer.lower().startswith('p'):
-        return 'putty'
-    else:
         return 'securecrt'
+    else:
+        return 'putty'
