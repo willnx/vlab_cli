@@ -16,6 +16,8 @@ class Connectorizer(object):
         self._gateway_ip = gateway_ip
         if config['SSH']['agent'] == 'putty':
             self._ssh_str = '%s -ssh {} -P {}' % config['SSH']['location']
+        elif config['SSH']['agent'] == 'securecrt':
+            self._ssh_str = '%s /SSH2 {} /P {}' % config['SSH']['location']
         else:
             self._ssh_str = '%s -- /bin/bash -c "ssh {} -p {}"' % config['SSH']['location']
         # Chrome and Firefox has the same syntax! :D

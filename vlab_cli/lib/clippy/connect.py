@@ -37,9 +37,14 @@ def invoke_config():
         found_programs = configurizer.find_programs()
         firefox = found_programs.get('firefox', False)
         chrome = found_programs.get('chrome', False)
+        putty = found_programs.get('putty', False)
+        secure_crt = found_programs.get('securecrt', False)
     if firefox and chrome:
         forget_browser = which_browser()
         found_programs.pop(forget_browser)
+    if putty and secure_crt:
+        forget_ssh = which_ssh()
+        found_programs.pop(forget_ssh)
     if len(found_programs) != 4:
         # They are missing some dependency...
         if the_os == 'windows':
@@ -63,7 +68,7 @@ def _make_config(found_programs):
     """
     new_config = {}
     for agent, prog_path in found_programs.items():
-        if agent.lower() in ('putty', 'gnome-terminal'):
+        if agent.lower() in ('putty', 'gnome-terminal', 'securecrt'):
             new_config['SSH'] = {'agent': agent, 'location': prog_path}
         elif agent in ('firefox', 'chrome'):
             new_config['BROWSER'] = {'agent' : agent, 'location': prog_path}
@@ -87,3 +92,16 @@ def which_browser():
         return 'chrome'
     else:
         return 'firefox'
+
+
+def which_ssh():
+    """If a user has multiple SSH clients, prompt them about which one to use"""
+    typewrite('Looks like you have both Putty and SecureCRT installed.')
+    choice_question = "Which do you prefer? [Putty/SecureCRT]"
+    confirm_question = "Ok, use {}? [yes/No]"
+    answer = prompt_and_confirm(choice_question, confirm_question)
+    # The answer is which to not use, but people have a hard time with negative questions
+    if answer.lower().startswith('p'):
+        return 'putty'
+    else:
+        return 'securecrt'
