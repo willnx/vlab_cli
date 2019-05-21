@@ -23,7 +23,7 @@ def invoke_portmap_clippy(username, vm_type, available_protocols):
     typewriter("are supported by the different components, and I'm a robot!\n")
     typewriter("Looks like the {} component supports these protocols:".format(vm_type))
     typewriter("{}".format(' '.join(available_protocols)))
-    choice_question = "\nWhich protocol to you want to use?"
+    choice_question = "\nWhich protocol do you want to use?"
     confirm_question = "Ok, use {}? [yes/No]"
     answer = prompt_and_confirm(choice_question, confirm_question)
     if not answer in available_protocols:
