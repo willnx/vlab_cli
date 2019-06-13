@@ -2,13 +2,12 @@
 """
 For interacting with your vLab Auth token
 """
-import time
 import textwrap
 
 import click
-from tabulate import tabulate
 
 from vlab_cli.lib import tokenizer
+from vlab_cli.lib.converters import epoch_to_date
 
 @click.command()
 @click.option('--show', is_flag=True, help='Display the contents of your authentication token')
@@ -50,8 +49,8 @@ def handle_show(token_contents):
     Client IP  : {}
     """.format(token_contents['username'],
                token_contents['iss'],
-               time.strftime('%m/%d/%Y %H:%M', time.gmtime(token_contents['iat'])),
-               time.strftime('%m/%d/%Y %H:%M', time.gmtime(token_contents['exp'])),
+               epoch_to_date(token_contents['iat']),
+               epoch_to_date(token_contents['exp']),
                token_contents['version'],
                token_contents['client_ip'])
     click.echo(textwrap.dedent(info))
