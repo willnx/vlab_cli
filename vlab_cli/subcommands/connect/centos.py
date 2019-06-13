@@ -9,7 +9,7 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh']),
+@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp']),
               default='ssh', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
@@ -30,4 +30,10 @@ def centos(ctx, name, protocol):
         raise click.ClickException(error)
 
     conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
-    conn.ssh(port=conn_port)
+    if protocol == 'ssh':
+        conn.ssh(port=conn_port)
+    elif protocol == 'scp':
+        conn.scp(port=conn_port)
+    else:
+        error = 'Unexpected protocol requested: {}'.format(protocol)
+        raise RuntimeError(error)
