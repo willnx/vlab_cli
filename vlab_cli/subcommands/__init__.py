@@ -7,3 +7,4 @@ from vlab_cli.subcommands.delete import delete
 from vlab_cli.subcommands.show import show
 from vlab_cli.subcommands.power import power
 from vlab_cli.subcommands.connect import connect
+from vlab_cli.subcommands.apply import apply

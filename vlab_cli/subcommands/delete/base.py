@@ -16,6 +16,7 @@ from vlab_cli.subcommands.delete.icap import icap
 from vlab_cli.subcommands.delete.claritynow import claritynow
 from vlab_cli.subcommands.delete.ecs import ecs
 from vlab_cli.subcommands.delete.portmap import portmap
+from vlab_cli.subcommands.delete.snapshot import snapshot
 
 
 @click.group()
@@ -37,3 +38,4 @@ delete.add_command(icap)
 delete.add_command(claritynow)
 delete.add_command(ecs)
 delete.add_command(portmap)
+delete.add_command(snapshot)
