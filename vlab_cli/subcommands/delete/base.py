@@ -17,7 +17,7 @@ from vlab_cli.subcommands.delete.claritynow import claritynow
 from vlab_cli.subcommands.delete.ecs import ecs
 from vlab_cli.subcommands.delete.portmap import portmap
 from vlab_cli.subcommands.delete.snapshot import snapshot
-
+from vlab_cli.subcommands.delete.esxi import esxi
 
 @click.group()
 def delete():
@@ -39,3 +39,4 @@ delete.add_command(claritynow)
 delete.add_command(ecs)
 delete.add_command(portmap)
 delete.add_command(snapshot)
+delete.add_command(esxi)

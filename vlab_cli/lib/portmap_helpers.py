@@ -95,7 +95,8 @@ def get_component_protocols(vm_type):
         'onefs': ['ssh', 'https'],
         'router': ['ssh'],
         'windows': ['rdp'],
-        'winserver': ['rdp']
+        'winserver': ['rdp'],
+        'esxi': ['ssh', 'https'],
     }
     return proto_map[vm_type.lower()]
 
@@ -156,6 +157,7 @@ def https_to_port(vm_type):
         'esrs' : 443,
         'insightiq' : 443,
         'onefs' : 8080,
+        'esxi' : 443,
     }
     try:
         answer =  port_map[vm_type.lower()]

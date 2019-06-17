@@ -17,6 +17,7 @@ from vlab_cli.subcommands.connect.centos import centos
 from vlab_cli.subcommands.connect.icap import icap
 from vlab_cli.subcommands.connect.claritynow import claritynow
 from vlab_cli.subcommands.connect.ecs import ecs
+from vlab_cli.subcommands.connect.esxi import esxi
 
 
 @click.group()
@@ -58,3 +59,4 @@ connect.add_command(centos)
 connect.add_command(icap)
 connect.add_command(claritynow)
 connect.add_command(ecs)
+connect.add_command(esxi)

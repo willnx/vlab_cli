@@ -16,6 +16,7 @@ from vlab_cli.subcommands.create.claritynow import claritynow
 from vlab_cli.subcommands.create.ecs import ecs
 from vlab_cli.subcommands.create.portmap import portmap
 from vlab_cli.subcommands.create.snapshot import snapshot
+from vlab_cli.subcommands.create.esxi import esxi
 
 
 @click.group()
@@ -38,3 +39,4 @@ create.add_command(claritynow)
 create.add_command(ecs)
 create.add_command(portmap)
 create.add_command(snapshot)
+create.add_command(esxi)
