@@ -14,6 +14,7 @@ from jwt import PyJWTError
 from requests.exceptions import HTTPError
 
 from vlab_cli import version
+from vlab_cli.lib import widgets
 from vlab_cli.lib.api import vLabApi
 from vlab_cli.lib.logger import get_logger
 from vlab_cli.lib.tokenizer import get_token
@@ -42,15 +43,18 @@ VLAB_USER = getuser()
 @click.option('--vlab-username', default=VLAB_USER, show_default=True,
               help="In case the username you are logged in as is different from your corp name")
 @click.option('--verbose', is_flag=True, help='Increase logging output')
+@click.option('--no-scroll', '-o', is_flag=True,
+              help='Output messages all at once')
 @click.option('--debug', is_flag=True, cls=HiddenOption)
 @click.pass_context
-def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, debug):
+def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, no_scroll, debug):
     """CLI tool for interacting with your virtual lab"""
     log = get_logger(__name__, verbose=verbose, debug=debug)
     verify = not skip_verify # inverted because ``requests`` is 'opt-out' of hostname verification
     if not vlab_url.startswith('https://'):
         # might have entered IP, or DNS FQDN
         vlab_url = 'https://{}'.format(vlab_url)
+    widgets.NO_SCROLL_OUTPUT = no_scroll
     try:
         the_token, token_contents = get_token(vlab_url, vlab_username, verify=verify, log=log)
     except Exception as doh:

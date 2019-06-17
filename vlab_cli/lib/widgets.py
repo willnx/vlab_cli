@@ -10,6 +10,8 @@ import threading
 
 import click
 
+NO_SCROLL_OUTPUT = False
+
 
 def prompt(question, boolean=False, boolean_default=False):
     """TODO
@@ -92,7 +94,10 @@ def typewriter(message, newline=True, indent=False):
     """
     if indent:
         message = indenter(message)
-    if do_easter_egg(message):
+    if NO_SCROLL_OUTPUT:
+        sys.stdout.write(message)
+        sys.stdout.flush()
+    elif do_easter_egg(message):
         pass
     else:
         for idx, char in enumerate(message):
