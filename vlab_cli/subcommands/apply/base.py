@@ -3,6 +3,8 @@
 import click
 
 from vlab_cli.subcommands.apply.snapshot import snapshot
+from vlab_cli.subcommands.apply.network import network
+
 
 @click.group()
 @click.pass_context
@@ -12,3 +14,4 @@ def apply(ctx):
 
 
 apply.add_command(snapshot)
+apply.add_command(network)

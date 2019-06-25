@@ -29,13 +29,12 @@ def status(ctx):
         gateway_ip = 'None' # so users see the literal word
     with Spinner('Processing inventory records'):
         vm_body = []
-        vm_header = ['Name', 'IPs', 'Connectable', 'Type', 'Version', 'Powered', 'Console']
+        vm_header = ['Name', 'IPs', 'Connectable', 'Type', 'Version', 'Powered', 'Networks']
         for vm in sorted(vm_info.keys()):
             params = {'name' : vm}
             addr_info = ctx.obj.vlab_api.get('/api/1/ipam/addr', params=params).json()['content']
             connectable = addr_info.get(vm, {}).get('routable', 'initializing')
-            shorter_link = ctx.obj.vlab_api.post('/api/1/link',
-                                                 json={'url': vm_info[vm]['console']}).json()['content']['url']
+            network = ','.join(vm_info.get('network', ['?']))
             kind = vm_info[vm]['meta']['component']
             version = vm_info[vm]['meta']['version']
             power = vm_info[vm]['state'].replace('powered', '')
@@ -44,7 +43,7 @@ def status(ctx):
                 # fall back to port map rule
                 addrs = addr_info.get(vm, {}).get('addr', '')
                 ips = '\n'.join(addrs)
-            row = [vm, ips, connectable, kind, version, power, shorter_link]
+            row = [vm, ips, connectable, kind, version, power, network]
             vm_body.append(row)
 
     heading = '\nUsername: {}\nGateway : {}\n'.format(ctx.obj.username, gateway_ip)

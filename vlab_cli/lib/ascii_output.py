@@ -41,14 +41,14 @@ def vm_table_view(vlab_api, info):
     :type info: Dictionary
     """
     vm_body = []
-    vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Console']
+    vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Networks']
     for vm, data in info.items():
         body = {'url': data['console']}
-        shorter_link = vlab_api.post('/api/1/link', json=body).json()['content']['url']
+        network = data.get('network', ['?'])
         kind = data['meta']['component']
         version = data['meta']['version']
         power = data['state'].replace('powered', '')
-        row = [vm, '\n'.join(data['ips']), kind, version, power, shorter_link]
+        row = [vm, '\n'.join(data['ips']), kind, version, power, ','.join(network)]
         vm_body.append(row)
     if not vm_body:
         table = None
