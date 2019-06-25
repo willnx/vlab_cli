@@ -15,7 +15,7 @@ def insightiq(ctx, name):
     """Delete an instance of InsightIQ"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/insightiq',
+                 endpoint='/api/2/inf/insightiq',
                  message='Destroying InsightIQ instance named {}'.format(name),
                  body=body,
                  method='DELETE')

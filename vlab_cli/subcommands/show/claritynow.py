@@ -14,7 +14,7 @@ def claritynow(ctx, images):
     """Display information about ClarityNow instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/claritynow/image',
+                            endpoint='/api/2/inf/claritynow/image',
                             base_endpoint=False,
                             message='Collecting available versions of ClarityNow for deployment',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def claritynow(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/claritynow',
+                            endpoint='/api/2/inf/claritynow',
                             message='Collecting information about your ClarityNow instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

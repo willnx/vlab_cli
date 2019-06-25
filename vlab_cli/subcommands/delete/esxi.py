@@ -16,7 +16,7 @@ def esxi(ctx, name):
     """Delete an instance of VMware ESXi"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/esxi',
+                 endpoint='/api/2/inf/esxi',
                  message='Destroying ESXi instance named {}'.format(name),
                  body=body,
                  method='DELETE')

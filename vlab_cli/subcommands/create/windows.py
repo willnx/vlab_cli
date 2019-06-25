@@ -20,11 +20,11 @@ from vlab_cli.lib.ascii_output import format_machine_info
 @click.pass_context
 def windows(ctx, name, image, external_network):
     """Create a new Windows Desktop client"""
-    body = {'network': "{}_{}".format(ctx.obj.username, external_network),
+    body = {'network': external_network,
             'name': name,
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/windows',
+                        endpoint='/api/2/inf/windows',
                         message='Creating a new instance of Windows {}'.format(image),
                         body=body,
                         timeout=900,

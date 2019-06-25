@@ -15,7 +15,7 @@ def cee(ctx, images):
     """Display information about EMC Common Event Enabler instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/cee/image',
+                            endpoint='/api/2/inf/cee/image',
                             base_endpoint=False,
                             message='Collecting available versions of CEE for deployment',
                             method='GET').json()['content']
@@ -26,7 +26,7 @@ def cee(ctx, images):
         click.echo('\n{}\n'.format(output))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/cee',
+                            endpoint='/api/2/inf/cee',
                             message='Collecting information about your CEE instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

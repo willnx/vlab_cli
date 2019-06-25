@@ -16,7 +16,7 @@ def onefs(ctx, images):
     """Display information about vOneFS nodes in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/onefs/image',
+                            endpoint='/api/2/inf/onefs/image',
                             base_endpoint=False,
                             message='Collecting available versions of OneFS for deployment',
                             method='GET').json()['content']
@@ -27,7 +27,7 @@ def onefs(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/onefs',
+                            endpoint='/api/2/inf/onefs',
                             message='Collecting information about your OneFS nodes',
                             method='GET').json()
         ordered_nodes = sort_node_list(info['content'])

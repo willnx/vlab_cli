@@ -12,9 +12,9 @@ from vlab_cli.lib.click_extras import MandatoryOption, HiddenOption
 @click.pass_context
 def network(ctx, name, switch):
     """Create a new vLAN network"""
-    body = {'vlan-name': '{}_{}'.format(ctx.obj.username, name), 'switch-name': switch}
+    body = {'vlan-name': name, 'switch-name': switch}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/vlan',
+                 endpoint='/api/2/inf/vlan',
                  message='Createing a new network named {}'.format(name),
                  body=body)
     click.echo('OK!')

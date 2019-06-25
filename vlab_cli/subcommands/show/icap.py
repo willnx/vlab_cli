@@ -14,7 +14,7 @@ def icap(ctx, images):
     """Display information about ICAP Antivirus servers in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/icap/image',
+                            endpoint='/api/2/inf/icap/image',
                             base_endpoint=False,
                             message='Collecting available versions of ICAP servers for deployment',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def icap(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/icap',
+                            endpoint='/api/2/inf/icap',
                             message='Collecting information about your ICAP servers',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

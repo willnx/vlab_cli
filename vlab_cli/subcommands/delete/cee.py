@@ -15,7 +15,7 @@ def cee(ctx, name):
     """Delete an instance of EMC Common Event Enabler"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/cee',
+                 endpoint='/api/2/inf/cee',
                  message='Destroying CEE instance named {}'.format(name),
                  body=body,
                  method='DELETE')

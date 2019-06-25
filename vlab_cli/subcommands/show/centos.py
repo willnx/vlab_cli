@@ -14,7 +14,7 @@ def centos(ctx, images):
     """Display information about CentOS instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/centos/image',
+                            endpoint='/api/2/inf/centos/image',
                             base_endpoint=False,
                             message='Collecting available versions of CentOS for deployment',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def centos(ctx, images):
         click.echo('\n{}\n'.format(output))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/centos',
+                            endpoint='/api/2/inf/centos',
                             message='Collecting information about your CentOS instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

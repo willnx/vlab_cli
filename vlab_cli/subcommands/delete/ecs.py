@@ -15,7 +15,7 @@ def ecs(ctx, name):
     """Delete an instance of Elastic Cloud Storage"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/ecs',
+                 endpoint='/api/2/inf/ecs',
                  message='Destroying ECS instance named {}'.format(name),
                  body=body,
                  method='DELETE')

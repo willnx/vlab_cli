@@ -15,7 +15,7 @@ def esrs(ctx, name):
     """Delete an instance of ESRS"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/esrs',
+                 endpoint='/api/2/inf/esrs',
                  message='Destroying ESRS instance named {}'.format(name),
                  body=body,
                  method='DELETE')

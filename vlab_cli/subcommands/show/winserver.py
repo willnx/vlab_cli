@@ -13,7 +13,7 @@ def winserver(ctx, images):
     """Display information about the Microsoft Server instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/winserver/image',
+                            endpoint='/api/2/inf/winserver/image',
                             base_endpoint=False,
                             message='Collecting available versions of Microsoft Server',
                             method='GET').json()['content']
@@ -24,7 +24,7 @@ def winserver(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/winserver',
+                            endpoint='/api/2/inf/winserver',
                             message='Collecting information about your Microsoft Server instances',
                             method='GET').json()['content']
         output = vm_table_view(ctx.obj.vlab_api, info)

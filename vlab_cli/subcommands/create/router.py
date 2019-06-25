@@ -26,9 +26,9 @@ def router(ctx, image, name, networks):
         error = 'Routers can only connect at most 4 networks, supplied {}: {}'.format(len(networks), ' '.join(networks))
         raise click.ClickException(error)
 
-    body = {'name': name, 'image': image, 'networks': ['{}_{}'.format(ctx.obj.username, x) for x in networks]}
+    body = {'name': name, 'image': image, 'networks': networks}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/router',
+                        endpoint='/api/2/inf/router',
                         message='Creating a new router for networks {}'.format(' '.join(networks)),
                         body=body,
                         timeout=900,

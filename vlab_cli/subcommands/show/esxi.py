@@ -14,7 +14,7 @@ def esxi(ctx, images):
     """Display information about VMware ESXi instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/esxi/image',
+                            endpoint='/api/2/inf/esxi/image',
                             base_endpoint=False,
                             message='Collecting available versions of ESXi for deployment',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def esxi(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/esxi',
+                            endpoint='/api/2/inf/esxi',
                             message='Collecting information about your ESXi instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

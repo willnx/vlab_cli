@@ -20,11 +20,11 @@ from vlab_cli.lib.ascii_output import format_machine_info
 @click.pass_context
 def cee(ctx, name, image, external_network):
     """Create an instance of EMC Common Event Enabler"""
-    body = {'network': "{}_{}".format(ctx.obj.username, external_network),
+    body = {'network': external_network,
             'name': name,
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/cee',
+                        endpoint='/api/2/inf/cee',
                         message='Creating a new instance of CEE running {}'.format(image),
                         body=body,
                         timeout=900,

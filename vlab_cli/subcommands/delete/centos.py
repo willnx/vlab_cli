@@ -15,7 +15,7 @@ def centos(ctx, name):
     """Delete an instance of CentOS"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/centos',
+                 endpoint='/api/2/inf/centos',
                  message='Destroying CentOS instance named {}'.format(name),
                  body=body,
                  method='DELETE')

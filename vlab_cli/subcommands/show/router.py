@@ -15,7 +15,7 @@ def router(ctx, images):
     """Display information about network routers in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/router/image',
+                            endpoint='/api/2/inf/router/image',
                             base_endpoint=False,
                             message='Collecting available versions of network routers for deployment',
                             method='GET').json()['content']
@@ -26,7 +26,7 @@ def router(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/router',
+                            endpoint='/api/2/inf/router',
                             message='Collecting information about the network routers in your lab',
                             method='GET').json()['content']
         output = vm_table_view(ctx.obj.vlab_api, info)

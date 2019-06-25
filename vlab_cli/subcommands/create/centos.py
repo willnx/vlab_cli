@@ -20,11 +20,11 @@ from vlab_cli.lib.ascii_output import format_machine_info
 @click.pass_context
 def centos(ctx, name, image, external_network):
     """Create an instance of CentOS"""
-    body = {'network': "{}_{}".format(ctx.obj.username, external_network),
+    body = {'network': external_network,
             'name': name,
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/centos',
+                        endpoint='/api/2/inf/centos',
                         message='Creating a new instance of CentOS {}'.format(image),
                         body=body,
                         timeout=900,

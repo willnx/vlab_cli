@@ -15,7 +15,7 @@ def icap(ctx, name):
     """Delete an ICAP Antivirus server"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/icap',
+                 endpoint='/api/2/inf/icap',
                  message='Destroying ICAP server named {}'.format(name),
                  body=body,
                  method='DELETE')

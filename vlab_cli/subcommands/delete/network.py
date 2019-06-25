@@ -15,9 +15,9 @@ def network(ctx, name):
     if name in ('frontend', 'backend'):
         click.secho('WARNING: Deleting this network can render your lab unusable', bold=True)
         click.confirm('Are you sure you wish to continue?', abort=True)
-    body = {'vlan-name': '{}_{}'.format(ctx.obj.username, name)}
+    body = {'vlan-name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/vlan',
+                 endpoint='/api/2/inf/vlan',
                  message='Destroying network: {}'.format(name),
                  body=body,
                  method='DELETE')

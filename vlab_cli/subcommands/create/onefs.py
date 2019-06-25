@@ -84,8 +84,8 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                         name=name,
                         image=image,
                         node_count=node_count,
-                        external='{}_{}'.format(ctx.obj.username, external),
-                        internal='{}_{}'.format(ctx.obj.username, internal),
+                        external=external,
+                        internal=internal,
                         vlab_api=ctx.obj.vlab_api)
     if not skip_config:
         config_nodes(cluster_name=name,
@@ -187,8 +187,8 @@ def create_nodes(username, name, image, external, internal, node_count, vlab_api
                     'frontend': external,
                     'backend': internal,
                     }
-            resp = vlab_api.post('/api/1/inf/onefs', json=body)
-            tasks[node_name] = '/api/1/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
+            resp = vlab_api.post('/api/2/inf/onefs', json=body)
+            tasks[node_name] = '/api/2/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
         info = block_on_tasks(vlab_api, tasks)
     return info
 
@@ -216,7 +216,7 @@ def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_rang
                                          internal_netmask=internal_netmask)
     join_payload = {'name' : '', 'cluster_name': cluster_name, 'join': True, 'compliance' : compliance}
     consume_task(vlab_api,
-                 endpoint='/api/1/inf/onefs/config',
+                 endpoint='/api/2/inf/onefs/config',
                  message='Initializing cluster {}'.format(cluster_name),
                  body=config_payload,
                  timeout=900,
@@ -225,7 +225,7 @@ def config_nodes(cluster_name, nodes, image, external_ip_range, internal_ip_rang
     for idx, node in enumerate(sorted_nodes):
         join_payload['name'] = node
         consume_task(vlab_api,
-                     endpoint='/api/1/inf/onefs/config',
+                     endpoint='/api/2/inf/onefs/config',
                      message='Joining node {} to cluster {}'.format(idx + 2, cluster_name),
                      body=join_payload,
                      timeout=900,

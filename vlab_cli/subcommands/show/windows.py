@@ -14,7 +14,7 @@ def windows(ctx, images):
     """Display information about the Windows Desktop clients in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/windows/image',
+                            endpoint='/api/2/inf/windows/image',
                             base_endpoint=False,
                             message='Collecting available versions of Windows Desktop',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def windows(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/windows',
+                            endpoint='/api/2/inf/windows',
                             message='Collecting information about your Windows clients',
                             method='GET').json()['content']
         output = vm_table_view(ctx.obj.vlab_api, info)

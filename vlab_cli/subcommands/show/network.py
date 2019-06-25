@@ -12,11 +12,11 @@ from vlab_cli.lib.api import consume_task
 def network(ctx, name):
     """Display the network(s) you own"""
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/vlan',
+                        endpoint='/api/2/inf/vlan',
                         message='Collecting your networks',
                         method='GET')
     user_tag = "{}_".format(ctx.obj.username)
-    networks = [x.replace(user_tag, '') for x in resp.json()['content'].keys()]
+    networks = [x for x in resp.json()['content'].keys()]
     if name:
         networks = [x for x in networks if x == name]
     if networks:

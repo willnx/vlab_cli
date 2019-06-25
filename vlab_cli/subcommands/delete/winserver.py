@@ -15,7 +15,7 @@ def winserver(ctx, name):
     """Delete a Microsoft Server"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/winserver',
+                 endpoint='/api/2/inf/winserver',
                  message='Destroying Microsoft Server named {}'.format(name),
                  body=body,
                  method='DELETE')

@@ -20,11 +20,11 @@ from vlab_cli.lib.portmap_helpers import https_to_port, get_ipv4_addrs
 @click.pass_context
 def ecs(ctx, name, image, external_network):
     """Create an instance of Dell EMC Elastic Cloud Storage"""
-    body = {'network': "{}_{}".format(ctx.obj.username, external_network),
+    body = {'network': external_network,
             'name': name,
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/ecs',
+                        endpoint='/api/2/inf/ecs',
                         message='Creating a new instance of ECS running {}'.format(image),
                         body=body,
                         timeout=900,

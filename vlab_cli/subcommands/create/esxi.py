@@ -20,11 +20,11 @@ from vlab_cli.lib.portmap_helpers import https_to_port, get_ipv4_addrs
 @click.pass_context
 def esxi(ctx, name, image, external_network):
     """Create an instance of VMware ESXi"""
-    body = {'network': "{}_{}".format(ctx.obj.username, external_network),
+    body = {'network': external_network,
             'name': name,
             'image': image}
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/esxi',
+                        endpoint='/api/2/inf/esxi',
                         message='Creating a new instance of ESXi running {}'.format(image),
                         body=body,
                         timeout=900,

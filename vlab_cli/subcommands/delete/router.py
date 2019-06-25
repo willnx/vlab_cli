@@ -15,7 +15,7 @@ def router(ctx, name):
     """Destroy a network router"""
     body = {'name': '{}'.format(name)}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/router',
+                 endpoint='/api/2/inf/router',
                  message='Destroying network router: {}'.format(name),
                  body=body,
                  method='DELETE')

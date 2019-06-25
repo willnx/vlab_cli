@@ -15,7 +15,7 @@ def esrs(ctx, images):
     """Display information about ESRS instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/esrs/image',
+                            endpoint='/api/2/inf/esrs/image',
                             base_endpoint=False,
                             message='Collecting available versions of ESRS for deployment',
                             method='GET').json()['content']
@@ -26,7 +26,7 @@ def esrs(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/esrs',
+                            endpoint='/api/2/inf/esrs',
                             message='Collecting information about your ESRS instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

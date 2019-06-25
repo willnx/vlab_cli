@@ -65,14 +65,14 @@ def nuke_lab(vlab_api, username, wan, switch, config, log):
                  message='Destroying inventory',
                  method='DELETE')
     resp = consume_task(vlab_api,
-                        endpoint='/api/1/inf/vlan',
+                        endpoint='/api/2/inf/vlan',
                         message='Determining what networks you own',
                         method='GET')
     vlans = resp.json()['content']
     tasks = {}
     with Spinner('Deleting networks'):
         for vlan in vlans.keys():
-            resp = vlab_api.delete('/api/1/inf/vlan', json={'vlan-name': vlan})
+            resp = vlab_api.delete('/api/2/inf/vlan', json={'vlan-name': vlan})
             tasks[vlan] = resp.links['status']['url']
         block_on_tasks(vlab_api, tasks, pause=1)
     typewriter('Finished deleting old lab. Initializing a new lab.')
@@ -116,15 +116,15 @@ def init_lab(vlab_api, username, wan, switch, config, log):
 
     with Spinner('Initializing your lab'):
         tasks = {}
-        resp1 = vlab_api.post('/api/1/inf/inventory', auto_check=False)
+        resp1 = vlab_api.post('/api/2/inf/inventory', auto_check=False)
         tasks['inventory'] = resp1.links['status']['url']
 
-        body2 = {'vlan-name': '{}_frontend'.format(username), 'switch-name': switch}
-        resp2 = vlab_api.post('/api/1/inf/vlan', json=body2)
+        body2 = {'vlan-name': 'frontend', 'switch-name': switch}
+        resp2 = vlab_api.post('/api/2/inf/vlan', json=body2)
         tasks['frontend_network'] = resp2.links['status']['url']
 
-        body3 = {'vlan-name': '{}_backend'.format(username), 'switch-name': switch}
-        resp3 = vlab_api.post('/api/1/inf/vlan', json=body3)
+        body3 = {'vlan-name': 'backend', 'switch-name': switch}
+        resp3 = vlab_api.post('/api/2/inf/vlan', json=body3)
         tasks['backend_network'] = resp3.links['status']['url']
         block_on_tasks(vlab_api, tasks, auto_check=False, pause=1)
 

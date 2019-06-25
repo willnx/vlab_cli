@@ -14,7 +14,7 @@ def ecs(ctx, images):
     """Display information about Elastic Cloud Storage instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/ecs/image',
+                            endpoint='/api/2/inf/ecs/image',
                             base_endpoint=False,
                             message='Collecting available versions of ECS for deployment',
                             method='GET').json()['content']
@@ -25,7 +25,7 @@ def ecs(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/ecs',
+                            endpoint='/api/2/inf/ecs',
                             message='Collecting information about your ECS instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])

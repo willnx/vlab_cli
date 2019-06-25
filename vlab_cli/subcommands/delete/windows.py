@@ -15,7 +15,7 @@ def windows(ctx, name):
     """Delete a Windows Desktop client"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/windows',
+                 endpoint='/api/2/inf/windows',
                  message='Destroying Windows Desktop client named {}'.format(name),
                  body=body,
                  method='DELETE')

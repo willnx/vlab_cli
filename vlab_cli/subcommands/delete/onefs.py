@@ -28,7 +28,7 @@ def delete_node(vlab_api, name):
     """Destroy one specific node"""
     body = {'name': name}
     consume_task(vlab_api,
-                 endpoint='/api/1/inf/onefs',
+                 endpoint='/api/2/inf/onefs',
                  body=body,
                  message='Destroying OneFS node {}'.format(name),
                  method='DELETE')
@@ -42,7 +42,7 @@ def delete_node(vlab_api, name):
 def delete_cluster(vlab_api, cluster):
     """Destroy an entire OneFS cluster"""
     data = consume_task(vlab_api,
-                        endpoint='/api/1/inf/onefs',
+                        endpoint='/api/2/inf/onefs',
                         message='Looking up OneFS cluster {}'.format(cluster),
                         method='GET').json()
     nodes = _find_cluster_nodes(cluster, all_nodes=data['content'].keys())
@@ -52,8 +52,8 @@ def delete_cluster(vlab_api, cluster):
     with Spinner("Deleting cluster {}".format(cluster)):
         for node in nodes:
             body = {'name': node}
-            resp = vlab_api.delete('/api/1/inf/onefs', json=body)
-            tasks[node] = '/api/1/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
+            resp = vlab_api.delete('/api/2/inf/onefs', json=body)
+            tasks[node] = '/api/2/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
         block_on_tasks(vlab_api, tasks)
     with Spinner('Deleting port mapping rules'):
         for node in nodes:

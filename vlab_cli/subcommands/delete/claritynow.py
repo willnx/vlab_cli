@@ -15,7 +15,7 @@ def claritynow(ctx, name):
     """Delete an instance of ClarityNow"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/1/inf/claritynow',
+                 endpoint='/api/2/inf/claritynow',
                  message='Destroying ClarityNow instance named {}'.format(name),
                  body=body,
                  method='DELETE')

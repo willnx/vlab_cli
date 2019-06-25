@@ -15,7 +15,7 @@ def insightiq(ctx, images):
     """Display information about InsightIQ instances in your lab"""
     if images:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/insightiq/image',
+                            endpoint='/api/2/inf/insightiq/image',
                             base_endpoint=False,
                             message='Collecting available versions of InsightIQ for deployment',
                             method='GET').json()['content']
@@ -26,7 +26,7 @@ def insightiq(ctx, images):
         click.echo('\n{}\n'.format(table))
     else:
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/1/inf/insightiq',
+                            endpoint='/api/2/inf/insightiq',
                             message='Collecting information about your InsightIQ instances',
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])
