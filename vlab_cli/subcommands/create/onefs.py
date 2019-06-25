@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for creating OneFS nodes"""
+import re
 import random
 import ipaddress
 from collections import OrderedDict
@@ -80,6 +81,7 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
         ips_ok = ext_network_ok(default_gateway, external_netmask, external_ip_range)
         if not ips_ok:
             external_ip_range = invoke_onefs_network_clippy(ctx.obj.username, default_gateway, external_netmask, external_ip_range)
+    name_ok(name)
     info = create_nodes(username=ctx.obj.username,
                         name=name,
                         image=image,
@@ -309,3 +311,29 @@ def generate_table(vlab_api, info):
 def node_sorter(node_name):
     """A function to sort nodes vis-a-vis name"""
     return int(node_name.split('-')[-1])
+
+
+def name_ok(hostname):
+    """A function to pre-check the use of OneFS node name"""
+    ok = True
+    allowed = re.compile("(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
+    hostname = hostname.rstrip('.') # remove any trailing dot
+    error = 'OneFS hostname check failure'
+    if len(hostname) < 1:
+        ok = False
+        error = 'Cluster name cannot be empty'
+    elif not hostname[0].isalpha():
+        error = 'Cluster name must start with a letter, supplied name {}'.format(hostname)
+        ok = False
+    # OneFS recommends limiting names to 11 chars for NetBIOS compatibility
+    elif len(hostname) > 11:
+        ok = False
+        error = 'Cluster name cannot exceed 11 letters'
+    elif '.' in hostname:
+        ok = False
+        error = 'OneFS nodes names cannot have a dot "." in their name. Supplied: {}'.format(hostname)
+    elif not all(allowed.match(x) for x in hostname.split(".")):
+        ok = False
+        error = 'Invalid hostname of {} supplied for OneFS node'.format(hostname)
+    if not ok:
+        raise click.ClickException(error)
