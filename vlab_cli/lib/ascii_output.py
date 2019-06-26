@@ -16,8 +16,6 @@ def format_machine_info(vlab_api, info):
     :param info: The deserialized JSON API response from the vLab server
     :type info: Dictionary
     """
-    shorter_link = vlab_api.post('/api/1/link',
-                                 json={'url': info['console']}).json()['content']['url']
     rows = []
     kind = info['meta']['component']
     version = info['meta']['version']
@@ -25,7 +23,7 @@ def format_machine_info(vlab_api, info):
     rows.append(['Version', ':', version])
     rows.append(['State', ':', info['state']])
     rows.append(['IPs', ':', ' '.join(info['ips'])])
-    rows.append(['Console', ':', shorter_link])
+    rows.append(['Networks', ':', ','.join(info['networks'])])
     return tabulate(rows, tablefmt='plain')
 
 
@@ -44,7 +42,7 @@ def vm_table_view(vlab_api, info):
     vm_header = ['Name', 'IPs', 'Type', 'Version', 'Powered', 'Networks']
     for vm, data in info.items():
         body = {'url': data['console']}
-        network = data.get('network', ['?'])
+        network = data.get('networks', ['?'])
         kind = data['meta']['component']
         version = data['meta']['version']
         power = data['state'].replace('powered', '')

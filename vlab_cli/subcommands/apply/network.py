@@ -15,7 +15,7 @@ from vlab_cli.lib.click_extras import MandatoryOption
 @click.pass_context
 def network(ctx, name, new_network):
     """Connect a Virtual Machine to a new front-end network"""
-    update_endpoint = '/api/1/inf/{}/network'
+    update_endpoint = '/api/2/inf/{}/network'
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/inventory',
                         message='Looking up details for {}'.format(name),
@@ -33,5 +33,6 @@ def network(ctx, name, new_network):
                  endpoint=update_endpoint.format(resource),
                  message='Connecting {} to network {}'.format(name, new_network),
                  body=body,
-                 method='PUT')
+                 method='PUT',
+                 base_endpoint=False)
     click.echo("OK!")

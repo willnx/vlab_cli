@@ -16,7 +16,8 @@ def status(ctx):
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/1/inf/inventory',
                         message='Collecting information about your inventory',
-                        method='GET')
+                        method='GET',
+                        timeout=120)
     vm_info = resp.json()['content']
     gateway = vm_info.pop('defaultGateway', None)
     if gateway:
@@ -34,7 +35,7 @@ def status(ctx):
             params = {'name' : vm}
             addr_info = ctx.obj.vlab_api.get('/api/1/ipam/addr', params=params).json()['content']
             connectable = addr_info.get(vm, {}).get('routable', 'initializing')
-            network = ','.join(vm_info.get('network', ['?']))
+            networks = ','.join(vm_info[vm].get('networks', ['?']))
             kind = vm_info[vm]['meta']['component']
             version = vm_info[vm]['meta']['version']
             power = vm_info[vm]['state'].replace('powered', '')
@@ -43,7 +44,7 @@ def status(ctx):
                 # fall back to port map rule
                 addrs = addr_info.get(vm, {}).get('addr', '')
                 ips = '\n'.join(addrs)
-            row = [vm, ips, connectable, kind, version, power, network]
+            row = [vm, ips, connectable, kind, version, power, networks]
             vm_body.append(row)
 
     heading = '\nUsername: {}\nGateway : {}\n'.format(ctx.obj.username, gateway_ip)
