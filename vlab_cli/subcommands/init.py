@@ -116,7 +116,7 @@ def init_lab(vlab_api, username, wan, switch, config, log):
 
     with Spinner('Initializing your lab'):
         tasks = {}
-        resp1 = vlab_api.post('/api/2/inf/inventory', auto_check=False)
+        resp1 = vlab_api.post('/api/1/inf/inventory', auto_check=False)
         tasks['inventory'] = resp1.links['status']['url']
 
         body2 = {'vlan-name': 'frontend', 'switch-name': switch}
