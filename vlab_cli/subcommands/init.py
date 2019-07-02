@@ -128,7 +128,7 @@ def init_lab(vlab_api, username, wan, switch, config, log):
         tasks['backend_network'] = resp3.links['status']['url']
         block_on_tasks(vlab_api, tasks, auto_check=False, pause=1)
 
-    body4 = {'wan': wan, 'lan': '{}_frontend'.format(username)}
+    body4 = {'wan': wan, 'lan': 'frontend'.format(username)}
     consume_task(vlab_api,
                  endpoint='/api/2/inf/gateway',
                  message='Deploying gateway',
