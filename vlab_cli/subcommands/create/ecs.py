@@ -58,7 +58,7 @@ def ecs(ctx, name, image, external_network, skip_config):
             gateway_ip = gateway_ips[0]
         else:
             error = "Unable to determine IP of your vLab gateway. Is it powered on?"
-            raise click.Exception(error)
+            raise click.ClickException(error)
         ecs_ip = _determine_ip(port_mapping.keys())
         config_payload = {'name' : name, 'ssh_port': port_mapping[ecs_ip],
                           'gateway_ip' : gateway_ip, 'ecs_ip': ecs_ip}
