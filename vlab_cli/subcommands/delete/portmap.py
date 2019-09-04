@@ -22,7 +22,7 @@ from vlab_cli.lib.portmap_helpers import (get_component_protocols, get_protocol_
 def portmap(ctx, name, protocol, ip_address):
     """Destroy a port mapping rule"""
     info = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/2/inf/inventory',
+                        endpoint='/api/1/inf/inventory',
                         message='Collecting information about your inventory',
                         method='GET').json()
     the_vm = info['content'].get(name, None)
