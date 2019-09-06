@@ -72,7 +72,7 @@ class Version(object):
                     except IndexError:
                         if idx == 3 or idx == 2:
                             # some versions only consist of major.monior, like google chrome
-                            setattr(self, '_%s' % semantic_version, None)
+                            setattr(self, '_%s' % semantic_version, -1)
                         else:
                             # re-raise the error for debugging
                             raise
