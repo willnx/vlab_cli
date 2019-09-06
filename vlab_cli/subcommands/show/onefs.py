@@ -6,7 +6,7 @@ import click
 
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.ascii_output import vm_table_view, columned_table
-from vlab_cli.lib.versions import Version
+
 
 @click.command()
 @click.option('-i', '--images', is_flag=True,
@@ -22,7 +22,7 @@ def onefs(ctx, images):
                             method='GET').json()['content']
         rows = []
         for img in info['image']:
-            rows.append(Version(img, name='OneFS'))
+            rows.append(img)
         table = get_formatted_table(sorted(rows))
         click.echo('\n{}\n'.format(table))
     else:
@@ -55,23 +55,26 @@ def get_formatted_table(images):
                 '8.1.3 (Seismic)',
                 '8.2.0 (Pipeline)'
                ]
-    header_c = ['Update your vLab CLI']
-    orca = sorted([x for x in images if '7.2.0' < x < '8.0.0' ])
-    riptide = sorted([x for x in images if '7.2.1' < x < '8.0.1'])
-    halfpipe = sorted([x for x in images if '8.0.0' < x < '8.1.0'])
-    freight_train = sorted([x for x in images if '8.0.1'< x < '8.1.1'])
-    niijima = sorted([x for x in images if '8.1.0' < x < '8.1.2'])
-    kanagawa = sorted([x for x in images if '8.1.1' < x < '8.1.3'])
-    seismic = sorted([x for x in images if '8.1.2' < x < '8.2.0'])
-    pipeline = sorted([x for x in images if '8.2.0.0' <= x < '8.2.1'])
-    net_new = sorted([x for x in images if '8.2.1' <= x])
+    header_c = ['8.2.1 (Acela)']
+    header_d = ['Update your vLab CLI']
+    orca = sorted([x for x in images if '7.2.0' < x < '8.0.0.0' ])
+    riptide = sorted([x for x in images if '7.2.1.9' < x < '8.0.1.0'])
+    halfpipe = sorted([x for x in images if '8.0.0.9' < x < '8.1.0.0'])
+    freight_train = sorted([x for x in images if '8.0.1.9'< x < '8.1.1.0'])
+    niijima = sorted([x for x in images if '8.1.0.9' < x < '8.1.2.0'])
+    kanagawa = sorted([x for x in images if '8.1.1.9' < x < '8.1.3.0'])
+    seismic = sorted([x for x in images if '8.1.2.9' < x < '8.2.0.0'])
+    pipeline = sorted([x for x in images if '8.2.0' <= x < '8.2.1.0'])
+    acela = sorted([x for x in images if '8.2.1' < x < '8.2.2.0'])
+    net_new = sorted([x for x in images if '8.2.2' <= x])
     table_a = columned_table(header_a, [orca, riptide, halfpipe, freight_train])
     table_b = columned_table(header_b, [niijima, kanagawa, seismic, pipeline])
+    table_c = columned_table(header_c, [acela])
     if net_new:
-        table_c = columned_table(header_c, [net_new])
-        table = '{}\n\n{}\n\n{}'.format(table_a, table_b, table_c)
+        table_d = columned_table(header_d, [net_new])
+        table = '{}\n\n{}\n\n{}\n\n{}'.format(table_a, table_b, table_c, table_d)
     else:
-        table = '{}\n\n{}'.format(table_a, table_b)
+        table = '{}\n\n{}\n\n{}'.format(table_a, table_b, table_c)
     return table
 
 
