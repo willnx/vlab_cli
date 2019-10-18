@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
 """Logic for opening a specific protocol client"""
+import os.path
 import subprocess
 
 import click
+
+from vlab_cli.lib.widgets import printerr
 
 
 class Connectorizer(object):
@@ -36,7 +39,7 @@ class Connectorizer(object):
     def ssh(self, port):
         """Open a session via SSH in a new client"""
         syntax = self._ssh_str.format(self._gateway_ip, port)
-        subprocess.Popen(syntax.split(' '))
+        execute_client(syntax, 'SSH')
 
     def https(self, port, url=None):
         """Open a session via HTTPS in a new client"""
@@ -46,17 +49,36 @@ class Connectorizer(object):
             syntax = syntax[:-1] # strip off tailing :
         else:
             syntax = self._https_str.format(self._gateway_ip, port)
-        subprocess.Popen(syntax.split(' '))
+        execute_client(syntax, 'Browser')
 
     def rdp(self, port):
         """Open a session via RDP in a new client"""
         syntax = self._rdp_str.format(self._gateway_ip, port)
-        subprocess.Popen(syntax.split(' '))
+        execute_client(syntax, 'RDP')
 
     def scp(self, port):
         """Open a session via SCP in a new client"""
         syntax = self._scp_str.format(self._gateway_ip, port)
         if self._scp_open:
-            subprocess.Popen(syntax.split(' '))
+            execute_client(syntax, 'SCP')
         else:
             print('SCP syntax: {}'.format(syntax))
+
+
+def execute_client(syntax, kind):
+    """Provides a better error message than subprocess if the exec doesn't exist
+
+    :Returns: None
+
+    :param syntax: The CLI command to execute
+    :type syntax: String
+
+    :param kind: The type of client being launched
+    :type kind: String
+    """
+    client_path = syntax.split(" ")[0]
+    if not os.path.isfile(client_path):
+        printerr('{} client not found at {}'.format(kind, client_path))
+        printerr('Please update your $HOME/.vlab/config.ini to resolve')
+    else:
+        subprocess.Popen(syntax.split(' '))
