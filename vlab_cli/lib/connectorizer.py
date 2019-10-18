@@ -16,6 +16,7 @@ class Connectorizer(object):
     :type config: configparser.ConfigParser
     """
     def __init__(self, config, gateway_ip):
+        self.config = config
         self._gateway_ip = gateway_ip
         if config['SSH']['agent'] == 'putty':
             self._ssh_str = '%s -ssh {} -P {}' % config['SSH']['location']
@@ -39,7 +40,7 @@ class Connectorizer(object):
     def ssh(self, port):
         """Open a session via SSH in a new client"""
         syntax = self._ssh_str.format(self._gateway_ip, port)
-        execute_client(syntax, 'SSH')
+        self.execute_client(syntax, 'SSH')
 
     def https(self, port, url=None):
         """Open a session via HTTPS in a new client"""
@@ -49,36 +50,35 @@ class Connectorizer(object):
             syntax = syntax[:-1] # strip off tailing :
         else:
             syntax = self._https_str.format(self._gateway_ip, port)
-        execute_client(syntax, 'Browser')
+        self.execute_client(syntax, 'Browser')
 
     def rdp(self, port):
         """Open a session via RDP in a new client"""
         syntax = self._rdp_str.format(self._gateway_ip, port)
-        execute_client(syntax, 'RDP')
+        self.execute_client(syntax, 'RDP')
 
     def scp(self, port):
         """Open a session via SCP in a new client"""
         syntax = self._scp_str.format(self._gateway_ip, port)
         if self._scp_open:
-            execute_client(syntax, 'SCP')
+            self.execute_client(syntax, 'SCP')
         else:
             print('SCP syntax: {}'.format(syntax))
 
+    def execute_client(self, syntax, kind):
+        """Provides a better error message than subprocess if the exec doesn't exist
 
-def execute_client(syntax, kind):
-    """Provides a better error message than subprocess if the exec doesn't exist
+        :Returns: None
 
-    :Returns: None
+        :param syntax: The CLI command to execute
+        :type syntax: String
 
-    :param syntax: The CLI command to execute
-    :type syntax: String
-
-    :param kind: The type of client being launched
-    :type kind: String
-    """
-    client_path = syntax.split(" ")[0]
-    if not os.path.isfile(client_path):
-        printerr('{} client not found at {}'.format(kind, client_path))
-        printerr('Please update your $HOME/.vlab/config.ini to resolve')
-    else:
-        subprocess.Popen(syntax.split(' '))
+        :param kind: The type of client being launched
+        :type kind: String
+        """
+        client_path = self.config[kind.upper()]['location']
+        if not os.path.isfile(client_path):
+            printerr('{} client not found at {}'.format(kind, client_path))
+            printerr('Please update your $HOME/.vlab/config.ini to resolve')
+        else:
+            subprocess.Popen(syntax.split(' '))
