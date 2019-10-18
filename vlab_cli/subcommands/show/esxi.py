@@ -30,12 +30,12 @@ def esxi(ctx, images):
                             method='GET').json()
         output = vm_table_view(ctx.obj.vlab_api, info['content'])
         if not output:
-            output = 'You do not own any ECS instances'
+            output = 'You do not own any ESXi instances'
         click.echo(output)
 
 
 def get_formatted_table(images):
-    """Obtain a human-friendly table of available ECS versions
+    """Obtain a human-friendly table of available ESXi versions
 
     :Returns: String
 
