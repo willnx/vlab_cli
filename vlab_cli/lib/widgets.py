@@ -187,3 +187,9 @@ class Spinner:
         time.sleep(self.delay)
         # extra whitespace to overwrite what's left of the spinner
         print('{}  '.format(self.message))
+
+
+def printerr(message):
+    """Like 'print()', but writes to stderr"""
+    sys.stderr.write('{}\n'.format(message))
+    sys.stderr.flush()

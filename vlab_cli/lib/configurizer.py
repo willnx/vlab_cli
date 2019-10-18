@@ -91,6 +91,11 @@ def find_programs():
 
     found_programs = {}
     for root, dirs, files in os.walk(search_root):
+        if '{' in root:
+            # Windows 10 VDI clients have paths with braces in them. This collides
+            # with how .format works in the connectorizer.py module resulting
+            # in a traceback. Better to just avoid paths with braces...
+            continue
         for the_file in files:
             if the_file.lower() in support_programs:
                 agent = os.path.splitext(the_file)[0] # remove file extension
