@@ -154,7 +154,7 @@ def https_to_port(vm_type):
     port_map = {
         'claritynow' : 443,
         'ecs' : 443,
-        'esrs' : 443,
+        'esrs' : 9443,
         'insightiq' : 443,
         'onefs' : 8080,
         'esxi' : 443,
