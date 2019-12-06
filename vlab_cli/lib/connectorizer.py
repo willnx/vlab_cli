@@ -36,6 +36,9 @@ class Connectorizer(object):
             self._rdp_str = '%s /v:{}:{} /w:1920 /h:1080' % config['RDP']['location']
         else:
             self._rdp_str = '%s --server {}:{}' % config['RDP']['location']
+        # VMRC is the same regardless of OS
+        self._console_str = '%s vmrc://readonly@vlab.local@vlab-vcenter.emc.com/?moid={}' % config['CONSOLE']['location']
+
 
     def ssh(self, port):
         """Open a session via SSH in a new client"""
@@ -64,6 +67,11 @@ class Connectorizer(object):
             self.execute_client(syntax, 'SCP')
         else:
             print('SCP syntax: {}'.format(syntax))
+
+    def console(self, vm_moid):
+        """Open the console to a VM with VMRC"""
+        syntax = self._console_str.format(vm_moid)
+        self.execute_client(syntax, 'Console')
 
     def execute_client(self, syntax, kind):
         """Provides a better error message than subprocess if the exec doesn't exist

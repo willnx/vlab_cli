@@ -3,29 +3,34 @@
 import click
 
 from vlab_cli.lib.api import consume_task
+from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.connectorizer import Connectorizer
 from vlab_cli.lib.click_extras import MandatoryOption
 from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['https']),
-              default='https', show_default=True,
+@click.option('-p', '--protocol', type=click.Choice(['console']),
+              default='console', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the network Router to connect to')
 @click.pass_context
 def router(ctx, name, protocol):
-    """Connect to the HTTPS console of a network router"""
+    """Connect to the console of a network router"""
     # Router only supports console access
-    info = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/router',
-                        message='Lookin up connection information for {}'.format(name),
-                        method='GET').json()['content']
-    vm = info.get(name, None)
-    if not vm:
-        error = 'You have no router named {}'.format(name)
+    if protocol == 'console':
+        info = consume_task(ctx.obj.vlab_api,
+                            endpoint='/api/2/inf/router',
+                            message='Looking up connection info for {}'.format(name),
+                            method='GET').json()
+        if not info['content'].get(name, None):
+            error = 'No Router named {} found'.format(name)
+            raise click.ClickException(error)
+        else:
+            vm_moid = info['content'][name].get('moid', 'n/a')
+        conn = Connectorizer(ctx.obj.vlab_config, gateway_ip='n/a')
+        conn.console(vm_moid)
+    else:
+        error = 'Unexpected connection protocol supplied'
         raise click.ClickException(error)
-    conn = Connectorizer(ctx.obj.vlab_config, 'router-does-not-use-gateway')
-    url = vm['console']
-    conn.https(port=None, url=url)

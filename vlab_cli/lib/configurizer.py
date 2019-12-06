@@ -19,6 +19,10 @@ The vLab CLI uses a very basic INI format, and looks like::
     [RDP]
     agent=mstsc
     location=C:\\some\\path\\mstsc.exe
+
+    [CONSOLE]
+    agent=vmrc
+    location=C:\\some\\path\\vmrc.exe
 """
 import os
 import platform
@@ -27,10 +31,10 @@ import configparser
 
 CONFIG_DIR = os.path.join(os.path.expanduser('~'), '.vlab')
 CONFIG_FILE = os.path.join(CONFIG_DIR, 'config.ini')
-CONFIG_SECTIONS = {'SSH', 'RDP', 'BROWSER', 'SCP'}
+CONFIG_SECTIONS = {'SSH', 'RDP', 'BROWSER', 'SCP', 'CONSOLE'}
 
 def _get_platform_progs():
-    base = ['chrome', 'firefox']
+    base = ['chrome', 'firefox', 'vmrc']
     this_os = platform.system().lower()
     if this_os == 'windows':
         base += ['putty', 'mstsc', 'winscp', 'SecureCRT']
@@ -84,10 +88,12 @@ def find_programs():
     this_os = platform.system().lower()
     if this_os == 'windows':
         search_root = 'C:\\'
-        support_programs = {'putty.exe', 'mstsc.exe', 'firefox.exe', 'chrome.exe', 'winscp.exe', 'securecrt.exe'}
+        support_programs = {'putty.exe', 'mstsc.exe', 'firefox.exe', 'chrome.exe',
+                            'winscp.exe', 'securecrt.exe', 'vmrc.exe'}
     else:
         search_root = '/'
-        support_programs = {'gnome-terminal', 'remmina', 'firefox', 'chrome', 'scp'}
+        support_programs = {'gnome-terminal', 'remmina', 'firefox', 'chrome',
+                            'scp', 'vmrc'}
 
     found_programs = {}
     for root, dirs, files in os.walk(search_root):
@@ -103,4 +109,7 @@ def find_programs():
                 found_programs[agent.lower()] = location
     if this_os == 'windows':
         found_programs['mstsc'] = 'C:\\Windows\\System32\\mstsc.exe'
+        found_programs['vmrc'] = 'C:\\Program Files (x86)\\VMware\\VMware Remote Console\\vmrc.exe'
+    else:
+        found_programs['vmrc'] = '/usr/bin/vmrc'
     return found_programs

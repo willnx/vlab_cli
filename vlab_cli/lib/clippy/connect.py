@@ -23,12 +23,12 @@ def invoke_config():
     """Initial config setup help"""
     the_os = platform.system().lower()
     typewriter("In order for 'vlab connect' to work, you'll need to have a")
-    typewriter("browser, an SSH client, and an SCP client installed.")
+    typewriter("browser, an SSH client, an SCP client and the VMware Remote Client (VMRC) installed.")
     typewriter("Based on your OS, I can use the following:")
     typewriter(", ".join(configurizer.SUPPORTED_PROGS))
     if the_os == 'windows':
         typewriter("\nNote: mstsc is the default RDP client that comes with Windows")
-    typewriter('\nIf you do not have the SSH, RDP, and SCP clients as well as a supported browser')
+    typewriter('\nIf you do not have the SSH, RDP, SCP and VMRC clients as well as a supported browser')
     typewriter("installed you'll be wasting time by continuing with this config setup.")
     keep_going = prompt("Continue with config setup? [Yes/no]", boolean=True, boolean_default=True)
     if not keep_going:
@@ -45,7 +45,7 @@ def invoke_config():
     if putty and secure_crt:
         forget_ssh = which_ssh()
         found_programs.pop(forget_ssh)
-    if len(found_programs) != 4:
+    if len(found_programs) != 5:
         # They are missing some dependency...
         if the_os == 'windows':
             scanned_drive = 'C:\\'
@@ -76,6 +76,8 @@ def _make_config(found_programs):
             new_config['SCP'] = {'agent': agent, 'location': prog_path}
         elif agent.lower() in ('mstsc', 'remmina'):
             new_config['RDP'] = {'agent': agent, 'location': prog_path}
+        elif agent.lower() == 'vmrc':
+            new_config['CONSOLE'] = {'agent': agent, 'location': prog_path}
         else:
             raise RuntimeError('Unexpected value for config: {} and {}'.format(agent, prog_path))
     return new_config
