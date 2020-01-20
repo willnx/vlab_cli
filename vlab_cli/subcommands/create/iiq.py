@@ -11,7 +11,7 @@ from vlab_cli.lib.portmap_helpers import https_to_port, get_ipv4_addrs
 
 
 @click.command()
-@click.option('-i', '--image', default='4.1.2', show_default=True,
+@click.option('-i', '--image', default='4.1.3', show_default=True,
               help='The version of InsightIQ to create')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the InsightIQ instance in your lab')
@@ -46,4 +46,5 @@ def insightiq(ctx, name, image, external_network):
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
     if ipv4_addrs:
-        typewriter("\nUse 'vlab connect insightiq --name {}' to access your new IIQ instance".format(name))
+        typewriter("\nUse 'vlab connect insightiq --protocol console --name {}' to setup a login password".format(name))
+        typewriter("for your new InsightIQ instance.")
