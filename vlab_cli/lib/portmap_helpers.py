@@ -139,6 +139,9 @@ def port_to_protocol(vm_type, port_number):
         return 'RDP'
     elif port_number == https:
         return 'HTTPS'
+    elif port_number == 443 and vm_type.lower() == 'esrs':
+        # Fix for https://github.com/willnx/vlab/issues/61
+        return 'HTTPS'
     else:
         raise RuntimeError('Unexpected port number: {}'.format(port_number))
 
