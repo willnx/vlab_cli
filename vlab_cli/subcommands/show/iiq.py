@@ -51,11 +51,11 @@ def get_formatted_table(images):
               '4.0 (Aurora)',
               '4.1 (Sol)'
              ]
-    candle  = [x for x in images if '2.4' < x < '3.0']
-    lantern = [x for x in images if '2.5' < x < '3.1']
-    beacon  = [x for x in images if '3.0' < x < '3.2']
-    lumen   = [x for x in images if '3.1' < x < '4.0']
-    aurora  = [x for x in images if '3.2' < x < '4.1']
-    sol     = [x for x in images if '4.0' < x < '4.2']
+    candle  = [x for x in images if '2.5' < x < '3.0']
+    lantern = [x for x in images if '3.0' < x < '3.1.0']
+    beacon  = [x for x in images if '3.1' < x < '3.2.0']
+    lumen   = [x for x in images if '3.2' < x < '4.0.0']
+    aurora  = [x for x in images if '4.0' < x < '4.1.0']
+    sol     = [x for x in images if '4.1' < x < '4.2.0']
     table = columned_table(header, [candle, lantern, beacon, lumen, aurora, sol])
     return table
