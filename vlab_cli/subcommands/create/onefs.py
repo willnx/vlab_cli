@@ -104,11 +104,32 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                      internal_netmask=internal_netmask,
                      compliance=compliance,
                      vlab_api=ctx.obj.vlab_api)
-        map_ips(vlab_api=ctx.obj.vlab_api, nodes=info.keys(), ip_range=external_ip_range)
+        map_ips(vlab_api=ctx.obj.vlab_api, nodes=_sort_node_names(info.keys()), ip_range=external_ip_range)
     table = generate_table(vlab_api=ctx.obj.vlab_api, info=info)
     click.echo('\n{}\n'.format(table))
     if not skip_config:
         typewriter("Use 'vlab connect onefs --name {}' to connect to a specific node".format(list(info.keys())[0]))
+
+
+def _sort_node_names(nodes):
+    """Sort nodes by their logical join number.
+
+    This function avoids a mis-match in mapping nodes to IPs when creating
+    portmap rules. Without this function, the IP assigned to "node A" might
+    get a portmap rule created stating that it's for "node B".
+
+    A node's name is the cluster name appended with a logical join number.
+    The delimiter is a dash (i.e. '-'), but a dash is also a valid char
+    in a cluster's name.
+
+    :Returns: List
+
+    :param nodes: A list of node names
+    :type nodes: List
+    """
+    # cast to int() to avoid a bug when sorting strings like '8' vs '18'
+    f = lambda x: int(x.split('-')[-1])
+    return sorted(nodes, key=f)
 
 
 def map_ips(vlab_api, nodes, ip_range):
