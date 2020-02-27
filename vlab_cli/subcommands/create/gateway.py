@@ -14,7 +14,7 @@ def gateway(ctx, wan, lan):
     """Create a network gateway to your virtual lab"""
     # Network names must be unique. Prefixing the username is a simply hack
     click.secho('**NOTE**: Gateways can take 10-15 minutes to be created', bold=True)
-    body = {'wan': wan, 'lan': '{}_{}'.format(ctx.obj.username, lan)}
+    body = {'wan': wan, 'lan': '{}'.format(lan)}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/2/inf/gateway',
                         message='Creating a new default gateway',
