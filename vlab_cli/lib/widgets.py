@@ -13,8 +13,22 @@ import click
 NO_SCROLL_OUTPUT = False
 
 
+def to_timestamp(epoch):
+    """Return a human-friendly timestamp
+
+    :Returns: String
+
+    :param epoch: The EPOCH time to convert into a timestamp.
+    :type epoch: Integer
+    """
+    local_time = time.localtime(epoch)
+    time_format = '%Y-%m-%d %H:%M:%S %Z'
+    time_stamp = time.strftime(time_format, local_time)
+    return time_stamp
+
+
 def prompt(question, boolean=False, boolean_default=False):
-    """TODO
+    """Ask a user a question.
 
     :Returns: Boolean or String
 
