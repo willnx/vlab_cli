@@ -17,6 +17,7 @@ from vlab_cli.subcommands.create.ecs import ecs
 from vlab_cli.subcommands.create.portmap import portmap
 from vlab_cli.subcommands.create.snapshot import snapshot
 from vlab_cli.subcommands.create.esxi import esxi
+from vlab_cli.subcommands.create.dataiq import dataiq
 
 
 @click.group()
@@ -40,3 +41,4 @@ create.add_command(ecs)
 create.add_command(portmap)
 create.add_command(snapshot)
 create.add_command(esxi)
+create.add_command(dataiq)

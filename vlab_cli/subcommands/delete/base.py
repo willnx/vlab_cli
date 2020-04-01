@@ -18,6 +18,7 @@ from vlab_cli.subcommands.delete.ecs import ecs
 from vlab_cli.subcommands.delete.portmap import portmap
 from vlab_cli.subcommands.delete.snapshot import snapshot
 from vlab_cli.subcommands.delete.esxi import esxi
+from vlab_cli.subcommands.delete.dataiq import dataiq
 
 @click.group()
 def delete():
@@ -40,3 +41,4 @@ delete.add_command(ecs)
 delete.add_command(portmap)
 delete.add_command(snapshot)
 delete.add_command(esxi)
+delete.add_command(dataiq)

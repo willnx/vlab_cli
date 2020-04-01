@@ -18,6 +18,7 @@ from vlab_cli.subcommands.connect.icap import icap
 from vlab_cli.subcommands.connect.claritynow import claritynow
 from vlab_cli.subcommands.connect.ecs import ecs
 from vlab_cli.subcommands.connect.esxi import esxi
+from vlab_cli.subcommands.connect.dataiq import dataiq
 
 
 @click.group()
@@ -60,3 +61,4 @@ connect.add_command(icap)
 connect.add_command(claritynow)
 connect.add_command(ecs)
 connect.add_command(esxi)
+connect.add_command(dataiq)
