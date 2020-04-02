@@ -15,7 +15,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
               help='The version of DatIQ to create')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the DatIQ instance in your lab')
-@click.option('-s', '--static-ip',
+@click.option('-s', '--static-ip', cls=MandatoryOption,
               help='The static IP to assign your DataIQ instance')
 @click.option('-e', '--external-network', default='frontend', show_default=True,
               help='The public network to connect the new DatIQ instance to')
