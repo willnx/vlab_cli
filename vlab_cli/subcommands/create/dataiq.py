@@ -34,7 +34,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
 @click.pass_context
 def dataiq(ctx, name, image, external_network, external_netmask, default_gateway,
            dns_servers, static_ip, disk_size, cpu_count, ram):
-    """Create an instance of DatIQ"""
+    """Create an instance of DataIQ"""
     error = network_config_ok(static_ip, default_gateway, external_netmask)
     if error:
         raise click.ClickException(error)
