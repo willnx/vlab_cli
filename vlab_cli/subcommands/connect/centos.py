@@ -10,7 +10,7 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'console']),
+@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'console', 'rdp']),
               default='ssh', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,

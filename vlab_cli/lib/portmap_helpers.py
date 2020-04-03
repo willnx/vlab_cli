@@ -86,7 +86,7 @@ def get_component_protocols(vm_type):
     """
     proto_map = {
         'cee' : ['rdp'],
-        'centos': ['ssh'],
+        'centos': ['ssh', 'rdp'],
         'claritynow': ['ssh', 'https', 'rdp'],
         'ecs' : ['ssh', 'https'],
         'esrs' : ['ssh', 'https'],
