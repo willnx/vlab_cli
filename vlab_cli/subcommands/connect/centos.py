@@ -48,6 +48,8 @@ def centos(ctx, name, protocol):
             conn.ssh(port=conn_port)
         elif protocol == 'scp':
             conn.scp(port=conn_port)
+        elif protocol == 'rdp':
+            conn.rdp(port=conn_port)
         else:
             error = 'Unexpected protocol requested: {}'.format(protocol)
             raise RuntimeError(error)
