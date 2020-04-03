@@ -43,7 +43,7 @@ class MandatoryOption(Option):
 
     def handle_parse_result(self, ctx, opts, args):
         if self.name not in opts:
-            raise UsageError("CLI flag '{}' is required".format(self.name))
+            raise UsageError("CLI flag '--{}' is required".format(self.name.replace('_', '-')))
         return super(MandatoryOption, self).handle_parse_result(ctx, opts, args)
 
 
