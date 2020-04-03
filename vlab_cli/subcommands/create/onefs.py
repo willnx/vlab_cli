@@ -49,6 +49,8 @@ from vlab_cli.lib.widgets import Spinner, prompt, typewriter
               help='The subnet mask to use on the private/backend network')
 @click.option('-r', '--ram', show_default=True, default='4', type=click.Choice(['4', '6', '8', '10', '12']),
               help='The number of GB of RAM/memory to create a OneFS node with')
+@click.option('-p', '--cpu-count', default='2', type=click.Choice(['2', '4', '6', '8']),
+              help='The number of CPU cores to allocate to the vOneFS node')
 @click.option('--skip-config', is_flag=True, show_default=True,
               help='Do not auto-configure the new OneFS cluster')
 @click.option('--compliance', is_flag=True, show_default=True,
@@ -56,11 +58,12 @@ from vlab_cli.lib.widgets import Spinner, prompt, typewriter
 @click.pass_context
 def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
           internal_ip_range, default_gateway, smartconnect_ip, sc_zonename, dns_servers,
-          encoding, external_netmask, internal_netmask, ram, skip_config, compliance):
+          encoding, external_netmask, internal_netmask, ram, cpu_count, skip_config, compliance):
     """Create a vOneFS cluster. You will be prompted for any missing required parameters."""
     if node_count > 6:
         raise click.ClickException('You can only deploy a maximum of 6 nodes at a time')
     ram = int(ram) # Click only supports strings, but we want a number
+    cpu_count = int(cpu_count)
     if ram > 6 and node_count > 1:
         raise click.ClickException('Only single-node clusters can be created with more than 6 GB of RAM')
     tasks = {}
@@ -94,6 +97,7 @@ def onefs(ctx, name, image, node_count, external, internal, external_ip_range,
                         external=external,
                         internal=internal,
                         ram=ram,
+                        cpu_count=cpu_count,
                         vlab_api=ctx.obj.vlab_api)
     if not skip_config:
         config_nodes(cluster_name=name,
@@ -183,7 +187,7 @@ def _generate_ips(start_ip, end_ip):
     return ip_range
 
 
-def create_nodes(username, name, image, external, internal, node_count, ram, vlab_api):
+def create_nodes(username, name, image, external, internal, node_count, ram, cpu_count, vlab_api):
     """Concurrently make all nodes
 
     :Returns: Dictionary
@@ -206,6 +210,9 @@ def create_nodes(username, name, image, external, internal, node_count, ram, vla
     :param ram: The number of GB of ram/memory to create a OneFS node with
     :type ram: Integer
 
+    :param cpu_count: The number of CPU cores to allocate to the vOneFS node
+    :type cpu_count: Integer
+
     :param vlab_api: An instantiated connection to the vLab server
     :type vlab_api: vlab_cli.lib.api.vLabApi
     """
@@ -219,6 +226,7 @@ def create_nodes(username, name, image, external, internal, node_count, ram, vla
                     'frontend': external,
                     'backend': internal,
                     'ram': ram,
+                    'cpu-count': cpu_count,
                     }
             resp = vlab_api.post('/api/2/inf/onefs', json=body)
             tasks[node_name] = '/api/2/inf/onefs/task/{}'.format(resp.json()['content']['task-id'])
