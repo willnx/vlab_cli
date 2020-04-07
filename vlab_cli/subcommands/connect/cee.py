@@ -10,7 +10,7 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['rdp', 'console']),
+@click.option('-p', '--protocol', type=click.Choice(['rdp', 'console'], case_sensitive=False),
               default='rdp', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
