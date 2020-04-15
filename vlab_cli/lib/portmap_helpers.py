@@ -97,7 +97,8 @@ def get_component_protocols(vm_type):
         'windows': ['rdp'],
         'winserver': ['rdp'],
         'esxi': ['ssh', 'https'],
-        'dataiq': ['ssh', 'https', 'rdp']
+        'dataiq': ['ssh', 'https', 'rdp'],
+        'dns': ['ssh', 'rdp']
     }
     return proto_map[vm_type.lower()]
 

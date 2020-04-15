@@ -19,6 +19,7 @@ from vlab_cli.subcommands.connect.claritynow import claritynow
 from vlab_cli.subcommands.connect.ecs import ecs
 from vlab_cli.subcommands.connect.esxi import esxi
 from vlab_cli.subcommands.connect.dataiq import dataiq
+from vlab_cli.subcommands.connect.dns import dns
 
 
 @click.group()
@@ -62,3 +63,4 @@ connect.add_command(claritynow)
 connect.add_command(ecs)
 connect.add_command(esxi)
 connect.add_command(dataiq)
+connect.add_command(dns)

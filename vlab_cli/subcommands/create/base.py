@@ -18,6 +18,7 @@ from vlab_cli.subcommands.create.portmap import portmap
 from vlab_cli.subcommands.create.snapshot import snapshot
 from vlab_cli.subcommands.create.esxi import esxi
 from vlab_cli.subcommands.create.dataiq import dataiq
+from vlab_cli.subcommands.create.dns import dns
 
 
 @click.group()
@@ -42,3 +43,4 @@ create.add_command(portmap)
 create.add_command(snapshot)
 create.add_command(esxi)
 create.add_command(dataiq)
+create.add_command(dns)

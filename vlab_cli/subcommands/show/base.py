@@ -19,6 +19,7 @@ from vlab_cli.subcommands.show.portmap import portmap
 from vlab_cli.subcommands.show.snapshot import snapshot
 from vlab_cli.subcommands.show.esxi import esxi
 from vlab_cli.subcommands.show.dataiq import dataiq
+from vlab_cli.subcommands.show.dns import dns
 
 
 @click.group()
@@ -43,3 +44,4 @@ show.add_command(portmap)
 show.add_command(snapshot)
 show.add_command(esxi)
 show.add_command(dataiq)
+show.add_command(dns)
