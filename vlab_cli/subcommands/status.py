@@ -33,7 +33,11 @@ def status(ctx):
         vm_header = ['Name', 'IPs', 'Connectable', 'Type', 'Version', 'Powered', 'Networks']
         for vm in sorted(vm_info.keys()):
             params = {'name' : vm}
-            addr_info = ctx.obj.vlab_api.get('/api/1/ipam/addr', params=params).json()['content']
+            resp = ctx.obj.vlab_api.get('/api/1/ipam/addr', params=params, auto_check=False)
+            if resp.json()['error'] == None:
+                addr_info = resp.json()['content']
+            else:
+                addr_info = {}
             connectable = addr_info.get(vm, {}).get('routable', 'initializing')
             networks = ','.join(vm_info[vm].get('networks', ['?']))
             kind = vm_info[vm]['meta']['component']
