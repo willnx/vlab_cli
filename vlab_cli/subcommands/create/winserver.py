@@ -42,7 +42,7 @@ def winserver(ctx, name, image, external_network, external_netmask, default_gate
                         endpoint='/api/2/inf/winserver',
                         message='Creating a new instance of Microsoft Server {}'.format(image),
                         body=body,
-                        timeout=900,
+                        timeout=1800,
                         pause=5)
     data = resp.json()['content'][name]
     ipv4_addrs = get_ipv4_addrs(data['ips'])
