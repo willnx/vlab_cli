@@ -110,6 +110,9 @@ class vLabApi(object):
         headers.update(self._header)
         caller = getattr(self._session, method)
         resp = caller(url, headers=headers, verify=self._verify, **kwargs)
+        if resp.status_code == 503:
+            self._log.debug("Retrying API call")
+            resp = self._exponential_backoff(self, caller, url, headers, **kwargs)
         if not resp.ok and auto_check:
             self._log.debug("Call Failed: HTTP {}".format(resp.status_code))
             self._log.debug("Request ID: {}".format(self._header['X-REQUEST-ID']))
@@ -123,6 +126,23 @@ class vLabApi(object):
                 error = resp.reason
             raise click.ClickException(error)
         return resp
+
+    def _exponential_backoff(self, caller, url, headers, **kwargs):
+        """Retries the API call a several times until the response is not HTTP 503.
+        The delay between retrying grows exponentially.
+
+        :Returns: requests.Response
+        """
+        total_retries = 5
+        some_time = 1
+        for _ in range(total_retries):
+            time.sleep(some_time)
+            resp = caller(url, headers=headers, verify=self._verify, **kwargs)
+            if resp.status_code != 503:
+                break
+            some_time = some_time *  2
+        return resp, some_time
+
 
     def close(self):
         """Terminate the TCP connection with the vLab server"""
