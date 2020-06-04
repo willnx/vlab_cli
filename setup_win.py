@@ -11,9 +11,6 @@ from vlab_cli import version
 
 packages = ['pkg_resources', 'jwt', 'idna', 'vlab_cli', 'cryptography', 'cffi']
 
-if not '--add-to-path' in sys.argv:
-    sys.argv += ['--add-to-path', 'True']
-
 
 setup(name="vlab-cli",
       author="Nicholas Willhite",
@@ -33,5 +30,7 @@ setup(name="vlab-cli",
       install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography', 'colorama'],
       executables = [Executable('vlab', base=None, icon='vlab_icon.ico')],
       options = {'build_exe' : {'packages' : packages},
-                 'build_msi' : {'upgrade_code': '{4adf8ee9-526b-4b37-a9c3-c46f42de5a53}'}},
+                 'bdist_msi' : {'upgrade_code': '{4adf8ee9-526b-4b37-a9c3-c46f42de5a53}',
+                                'add_to_path': True,
+                                'install_icon': 'vlab_icon.ico'}},
       )
