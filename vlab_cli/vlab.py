@@ -18,6 +18,7 @@ from vlab_cli.lib import widgets
 from vlab_cli.lib.api import vLabApi
 from vlab_cli.lib.logger import get_logger
 from vlab_cli.lib.tokenizer import get_token
+from vlab_cli.lib.new_cli import handle_updates
 from vlab_cli.lib.configurizer import get_config, set_config
 from vlab_cli.lib.click_extras import GlobalContext, HiddenOption
 from vlab_cli.subcommands import status, token, init, create, delete, show, power, connect, apply
@@ -45,9 +46,10 @@ VLAB_USER = getuser()
 @click.option('--verbose', is_flag=True, help='Increase logging output')
 @click.option('--no-scroll', '-o', is_flag=True,
               help='Output messages all at once')
+@click.option('-s', '--skip-update-check', is_flag=True, help="Don't check for and updated vLab CLI")
 @click.option('--debug', is_flag=True, cls=HiddenOption)
 @click.pass_context
-def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, no_scroll, debug):
+def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, no_scroll, skip_update_check, debug):
     """CLI tool for interacting with your virtual lab"""
     log = get_logger(__name__, verbose=verbose, debug=debug)
     verify = not skip_verify # inverted because ``requests`` is 'opt-out' of hostname verification
@@ -73,6 +75,8 @@ def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, no_scroll, debug):
                             username=token_contents['username'], verify=verify,
                             token_contents=token_contents,
                             vlab_config=config)
+    log.info("Checking for updates")
+    handle_updates(vlab_api, config, skip_update_check)
     log.info('Calling sub-command')
 
 

@@ -25,5 +25,6 @@ setup(name="vlab-cli",
       description="Command Line Interface for vLab",
       long_description=open('README.rst').read(),
       entry_points={'console_scripts' : 'vlab=vlab_cli.vlab:cli'},
-      install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography', 'colorama'],
+      install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography',
+                        'colorama', 'beautifulsoup4'],
       )

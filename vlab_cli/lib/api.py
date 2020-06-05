@@ -80,6 +80,10 @@ class vLabApi(object):
         else:
             self._log = log
 
+    @property
+    def server(self):
+        return self._server
+
     def _call(self, method, endpoint, auto_check=True, **kwargs):
         """Does the actual HTTP API calling
 
