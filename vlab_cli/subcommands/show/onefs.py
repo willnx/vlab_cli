@@ -58,6 +58,7 @@ def get_formatted_table(images):
     header_c = ['8.2.1 (Acela)',
                 '8.2.2 (Beachcomber)',
                 '9.0.0 (Cascades)',
+                '9.1.0 (Deccan)'
                ]
     header_d = ['Update your vLab CLI']
     orca = sorted([x for x in images if '7.2.0' < x < '8.0.0.0' ])
@@ -71,10 +72,11 @@ def get_formatted_table(images):
     acela = sorted([x for x in images if '8.2.1' < x < '8.2.2.0'])
     beachcomber = sorted([x for x in images if '8.2.2' < x < '8.2.3.0'])
     cascades = sorted([x for x in images if '9.0.0.0' <= x < '9.1.0.0'])
-    net_new = sorted([x for x in images if '9.1.0' <= x])
+    deccan = sorted([x for x in images if '9.1.0' < x < '9.2.0.0'])
+    net_new = sorted([x for x in images if '9.2.0' <= x])
     table_a = columned_table(header_a, [orca, riptide, halfpipe, freight_train])
     table_b = columned_table(header_b, [niijima, kanagawa, seismic, pipeline])
-    table_c = columned_table(header_c, [acela, beachcomber, cascades])
+    table_c = columned_table(header_c, [acela, beachcomber, cascades, deccan])
     if net_new:
         table_d = columned_table(header_d, [net_new])
         table = '{}\n\n{}\n\n{}\n\n{}'.format(table_a, table_b, table_c, table_d)
