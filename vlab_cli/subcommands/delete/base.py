@@ -20,6 +20,8 @@ from vlab_cli.subcommands.delete.snapshot import snapshot
 from vlab_cli.subcommands.delete.esxi import esxi
 from vlab_cli.subcommands.delete.dataiq import dataiq
 from vlab_cli.subcommands.delete.dns import dns
+from vlab_cli.subcommands.delete.deployment import deployment
+from vlab_cli.subcommands.delete.template import template
 
 @click.group()
 def delete():
@@ -44,3 +46,5 @@ delete.add_command(snapshot)
 delete.add_command(esxi)
 delete.add_command(dataiq)
 delete.add_command(dns)
+delete.add_command(deployment)
+delete.add_command(template)

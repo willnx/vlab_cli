@@ -49,7 +49,7 @@ from vlab_cli.lib.widgets import Spinner, prompt, typewriter
               help='The subnet mask to use on the private/backend network')
 @click.option('-r', '--ram', show_default=True, default='4', type=click.Choice(['4', '6', '8', '10', '12']),
               help='The number of GB of RAM/memory to create a OneFS node with')
-@click.option('-p', '--cpu-count', default='2', type=click.Choice(['2', '4', '6', '8']),
+@click.option('-p', '--cpu-count', default='4', type=click.Choice(['2', '4', '6', '8']),
               help='The number of CPU cores to allocate to the vOneFS node')
 @click.option('--skip-config', is_flag=True, show_default=True,
               help='Do not auto-configure the new OneFS cluster')

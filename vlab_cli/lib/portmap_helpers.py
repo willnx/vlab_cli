@@ -144,6 +144,8 @@ def port_to_protocol(vm_type, port_number):
     elif port_number == 443 and vm_type.lower() == 'esrs':
         # Fix for https://github.com/willnx/vlab/issues/61
         return 'HTTPS'
+    elif is_https(port_number):
+        return 'HTTPS'
     else:
         raise RuntimeError('Unexpected port number: {}'.format(port_number))
 
@@ -170,6 +172,9 @@ def https_to_port(vm_type):
     except KeyError:
         answer = None
     return answer
+
+def is_https(port):
+    return port in [443, 9443, 8080]
 
 
 def get_ipv4_addrs(ips):

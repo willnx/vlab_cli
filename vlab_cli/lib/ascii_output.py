@@ -27,6 +27,32 @@ def format_machine_info(vlab_api, info):
     return tabulate(rows, tablefmt='plain')
 
 
+def deployment_table(name, details, verbose=False):
+    """Create an ASCII table displaying information about a deployment template.
+
+    :Returns: String
+
+    :param name: The name of the deployment template
+    :type name: String
+
+    :param details: Additional information about the template
+    :type details: Dictionary
+
+    :param verbose: Show extra information about the template.
+    :type verbose: Boolean
+    """
+    owner = '{} {}'.format(details['owner'], details['email'])
+    title = 'Name    : {}\nOwner   : {}\nSummary : {}'.format(name, owner, details['summary'])
+    if verbose:
+        header = ['Component', 'IP']
+        body = [[x, details['machines'][x]['ip']] for x in details['machines'].keys()]
+        components = '{}\n'.format(tabulate(body, headers=header, tablefmt='presto'))
+    else:
+        components = ''
+    return '{}\n{}'.format(title, components)
+
+
+
 def vm_table_view(vlab_api, info):
     """Create an ASCII table displaying information about virtual machines
 

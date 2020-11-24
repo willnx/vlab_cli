@@ -19,6 +19,9 @@ from vlab_cli.subcommands.create.snapshot import snapshot
 from vlab_cli.subcommands.create.esxi import esxi
 from vlab_cli.subcommands.create.dataiq import dataiq
 from vlab_cli.subcommands.create.dns import dns
+from vlab_cli.subcommands.create.deployment import deployment
+from vlab_cli.subcommands.create.template import template
+
 
 
 @click.group()
@@ -44,3 +47,5 @@ create.add_command(snapshot)
 create.add_command(esxi)
 create.add_command(dataiq)
 create.add_command(dns)
+create.add_command(deployment)
+create.add_command(template)
