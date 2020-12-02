@@ -22,7 +22,6 @@ def deployment(ctx, image):
                         timeout=3600,
                         pause=20)
     data = resp.json()['content']
-    click.echo(data)
     typewriter("Successfully created the following machines:")
     click.echo('\t{}'.format('\n\t'.join(data.keys())))
     typewriter("\nUse 'vlab connect deployment --name <name> --protocol <protocol>' to access a deployed machine")
