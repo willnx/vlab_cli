@@ -21,6 +21,7 @@ from vlab_cli.subcommands.connect.esxi import esxi
 from vlab_cli.subcommands.connect.dataiq import dataiq
 from vlab_cli.subcommands.connect.dns import dns
 from vlab_cli.subcommands.connect.deployment import deployment
+from vlab_cli.subcommands.connect.avamar import avamar
 
 
 @click.group()
@@ -66,3 +67,4 @@ connect.add_command(esxi)
 connect.add_command(dataiq)
 connect.add_command(dns)
 connect.add_command(deployment)
+connect.add_command(avamar)

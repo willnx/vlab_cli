@@ -98,7 +98,8 @@ def get_component_protocols(vm_type):
         'winserver': ['rdp'],
         'esxi': ['ssh', 'https'],
         'dataiq': ['ssh', 'https', 'rdp'],
-        'dns': ['ssh', 'rdp']
+        'dns': ['ssh', 'rdp'],
+        'avamar': ['ssh', 'https']
     }
     return proto_map[vm_type.lower()]
 
@@ -166,6 +167,7 @@ def https_to_port(vm_type):
         'onefs' : 8080,
         'esxi' : 443,
         'dataiq' : 443,
+        'avamar' : 7543,
     }
     try:
         answer =  port_map[vm_type.lower()]
@@ -174,7 +176,7 @@ def https_to_port(vm_type):
     return answer
 
 def is_https(port):
-    return port in [443, 9443, 8080]
+    return port in [443, 9443, 8080, 7543]
 
 
 def get_ipv4_addrs(ips):

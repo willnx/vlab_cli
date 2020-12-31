@@ -21,7 +21,7 @@ from vlab_cli.subcommands.create.dataiq import dataiq
 from vlab_cli.subcommands.create.dns import dns
 from vlab_cli.subcommands.create.deployment import deployment
 from vlab_cli.subcommands.create.template import template
-
+from vlab_cli.subcommands.create.avamar import avamar
 
 
 @click.group()
@@ -49,3 +49,4 @@ create.add_command(dataiq)
 create.add_command(dns)
 create.add_command(deployment)
 create.add_command(template)
+create.add_command(avamar)
