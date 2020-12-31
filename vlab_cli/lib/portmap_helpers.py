@@ -121,7 +121,16 @@ def get_protocol_port(vm_type, protocol):
         port = 22
     elif protocol == 'rdp':
         port = 3389
+    elif protocol == 'mgmt':
+        port = get_mgmt_port(vm_type)
     return port
+
+def get_mgmt_port(vm_type):
+    """Because some systems have an HTTPS based management interface."""
+    mgmt_port_map = {
+        'avamar' : 7543
+    }
+    return mgmt_port_map.get(vm_type.lower(), None)
 
 
 def port_to_protocol(vm_type, port_number):
@@ -167,7 +176,7 @@ def https_to_port(vm_type):
         'onefs' : 8080,
         'esxi' : 443,
         'dataiq' : 443,
-        'avamar' : 7543,
+        'avamar' : 443,
     }
     try:
         answer =  port_map[vm_type.lower()]

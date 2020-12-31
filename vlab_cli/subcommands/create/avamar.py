@@ -7,7 +7,7 @@ from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.widgets import typewriter
 from vlab_cli.lib.click_extras import MandatoryOption
 from vlab_cli.lib.ascii_output import format_machine_info
-from vlab_cli.lib.portmap_helpers import get_protocol_port
+from vlab_cli.lib.portmap_helpers import get_protocol_port, get_mgmt_port
 
 
 @click.command()
@@ -49,16 +49,20 @@ def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_s
     data = resp.json()['content'][name]
     vm_type = data['meta']['component']
     with Spinner('Creating port mapping rules for HTTPS and SSH'):
+        mgmt_port = get_mgmt_port(vm_type)
+        mgmt_payload = {'target_addr' : static_ip, 'target_port' : mgmt_port,
+                        'target_name' : name, 'target_component' : vm_type}
         https_port = get_protocol_port(vm_type, 'https')
         https_payload = {'target_addr' : static_ip, 'target_port' : https_port,
                          'target_name' : name, 'target_component' : vm_type}
         ssh_payload = {'target_addr' : static_ip, 'target_port' : 22,
                        'target_name' : name, 'target_component' : vm_type}
+        ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=mgmt_payload)
         ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=https_payload)
         ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=ssh_payload)
 
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
-    msg = "Use vlab connect avamar --name {}' to access your new Avamar Server\n".format(name)
+    msg = "Use 'vlab connect avamar --name {} --protocol mgmt' to setup your new Avamar Server\n".format(name)
     msg += "The default credentials are 'root' and 'changme'".format(name)
     typewriter(msg)

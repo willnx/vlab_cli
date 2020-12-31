@@ -10,7 +10,7 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'https', 'console'], case_sensitive=False),
+@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'https', 'console', 'mgmt'], case_sensitive=False),
               default='https', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
@@ -50,6 +50,8 @@ def avamar(ctx, name, protocol):
             conn.https(port=conn_port)
         elif protocol == 'scp':
             conn.scp(port=conn_port)
+        elif protocol == 'mgmt':
+            conn.https(port=conn_port)
         else:
             error = 'Unexpected protocol requested: {}'.format(protocol)
             raise RuntimeError(error)
