@@ -45,12 +45,14 @@ class Connectorizer(object):
         syntax = self._ssh_str.format(self._gateway_ip, port)
         self.execute_client(syntax, 'SSH')
 
-    def https(self, port, url=None):
+    def https(self, port, url='', endpoint=''):
         """Open a session via HTTPS in a new client"""
         if url:
             url = url[8:] # strip of redundant https://
             syntax = self._https_str.format(url, '')
             syntax = syntax[:-1] # strip off tailing :
+        elif endpoint:
+            syntax = self._https_str.format(self._gateway_ip, port) + endpoint
         else:
             syntax = self._https_str.format(self._gateway_ip, port)
         self.execute_client(syntax, 'Browser')

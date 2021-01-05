@@ -47,7 +47,8 @@ def avamar(ctx, name, protocol):
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
         elif protocol == 'https':
-            conn.https(port=conn_port)
+            click.secho("WARNING: Some parts of the Avamar WebUI only work from inside your lab.", bold=True)
+            conn.https(port=conn_port, endpoint='/dtlt/home.html')
         elif protocol == 'scp':
             conn.scp(port=conn_port)
         elif protocol == 'mgmt':
