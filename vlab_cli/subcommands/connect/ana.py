@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for connecting to an Avamar instance"""
+"""Defines the CLI for connecting to an Avamar NDMP Accelerator"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -10,21 +10,21 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
 
 
 @click.command()
-@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'https', 'console', 'mgmt'], case_sensitive=False),
+@click.option('-p', '--protocol', type=click.Choice(['ssh', 'scp', 'console', 'mgmt'], case_sensitive=False),
               default='https', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the Avamar instance to connect to')
+              help='The name of the Avamar NDMP Accelerator to connect to')
 @click.pass_context
-def avamar(ctx, name, protocol):
-    """Connect to an Avamar server"""
+def ana(ctx, name, protocol):
+    """Connect to an Avamar NDMP Accelerator"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/2/inf/avamar/server',
+                            endpoint='/api/2/inf/avamar/ndmp-accelerator',
                             message='Looking up connection info for {}'.format(name),
                             method='GET').json()
         if not info['content'].get(name, None):
-            error = 'No Avamar server named {} found'.format(name)
+            error = 'No Avamar NDMP Accelerator named {} found'.format(name)
             raise click.ClickException(error)
         else:
             vm_moid = info['content'][name].get('moid', 'n/a')
@@ -46,9 +46,6 @@ def avamar(ctx, name, protocol):
         conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
-        elif protocol == 'https':
-            click.secho("WARNING: Some parts of the Avamar WebUI only work from inside your lab.", bold=True)
-            conn.https(port=conn_port, endpoint='/dtlt/home.html')
         elif protocol == 'scp':
             conn.scp(port=conn_port)
         elif protocol == 'mgmt':

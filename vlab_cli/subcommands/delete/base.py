@@ -23,6 +23,7 @@ from vlab_cli.subcommands.delete.dns import dns
 from vlab_cli.subcommands.delete.deployment import deployment
 from vlab_cli.subcommands.delete.template import template
 from vlab_cli.subcommands.delete.avamar import avamar
+from vlab_cli.subcommands.delete.ana import ana
 
 
 @click.group()
@@ -51,3 +52,4 @@ delete.add_command(dns)
 delete.add_command(deployment)
 delete.add_command(template)
 delete.add_command(avamar)
+delete.add_command(ana)

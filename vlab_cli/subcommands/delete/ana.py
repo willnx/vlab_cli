@@ -9,14 +9,14 @@ from vlab_cli.lib.click_extras import MandatoryOption
 
 @click.command()
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the Avamar server in your lab')
+              help='The name of the Avamar NDMP Accelerator in your lab')
 @click.pass_context
-def avamar(ctx, name):
-    """Delete an Avamar server"""
+def ana(ctx, name):
+    """Delete an Avamar NDMP Accelerator"""
     body = {'name': name}
     consume_task(ctx.obj.vlab_api,
-                 endpoint='/api/2/inf/avamar/server',
-                 message='Destroying Avamar server named {}'.format(name),
+                 endpoint='/api/2/inf/avamar/ndmp-accelerator',
+                 message='Destroying Avamar NDMP Accelerator named {}'.format(name),
                  body=body,
                  method='DELETE')
     with Spinner('Deleting port mapping rules'):

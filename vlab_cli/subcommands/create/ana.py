@@ -11,10 +11,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port, get_component_protoc
 
 
 @click.command()
-@click.option('-i', '--image', default='19.3.0.149', show_default=True,
-              help='The version of Avamar to create')
+@click.option('-i', '--image', default='19.4.0.116', show_default=True,
+              help='The version of Avamar NDMP Accelerators to create')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the Avamar server in your lab')
+              help='The name of the Avamar NDMP Accelerators in your lab')
 @click.option('-s', '--static-ip', cls=MandatoryOption,
               help='The static IP to assign your DNS server')
 @click.option('-m', '--external-netmask', default='255.255.255.0', show_default=True,
@@ -28,8 +28,8 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port, get_component_protoc
 @click.option('-e', '--external-network', default='frontend', show_default=True,
               help='The public network to connect the new Microsoft Server to')
 @click.pass_context
-def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_servers, domain, external_network):
-    """Create a new Avamar server."""
+def ana(ctx, name, image, static_ip, external_netmask, default_gateway, dns_servers, domain, external_network):
+    """Create a new Avamar NDMP accelerator."""
     body = {'network': external_network,
             'name': name,
             'image': image,
@@ -41,8 +41,8 @@ def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_s
                          }
             }
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/2/inf/avamar/server',
-                        message='Creating a new Avamar Server running version {}'.format(image),
+                        endpoint='/api/2/inf/avamar/ndmp-accelerator',
+                        message='Creating a new Avamar NDMP accelerator running version {}'.format(image),
                         body=body,
                         timeout=1800,
                         pause=5)
@@ -55,6 +55,7 @@ def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_s
             payload = {'target_addr' : static_ip, 'target_port' : port,
                        'target_name' : name, 'target_component' : vm_type}
             ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=payload)
+
 
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)

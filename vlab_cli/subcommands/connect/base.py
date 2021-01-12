@@ -22,6 +22,7 @@ from vlab_cli.subcommands.connect.dataiq import dataiq
 from vlab_cli.subcommands.connect.dns import dns
 from vlab_cli.subcommands.connect.deployment import deployment
 from vlab_cli.subcommands.connect.avamar import avamar
+from vlab_cli.subcommands.connect.ana import ana
 
 
 @click.group()
@@ -68,3 +69,4 @@ connect.add_command(dataiq)
 connect.add_command(dns)
 connect.add_command(deployment)
 connect.add_command(avamar)
+connect.add_command(ana)

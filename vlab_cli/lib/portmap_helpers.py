@@ -99,7 +99,8 @@ def get_component_protocols(vm_type):
         'esxi': ['ssh', 'https'],
         'dataiq': ['ssh', 'https', 'rdp'],
         'dns': ['ssh', 'rdp'],
-        'avamar': ['ssh', 'https']
+        'avamar': ['ssh', 'https', 'mgmt'],
+        'avamarndmp' : ['ssh', 'mgmt']
     }
     return proto_map[vm_type.lower()]
 
@@ -123,12 +124,15 @@ def get_protocol_port(vm_type, protocol):
         port = 3389
     elif protocol == 'mgmt':
         port = get_mgmt_port(vm_type)
+    else:
+        raise RuntimeError("Unknown port for {} {}".format(vm_type, protocols))
     return port
 
 def get_mgmt_port(vm_type):
     """Because some systems have an HTTPS based management interface."""
     mgmt_port_map = {
-        'avamar' : 7543
+        'avamar' : 7543,
+        'avamarndmp' : 7543,
     }
     return mgmt_port_map.get(vm_type.lower(), None)
 
