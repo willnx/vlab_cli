@@ -20,11 +20,11 @@ def deployment(ctx, name, protocol):
     """Connect to a deployed machine"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
-                            endpoint='/api/2/inf/centos',
+                            endpoint='/api/2/inf/deployment',
                             message='Looking up connection info for {}'.format(name),
                             method='GET').json()
         if not info['content'].get(name, None):
-            error = 'No CentOS VM named {} found'.format(name)
+            error = 'No Deployment VM named {} found'.format(name)
             raise click.ClickException(error)
         else:
             vm_moid = info['content'][name].get('moid', 'n/a')
