@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for creating a DatIQ instance"""
+"""Defines the CLI for creating a DataIQ instance"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -12,13 +12,13 @@ from vlab_cli.lib.ascii_output import format_machine_info
 
 @click.command()
 @click.option('-i', '--image', default='1.0.0', show_default=True,
-              help='The version of DatIQ to create')
+              help='The version of DataIQ to create')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the DatIQ instance in your lab')
+              help='The name of the DataIQ instance in your lab')
 @click.option('-s', '--static-ip', cls=MandatoryOption,
               help='The static IP to assign your DataIQ instance')
 @click.option('-e', '--external-network', default='frontend', show_default=True,
-              help='The public network to connect the new DatIQ instance to')
+              help='The public network to connect the new DataIQ instance to')
 @click.option('-m', '--external-netmask', default='255.255.255.0', show_default=True,
               help='The subnet mask to use on the public network')
 @click.option('-g', '--default-gateway', default='192.168.1.1', show_default=True,

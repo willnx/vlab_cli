@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for creating a DatIQ instance"""
+"""Defines the CLI for creating a DNS instance"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -12,9 +12,9 @@ from vlab_cli.lib.ascii_output import format_machine_info
 
 @click.command()
 @click.option('-i', '--image', default='Windows2019', show_default=True,
-              help='The version of DatIQ to create')
+              help='The version of DNS to create')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the DatIQ instance in your lab')
+              help='The name of the DNS instance in your lab')
 @click.option('-s', '--static-ip', cls=MandatoryOption,
               help='The static IP to assign your DNS server')
 @click.option('-e', '--external-network', default='frontend', show_default=True,

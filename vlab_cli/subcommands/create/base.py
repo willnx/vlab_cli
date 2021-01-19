@@ -23,6 +23,7 @@ from vlab_cli.subcommands.create.deployment import deployment
 from vlab_cli.subcommands.create.template import template
 from vlab_cli.subcommands.create.avamar import avamar
 from vlab_cli.subcommands.create.ana import ana
+from vlab_cli.subcommands.create.dd import dd
 
 
 @click.group()
@@ -52,3 +53,4 @@ create.add_command(deployment)
 create.add_command(template)
 create.add_command(avamar)
 create.add_command(ana)
+create.add_command(dd)

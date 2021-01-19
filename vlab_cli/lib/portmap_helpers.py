@@ -100,7 +100,8 @@ def get_component_protocols(vm_type):
         'dataiq': ['ssh', 'https', 'rdp'],
         'dns': ['ssh', 'rdp'],
         'avamar': ['ssh', 'https', 'mgmt'],
-        'avamarndmp' : ['ssh', 'mgmt']
+        'avamarndmp' : ['ssh', 'mgmt'],
+        'datadomain' : ['ssh', 'https']
     }
     return proto_map[vm_type.lower()]
 
@@ -181,6 +182,7 @@ def https_to_port(vm_type):
         'esxi' : 443,
         'dataiq' : 443,
         'avamar' : 443,
+        'datadomain' : 443,
     }
     try:
         answer =  port_map[vm_type.lower()]

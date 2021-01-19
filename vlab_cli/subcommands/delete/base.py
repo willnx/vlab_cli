@@ -24,6 +24,7 @@ from vlab_cli.subcommands.delete.deployment import deployment
 from vlab_cli.subcommands.delete.template import template
 from vlab_cli.subcommands.delete.avamar import avamar
 from vlab_cli.subcommands.delete.ana import ana
+from vlab_cli.subcommands.delete.dd import dd
 
 
 @click.group()
@@ -53,3 +54,4 @@ delete.add_command(deployment)
 delete.add_command(template)
 delete.add_command(avamar)
 delete.add_command(ana)
+delete.add_command(dd)

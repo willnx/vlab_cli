@@ -24,6 +24,7 @@ from vlab_cli.subcommands.show.deployment import deployment
 from vlab_cli.subcommands.show.template import template
 from vlab_cli.subcommands.show.avamar import avamar
 from vlab_cli.subcommands.show.ana import ana
+from vlab_cli.subcommands.show.dd import dd
 
 
 @click.group()
@@ -53,3 +54,4 @@ show.add_command(deployment)
 show.add_command(template)
 show.add_command(avamar)
 show.add_command(ana)
+show.add_command(dd)
