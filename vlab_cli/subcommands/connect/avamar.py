@@ -14,9 +14,11 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               default='https', show_default=True,
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the Avamar instance to connect to')
+              help='The name of the Avamar server to connect to')
+@click.option('-u', '--user', default='root',
+              help='The name of the user to connect to the Avamar server as.')
 @click.pass_context
-def avamar(ctx, name, protocol):
+def avamar(ctx, name, protocol, user):
     """Connect to an Avamar server"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -43,7 +45,7 @@ def avamar(ctx, name, protocol):
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
 
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
+        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
         elif protocol == 'https':

@@ -15,8 +15,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the network Router to connect to')
+@click.option('-u', '--user', default='administrator',
+              help='The name of the user to connect to the network Router as.')
 @click.pass_context
-def router(ctx, name, protocol):
+def router(ctx, name, protocol, user):
     """Connect to the console of a network router"""
     # Router only supports console access
     if protocol == 'console':
@@ -29,7 +31,7 @@ def router(ctx, name, protocol):
             raise click.ClickException(error)
         else:
             vm_moid = info['content'][name].get('moid', 'n/a')
-        conn = Connectorizer(ctx.obj.vlab_config, gateway_ip='n/a')
+        conn = Connectorizer(ctx.obj.vlab_config, gateway_ip='n/a', user=user)
         conn.console(vm_moid)
     else:
         error = 'Unexpected connection protocol supplied'

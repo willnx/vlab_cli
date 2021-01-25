@@ -34,10 +34,10 @@ CONFIG_FILE = os.path.join(CONFIG_DIR, 'config.ini')
 CONFIG_SECTIONS = {'SSH', 'RDP', 'BROWSER', 'SCP', 'CONSOLE'}
 
 def _get_platform_progs():
-    base = ['chrome', 'firefox', 'vmrc']
+    base = ['chrome', 'firefox', 'vmrc', 'filezilla']
     this_os = platform.system().lower()
     if this_os == 'windows':
-        base += ['putty', 'mstsc', 'winscp', 'SecureCRT']
+        base += ['putty', 'mstsc', 'winscp', 'SecureCRT', 'windows-terminal']
     else:
         base += ['gnome-terminal', 'remmina', 'scp']
     return base
@@ -89,11 +89,11 @@ def find_programs():
     if this_os == 'windows':
         search_root = 'C:\\'
         support_programs = {'putty.exe', 'mstsc.exe', 'firefox.exe', 'chrome.exe',
-                            'winscp.exe', 'securecrt.exe', 'vmrc.exe'}
+                            'winscp.exe', 'securecrt.exe', 'vmrc.exe', 'wt.exe', 'filezilla.exe'}
     else:
         search_root = '/'
         support_programs = {'gnome-terminal', 'remmina', 'firefox', 'chrome',
-                            'scp', 'vmrc'}
+                            'scp', 'vmrc', 'filezilla'}
 
     found_programs = {}
     for root, dirs, files in os.walk(search_root):

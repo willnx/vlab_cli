@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 """Help users with the ``vlab connect`` command"""
+import os
 import platform
 
 import click
@@ -27,7 +28,9 @@ def invoke_config():
     typewriter("Based on your OS, I can use the following:")
     typewriter(", ".join(configurizer.SUPPORTED_PROGS))
     if the_os == 'windows':
-        typewriter("\nNote: mstsc is the default RDP client that comes with Windows")
+        typewriter("\nNote: 'wt' is short for Windows Terminal, which also requires 'ssh' to be installed.")
+        typewriter("Note: mstsc is the default RDP client that comes with Windows")
+
     typewriter('\nIf you do not have the SSH, RDP, SCP and VMRC clients as well as a supported browser')
     typewriter("installed you'll be wasting time by continuing with this config setup.")
     keep_going = prompt("Continue with config setup? [Yes/no]", boolean=True, boolean_default=True)
@@ -35,16 +38,33 @@ def invoke_config():
         raise RuntimeError("vlab connect prerequisites not met")
     with Spinner('Great! Give me a couple of minutes to find those programs'):
         found_programs = configurizer.find_programs()
-        firefox = found_programs.get('firefox', False)
-        chrome = found_programs.get('chrome', False)
-        putty = found_programs.get('putty', False)
-        secure_crt = found_programs.get('securecrt', False)
+        firefox = found_programs.get('firefox', '')
+        chrome = found_programs.get('chrome', '')
+        putty = found_programs.get('putty', '')
+        secure_crt = found_programs.get('securecrt', '')
+        windows_term = found_programs.get('wt', '')
+        winscp = found_programs.get('winscp', '')
+        filezilla = found_programs.get('filezilla', '')
+        scp = found_programs.get('scp', '')
+
+    browsers = [x for x in [firefox, chrome] if x]
     if firefox and chrome:
-        forget_browser = which_browser()
-        found_programs.pop(forget_browser)
-    if putty and secure_crt:
-        forget_ssh = which_ssh()
-        found_programs.pop(forget_ssh)
+        forget_browsers = which_client(browsers, 'Browser')
+        for browser in forget_browsers:
+            found_programs.pop(browser)
+
+    scp_clients = [x for x in [winscp, filezilla, scp] if x]
+    if len(scp_clients) > 1:
+        forget_scp = which_client(scp_clients, 'SCP')
+        for scp_client in forget_scp:
+            found_programs.pop(scp_client)
+
+    ssh_clients = [x for x in [putty, secure_crt, windows_term] if x]
+    if len(ssh_clients) > 1:
+        forget_ssh_clients = which_client(ssh_clients, 'SSH')
+        for ssh_client in forget_ssh_clients:
+            found_programs.pop(ssh_client)
+
     if len(found_programs) != 5:
         # They are missing some dependency...
         if the_os == 'windows':
@@ -72,7 +92,7 @@ def _make_config(found_programs):
             new_config['SSH'] = {'agent': agent, 'location': prog_path}
         elif agent in ('firefox', 'chrome'):
             new_config['BROWSER'] = {'agent' : agent, 'location': prog_path}
-        elif agent.lower() in ('scp', 'winscp'):
+        elif agent.lower() in ('scp', 'winscp', 'filezilla'):
             new_config['SCP'] = {'agent': agent, 'location': prog_path}
         elif agent.lower() in ('mstsc', 'remmina'):
             new_config['RDP'] = {'agent': agent, 'location': prog_path}
@@ -83,27 +103,15 @@ def _make_config(found_programs):
     return new_config
 
 
-def which_browser():
-    """If a user has multiple browsers, prompt them about which one to use"""
-    typewriter('Looks like you have both Firefox and Chrome installed.')
-    choice_question = "Which do you prefer? [chrome/firefox]"
-    confirm_question = "Ok, use {}? [yes/No]"
-    answer = prompt_and_confirm(choice_question, confirm_question)
-    # The answer is which to not use, but people have a hard time with negative questions
-    if answer.startswith('f'):
-        return 'chrome'
-    else:
-        return 'firefox'
-
-
-def which_ssh():
+def which_client(clients, kind):
     """If a user has multiple SSH clients, prompt them about which one to use"""
-    typewriter('Looks like you have both Putty and SecureCRT installed.')
-    choice_question = "Which do you prefer? [Putty/SecureCRT]"
+    typewriter('Looks like you have several {} clients installed installed.'.format(kind))
+    choices = [os.path.splitext(os.path.basename(x))[0] for x in clients]
+    choice_question = "Which do you prefer? [{}]".format('/'.join([x.title() for x in choices]))
     confirm_question = "Ok, use {}? [yes/No]"
-    answer = prompt_and_confirm(choice_question, confirm_question)
-    # The answer is which to not use, but people have a hard time with negative questions
-    if answer.lower().startswith('p'):
-        return 'securecrt'
-    else:
-        return 'putty'
+    answer = prompt_and_confirm(choice_question, confirm_question).lower()
+    while answer not in choices:
+        typewriter('Invalid choice: {}'.format(answer))
+        answer = prompt_and_confirm(choice_question, confirm_question).lower()
+    losers = [x for x in choices if not x.startswith(answer)]
+    return losers

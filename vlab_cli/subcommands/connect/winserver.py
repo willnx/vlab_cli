@@ -15,8 +15,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the Microsoft Server to connect to')
+@click.option('-u', '--user', default='administrator',
+              help='The name of the user to connect to the Microsoft Server as.')
 @click.pass_context
-def winserver(ctx, name, protocol):
+def winserver(ctx, name, protocol, user):
     """Connect to a Microsoft Server instance"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -43,5 +45,5 @@ def winserver(ctx, name, protocol):
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
 
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
+        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         conn.rdp(port=conn_port)

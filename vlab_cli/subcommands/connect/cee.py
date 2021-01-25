@@ -15,8 +15,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the CEE instance to connect to')
+@click.option('-u', '--user', default='administrator',
+              help='The name of the user to connect to the EMC Common Event Enabler as.')
 @click.pass_context
-def cee(ctx, name, protocol):
+def cee(ctx, name, protocol, user):
     """Connect to a EMC Common Event Enabler instance"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -43,5 +45,5 @@ def cee(ctx, name, protocol):
         if not conn_port:
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
+        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         conn.rdp(port=conn_port)

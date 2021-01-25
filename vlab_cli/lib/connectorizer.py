@@ -15,23 +15,33 @@ class Connectorizer(object):
     :param config: The vLab config file
     :type config: configparser.ConfigParser
     """
-    def __init__(self, config, gateway_ip):
+    def __init__(self, config, gateway_ip, user='root'):
         self.config = config
         self._gateway_ip = gateway_ip
         if config['SSH']['agent'] == 'putty':
             self._ssh_str = '%s -ssh {} -P {}' % config['SSH']['location']
         elif config['SSH']['agent'] == 'securecrt':
             self._ssh_str = '%s /SSH2 {} /P {}' % config['SSH']['location']
+        elif config['SSH']['agent'] == 'wt':
+            self._ssh_str = '%s new-tab ssh %s@{} -p {}' % (config['SSH']['location'], user)
+        elif config['SSH']['agent'] == 'gnome-terminal':
+            self._ssh_str = '%s -- ssh %s@{} -p {}' % (config['SSH']['location'], user)
         else:
-            self._ssh_str = '%s -- /bin/bash -c "ssh {} -p {}"' % config['SSH']['location']
+            error = 'Unknown SSH agent: %s' % config['SSH']['agent']
+            raise RuntimeError(error)
         # Chrome and Firefox has the same syntax! :D
         self._https_str = '%s --new-window https://{}:{}' % config['BROWSER']['location']
+
         if config['SCP']['agent'] == 'winscp':
             self._scp_str = '%s scp://{}:{}' % config['SCP']['location']
+            self._scp_open = True
+        elif config['SCP']['agent'] == 'filezilla':
+            self._scp_str = '%s sftp://%s:{}@{}:{}' % (config['SSH']['location'], user)
             self._scp_open = True
         else:
             self._scp_str = 'scp -P {} USER@{} FILE1 FILE2'
             self._scp_open = False
+
         if config['RDP']['agent'] == 'mstsc':
             self._rdp_str = '%s /v:{}:{} /w:1920 /h:1080' % config['RDP']['location']
         else:

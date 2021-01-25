@@ -15,8 +15,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the Windows Desktop client to connect to')
+@click.option('-u', '--user', default='administrator',
+              help='The name of the user to connect to the Windows Desktop client as.')
 @click.pass_context
-def windows(ctx, name, protocol):
+def windows(ctx, name, protocol, user):
     """Connect to a Windows Desktop client"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -43,5 +45,5 @@ def windows(ctx, name, protocol):
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
 
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
+        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         conn.rdp(port=conn_port)

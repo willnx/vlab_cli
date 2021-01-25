@@ -15,8 +15,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The protocol to connect with')
 @click.option('-n', '--name', cls=MandatoryOption,
               help='The name of the Data Domain server to connect to')
+@click.option('-u', '--user', default='sysadmin',
+              help='The name of the user to connect to the Data Domain server as.')
 @click.pass_context
-def dd(ctx, name, protocol):
+def dd(ctx, name, protocol, user):
     """Connect to an Data Domain server"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -43,7 +45,7 @@ def dd(ctx, name, protocol):
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
 
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'])
+        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
         elif protocol == 'https':
