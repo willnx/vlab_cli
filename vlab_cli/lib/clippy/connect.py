@@ -43,7 +43,7 @@ def invoke_config():
         putty = found_programs.get('putty', '')
         secure_crt = found_programs.get('securecrt', '')
         windows_term = found_programs.get('wt', '')
-        winscp = found_programs.get('winscp', '')
+        winscp = found_programs.get('winscp', '').lower()
         filezilla = found_programs.get('filezilla', '')
         scp = found_programs.get('scp', '')
 
@@ -88,7 +88,7 @@ def _make_config(found_programs):
     """
     new_config = {}
     for agent, prog_path in found_programs.items():
-        if agent.lower() in ('putty', 'gnome-terminal', 'securecrt'):
+        if agent.lower() in ('putty', 'gnome-terminal', 'securecrt', 'wt'):
             new_config['SSH'] = {'agent': agent, 'location': prog_path}
         elif agent in ('firefox', 'chrome'):
             new_config['BROWSER'] = {'agent' : agent, 'location': prog_path}
