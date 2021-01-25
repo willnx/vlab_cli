@@ -97,8 +97,15 @@ class Connectorizer(object):
         :type kind: String
         """
         client_path = self.config[kind.upper()]['location']
-        if not os.path.isfile(client_path):
+        if not isfile(client_path):
             printerr('{} client not found at {}'.format(kind, client_path))
             printerr('Please update your $HOME/.vlab/config.ini to resolve')
         else:
             subprocess.Popen(syntax.split(' '))
+
+
+def is_file(path):
+    """Because Python on Windows fails for archive links (which are files...)"""
+    directory = os.path.dirname(path)
+    the_file = os.path.basename(path)
+    return the_file in os.listdir(directory)
