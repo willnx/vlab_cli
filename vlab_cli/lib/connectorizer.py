@@ -15,7 +15,7 @@ class Connectorizer(object):
     :param config: The vLab config file
     :type config: configparser.ConfigParser
     """
-    def __init__(self, config, gateway_ip, user='root'):
+    def __init__(self, config, gateway_ip, user='root', password='a'):
         self.config = config
         self._gateway_ip = gateway_ip
         if config['SSH']['agent'] == 'putty':
@@ -33,10 +33,10 @@ class Connectorizer(object):
         self._https_str = '%s --new-window https://{}:{}' % config['BROWSER']['location']
 
         if config['SCP']['agent'] == 'winscp':
-            self._scp_str = '%s scp://{}:{}' % config['SCP']['location']
+            self._scp_str = '%s scp://%s:%s@{}:{}' % (config['SCP']['location'], user, password)
             self._scp_open = True
         elif config['SCP']['agent'] == 'filezilla':
-            self._scp_str = '%s sftp://%s:{}@{}:{}' % (config['SSH']['location'], user)
+            self._scp_str = '%s sftp://%s:%s@{}:{}' % (config['SCP']['location'], user, password)
             self._scp_open = True
         else:
             self._scp_str = 'scp -P {} USER@{} FILE1 FILE2'

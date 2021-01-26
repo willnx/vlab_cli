@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for connecting to an EMC Common Event Enabler instance"""
+import getpass
+
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -17,8 +19,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The name of the CEE instance to connect to')
 @click.option('-u', '--user', default='administrator',
               help='The name of the user to connect to the EMC Common Event Enabler as.')
+@click.option('--password', default=False, is_flag=True,
+              help='If supported, auto-enter the password when connecting.')
 @click.pass_context
-def cee(ctx, name, protocol, user):
+def cee(ctx, name, protocol, user, password):
     """Connect to a EMC Common Event Enabler instance"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -45,5 +49,9 @@ def cee(ctx, name, protocol, user):
         if not conn_port:
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
+        if password:
+            password_value = getpass.getpass('Password for {}: '.format(user))
+            conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user, password=password_value)
+        else:
+            conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         conn.rdp(port=conn_port)

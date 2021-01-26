@@ -2,7 +2,6 @@
 """Defines the CLI for connecting users to components in their lab"""
 import click
 
-from vlab_cli.lib.widgets import typewriter
 from vlab_cli.lib.configurizer import CONFIG_SECTIONS, set_config, get_config
 from vlab_cli.lib.clippy.connect import invoke_bad_missing_config, invoke_config
 

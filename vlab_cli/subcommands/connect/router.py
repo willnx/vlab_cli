@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for connecting to an InsightIQ instance"""
+import getpass
+
 import click
 
-from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.connectorizer import Connectorizer
 from vlab_cli.lib.click_extras import MandatoryOption
@@ -17,8 +18,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The name of the network Router to connect to')
 @click.option('-u', '--user', default='administrator',
               help='The name of the user to connect to the network Router as.')
+@click.option('--password', default=False, is_flag=True,
+              help='If supported, auto-enter the password when connecting.')
 @click.pass_context
-def router(ctx, name, protocol, user):
+def router(ctx, name, protocol, user, password):
     """Connect to the console of a network router"""
     # Router only supports console access
     if protocol == 'console':
@@ -31,7 +34,11 @@ def router(ctx, name, protocol, user):
             raise click.ClickException(error)
         else:
             vm_moid = info['content'][name].get('moid', 'n/a')
-        conn = Connectorizer(ctx.obj.vlab_config, gateway_ip='n/a', user=user)
+            if password:
+                password_value = getpass.getpass('Password for {}: '.format(user))
+                conn = Connectorizer(ctx.obj.vlab_config, info['content']['gateway_ip'], user=user, password=password_value)
+            else:
+                conn = Connectorizer(ctx.obj.vlab_config, info['content']['gateway_ip'], user=user)
         conn.console(vm_moid)
     else:
         error = 'Unexpected connection protocol supplied'

@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 """Defines the CLI for connecting to a ClarityNow instance"""
+import getpass
+
 import click
 
 from vlab_cli.lib.widgets import Spinner
@@ -17,8 +19,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port
               help='The name of the ClarityNow instance to connect to')
 @click.option('-u', '--user', default='root',
               help='The name of the user to connect to the ClarityNow instance as.')
+@click.option('--password', default=False, is_flag=True,
+              help='If supported, auto-enter the password when connecting.')
 @click.pass_context
-def claritynow(ctx, name, protocol, user):
+def claritynow(ctx, name, protocol, user, password):
     """Connect to a ClarityNow instance"""
     if protocol == 'console':
         info = consume_task(ctx.obj.vlab_api,
@@ -45,7 +49,11 @@ def claritynow(ctx, name, protocol, user):
             error = 'No mapping rule for {} to {} exists'.format(protocol, name)
             raise click.ClickException(error)
 
-        conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
+        if password:
+            password_value = getpass.getpass('Password for {}: '.format(user))
+            conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user, password=password_value)
+        else:
+            conn = Connectorizer(ctx.obj.vlab_config, resp['content']['gateway_ip'], user=user)
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
         elif protocol == 'https':
