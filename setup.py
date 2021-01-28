@@ -26,5 +26,5 @@ setup(name="vlab-cli",
       long_description=open('README.rst').read(),
       entry_points={'console_scripts' : 'vlab=vlab_cli.vlab:cli'},
       install_requires=['click', 'pyjwt', 'requests', 'tabulate', 'cryptography',
-                        'colorama', 'beautifulsoup4'],
+                        'colorama', 'beautifulsoup4', 'click-completion'],
       )

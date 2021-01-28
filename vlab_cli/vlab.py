@@ -10,6 +10,7 @@ from getpass import getuser
 from json import JSONDecodeError
 
 import click
+import click_completion
 from jwt import PyJWTError
 from requests.exceptions import HTTPError
 
@@ -22,6 +23,9 @@ from vlab_cli.lib.new_cli import handle_updates
 from vlab_cli.lib.configurizer import get_config, set_config
 from vlab_cli.lib.click_extras import GlobalContext, HiddenOption
 from vlab_cli.subcommands import status, token, init, create, delete, show, power, connect, apply
+
+# Enable tab complete
+click_completion.init()
 
 # Setting these environment vars b/c Click needs it: http://click.pocoo.org/5/python3/
 environ['LC_ALL'] = environ.get('LC_ALL', 'C.UTF-8')
