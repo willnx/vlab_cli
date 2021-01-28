@@ -20,14 +20,18 @@ from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invo
 @click.option('--start-over', is_flag=True, help='Nuke your lab, and start all over')
 @click.option('--switch', cls=HiddenOption, default='vLabSwitch')
 @click.option('--wan', cls=HiddenOption, default='corpNetwork')
-@click.option('--only-setup-tab-completion', is_flag=True)
+@click.option('--only-tab-completion', is_flag=True,
+              help="Only setup tab completion")
+@click.option('--tab-completion-shell', default='powershell', show_default=True,
+              type=click.Choice(['bash', 'fish', 'zsh', 'powershell']),
+              help="The kind of shell to configure tab-completion for.")
 @click.pass_context
-def init(ctx, start_over, switch, wan, only_setup_tab_completion):
+def init(ctx, start_over, switch, wan, only_tab_completion, tab_completion_shell):
     """Initialize the virtual lab"""
     if start_over:
         nuke_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
-    elif only_setup_tab_completion:
-        install_tab_complete_config()
+    elif only_tab_completion:
+        install_tab_complete_config(tab_completion_shell)
         sys.exit(0)
     else:
         invoke_greeting(username=ctx.obj.username)
@@ -36,7 +40,7 @@ def init(ctx, start_over, switch, wan, only_setup_tab_completion):
             raise click.ClickException("Must agree to \"not ruin this for others\" to use vLab")
         invoke_tutorial()
         init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
-        install_tab_complete_config()
+        install_tab_complete_config(tab_completion_shell)
 
 
 def nuke_lab(vlab_api, username, wan, switch, config, log):
