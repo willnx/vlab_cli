@@ -2,6 +2,7 @@
 """
 Entry point logic for the vLab CLI application
 """
+import sys
 import atexit
 import pkg_resources
 from os import environ

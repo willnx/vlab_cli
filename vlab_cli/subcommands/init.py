@@ -2,6 +2,8 @@
 """
 Defines the CLI for initializing a virtual lab
 """
+import sys
+
 import click
 
 from vlab_cli.lib.click_extras import HiddenOption
@@ -10,6 +12,7 @@ from vlab_cli.lib.ascii_output import format_machine_info
 from vlab_cli.lib.api import consume_task, block_on_tasks
 from vlab_cli.lib.configurizer import set_config, CONFIG_SECTIONS
 from vlab_cli.lib.clippy.connect import invoke_config
+from vlab_cli.lib.tab_completion import install_tab_complete_config
 from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invoke_init_done_help, invoke_eula
 
 
@@ -17,11 +20,15 @@ from vlab_cli.lib.clippy.vlab_init import invoke_greeting, invoke_tutorial, invo
 @click.option('--start-over', is_flag=True, help='Nuke your lab, and start all over')
 @click.option('--switch', cls=HiddenOption, default='vLabSwitch')
 @click.option('--wan', cls=HiddenOption, default='corpNetwork')
+@click.option('--only-setup-tab-completion', is_flag=True)
 @click.pass_context
-def init(ctx, start_over, switch, wan):
+def init(ctx, start_over, switch, wan, only_setup_tab_completion):
     """Initialize the virtual lab"""
     if start_over:
         nuke_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
+    elif only_setup_tab_completion:
+        install_tab_complete_config()
+        sys.exit(0)
     else:
         invoke_greeting(username=ctx.obj.username)
         accepts_terms = invoke_eula()
@@ -29,6 +36,7 @@ def init(ctx, start_over, switch, wan):
             raise click.ClickException("Must agree to \"not ruin this for others\" to use vLab")
         invoke_tutorial()
         init_lab(ctx.obj.vlab_api, ctx.obj.username, wan, switch, config=ctx.obj.vlab_config, log=ctx.obj.log)
+        install_tab_complete_config()
 
 
 def nuke_lab(vlab_api, username, wan, switch, config, log):
