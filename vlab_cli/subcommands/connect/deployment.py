@@ -52,9 +52,9 @@ def deployment(ctx, name, protocol, user, password):
 
         if password:
             password_value = getpass.getpass('Password for {}: '.format(user))
-            conn = Connectorizer(ctx.obj.vlab_config, info['content']['gateway_ip'], user=user, password=password_value)
+            conn = Connectorizer(ctx.obj.vlab_config, data['gateway_ip'], user=user, password=password_value)
         else:
-            conn = Connectorizer(ctx.obj.vlab_config, info['content']['gateway_ip'], user=user)
+            conn = Connectorizer(ctx.obj.vlab_config, data['gateway_ip'], user=user)
         if protocol == 'ssh':
             conn.ssh(port=conn_port)
         elif protocol == 'scp':
