@@ -68,3 +68,4 @@ bin/
 include/
 share/
 man/
+pyvenv.cfg
