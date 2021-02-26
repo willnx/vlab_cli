@@ -37,7 +37,7 @@ def _get_platform_progs():
     base = ['chrome', 'firefox', 'vmrc', 'filezilla']
     this_os = platform.system().lower()
     if this_os == 'windows':
-        base += ['putty', 'mstsc', 'winscp', 'SecureCRT', 'wt']
+        base += ['putty', 'mstsc', 'winscp', 'securecrt', 'wt']
     else:
         base += ['gnome-terminal', 'remmina', 'scp']
     return base

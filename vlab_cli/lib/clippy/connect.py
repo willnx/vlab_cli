@@ -41,7 +41,7 @@ def invoke_config():
         firefox = found_programs.get('firefox', '')
         chrome = found_programs.get('chrome', '')
         putty = found_programs.get('putty', '')
-        secure_crt = found_programs.get('securecrt', '')
+        secure_crt = found_programs.get('securecrt', '').lower()
         windows_term = found_programs.get('wt', '')
         winscp = found_programs.get('winscp', '').lower()
         filezilla = found_programs.get('filezilla', '')
