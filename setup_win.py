@@ -33,5 +33,6 @@ setup(name="vlab-cli",
       options = {'build_exe' : {'packages' : packages},
                  'bdist_msi' : {'upgrade_code': '{4adf8ee9-526b-4b37-a9c3-c46f42de5a53}',
                                 'add_to_path': True,
+                                'all_users' : True,
                                 'install_icon': 'vlab_icon.ico'}},
       )
