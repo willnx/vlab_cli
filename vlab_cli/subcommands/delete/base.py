@@ -26,6 +26,8 @@ from vlab_cli.subcommands.delete.avamar import avamar
 from vlab_cli.subcommands.delete.ana import ana
 from vlab_cli.subcommands.delete.dd import dd
 from vlab_cli.subcommands.delete.everything import everything
+from vlab_cli.subcommands.delete.superna import superna
+from vlab_cli.subcommands.delete.kemp import kemp
 
 
 @click.group()
@@ -57,3 +59,5 @@ delete.add_command(avamar)
 delete.add_command(ana)
 delete.add_command(dd)
 delete.add_command(everything)
+delete.add_command(superna)
+delete.add_command(kemp)

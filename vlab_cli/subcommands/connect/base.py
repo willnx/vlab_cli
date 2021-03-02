@@ -23,6 +23,8 @@ from vlab_cli.subcommands.connect.deployment import deployment
 from vlab_cli.subcommands.connect.avamar import avamar
 from vlab_cli.subcommands.connect.ana import ana
 from vlab_cli.subcommands.connect.dd import dd
+from vlab_cli.subcommands.connect.superna import superna
+from vlab_cli.subcommands.connect.kemp import kemp
 
 
 @click.group()
@@ -71,3 +73,5 @@ connect.add_command(deployment)
 connect.add_command(avamar)
 connect.add_command(ana)
 connect.add_command(dd)
+connect.add_command(superna)
+connect.add_command(kemp)

@@ -24,6 +24,8 @@ from vlab_cli.subcommands.create.template import template
 from vlab_cli.subcommands.create.avamar import avamar
 from vlab_cli.subcommands.create.ana import ana
 from vlab_cli.subcommands.create.dd import dd
+from vlab_cli.subcommands.create.superna import superna
+from vlab_cli.subcommands.create.kemp import kemp
 
 
 @click.group()
@@ -54,3 +56,5 @@ create.add_command(template)
 create.add_command(avamar)
 create.add_command(ana)
 create.add_command(dd)
+create.add_command(superna)
+create.add_command(kemp)

@@ -183,6 +183,7 @@ def https_to_port(vm_type):
         'dataiq' : 443,
         'avamar' : 443,
         'datadomain' : 443,
+        'kemp' : 443,
     }
     try:
         answer =  port_map[vm_type.lower()]

@@ -1,20 +1,18 @@
 # -*- coding: UTF-8 -*-
-"""Defines the CLI for creating an Avamar server"""
+"""Defines the CLI for creating a Superna Eyeglass server"""
 import click
 
 from vlab_cli.lib.widgets import Spinner
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.widgets import typewriter
 from vlab_cli.lib.click_extras import MandatoryOption
-from vlab_cli.lib.ascii_output import format_machine_info
-from vlab_cli.lib.portmap_helpers import get_protocol_port, get_component_protocols
 
 
 @click.command()
-@click.option('-i', '--image', default='19.3.0.149', show_default=True,
-              help='The version of Avamar to create')
+@click.option('-i', '--image', default='2.5.6', show_default=True,
+              help='The version of Superna Eyeglass to create')
 @click.option('-n', '--name', cls=MandatoryOption,
-              help='The name of the Avamar server in your lab')
+              help='The name of the Superna Eyeglass server in your lab')
 @click.option('-s', '--static-ip', cls=MandatoryOption,
               help='The static IP to assign your DNS server')
 @click.option('-m', '--external-netmask', default='255.255.255.0', show_default=True,
@@ -26,10 +24,10 @@ from vlab_cli.lib.portmap_helpers import get_protocol_port, get_component_protoc
 @click.option('-o', '--domain', default='vlab.local', show_default=True,
               help='The domain part of an FQDN (i.e. everything except the hostname).')
 @click.option('-e', '--external-network', default='frontend', show_default=True,
-              help='The public network to connect the new Avamar server to')
+              help='The public network to connect the new Superna Eyeglass server to')
 @click.pass_context
-def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_servers, domain, external_network):
-    """Create a new Avamar server."""
+def superna(ctx, name, image, static_ip, external_netmask, default_gateway, dns_servers, domain, external_network):
+    """Create a new Superna Eyeglass server."""
     body = {'network': external_network,
             'name': name,
             'image': image,
@@ -41,23 +39,20 @@ def avamar(ctx, name, image, static_ip, external_netmask, default_gateway, dns_s
                          }
             }
     resp = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/2/inf/avamar/server',
-                        message='Creating a new Avamar Server running version {}'.format(image),
+                        endpoint='/api/2/inf/superna',
+                        message='Creating a new Superna Eyeglass server running version {}'.format(image),
                         body=body,
                         timeout=1800,
                         pause=5)
     data = resp.json()['content'][name]
     vm_type = data['meta']['component']
-    with Spinner('Creating port mapping rules for HTTPS and SSH'):
-        protocols = get_component_protocols(vm_type.lower())
-        for protocol in protocols:
-            port = get_protocol_port(vm_type, protocol)
-            payload = {'target_addr' : static_ip, 'target_port' : port,
-                       'target_name' : name, 'target_component' : vm_type}
-            ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=payload)
+    with Spinner('Creating port a mapping rule for SSH.'):
+        payload = {'target_addr' : static_ip, 'target_port' : 22,
+                   'target_name' : name, 'target_component' : vm_type}
+        ctx.obj.vlab_api.post('/api/1/ipam/portmap', json=payload)
 
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
-    msg = "Use 'vlab connect avamar --name {} --protocol mgmt' to setup your new Avamar Server\n".format(name)
-    msg += "The default credentials are 'root' and 'changme'".format(name)
+    msg = "Use 'vlab connect avamar --name {} --protocol ssh' to setup your new Superna Eyeglass server\n".format(name)
+    msg += "The default credentials are 'admin' and '3y3gl4ss'".format(name)
     typewriter(msg)
