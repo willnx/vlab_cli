@@ -31,7 +31,7 @@ def ecs(ctx, name, image, external_network, skip_config):
                         endpoint='/api/2/inf/ecs',
                         message='Creating a new instance of ECS running {}'.format(image),
                         body=body,
-                        timeout=900,
+                        timeout=1200,
                         pause=5)
     data = resp.json()['content'][name]
     ipv4_addrs = get_ipv4_addrs(data['ips'])

@@ -38,7 +38,7 @@ def onefs(ctx, name, protocol, user, password):
         conn.console(vm_moid)
     else:
         target_port = get_protocol_port('onefs', protocol)
-        with Spinner('Lookin up connection information for {}'.format(name)):
+        with Spinner('Looking up connection information for {}'.format(name)):
             resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name' : name, 'target_port' : target_port}).json()
             try:
                 conn_port = list(resp['content']['ports'].keys())[0]

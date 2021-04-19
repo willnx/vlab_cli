@@ -22,32 +22,39 @@ from vlab_cli.lib.portmap_helpers import (get_component_protocols, get_protocol_
 @click.pass_context
 def portmap(ctx, name, protocol, ip_address, override_port):
     """Destroy a port mapping rule"""
-    info = consume_task(ctx.obj.vlab_api,
-                        endpoint='/api/1/inf/inventory',
-                        message='Collecting information about your inventory',
-                        method='GET').json()
-    the_vm = info['content'].get(name, None)
-    if the_vm is None:
-        error = "You own no machine named {}. See 'vlab status' for help".format(name)
-        raise click.ClickException(error)
+    if ip_address and override_port:
+        target_port = 0
+        protocol = 'an unknown protocol'
+    else:
+        info = consume_task(ctx.obj.vlab_api,
+                            endpoint='/api/1/inf/inventory',
+                            message='Collecting information about your inventory',
+                            method='GET').json()
+        the_vm = info['content'].get(name, None)
+        if the_vm is None:
+            error = "You own no machine named {}. See 'vlab status' for help".format(name)
+            raise click.ClickException(error)
 
-    vm_type = the_vm['meta']['component']
-    validate_ip(name, vm_type, the_vm['ips'], ip_address, the_vm['state'])
-    target_addr = determine_which_ip(the_vm['ips'], ip_address)
-    valid_protocols = get_component_protocols(vm_type)
-    if not protocol or protocol not in valid_protocols:
-        protocol = invoke_portmap_clippy(ctx.obj.username, vm_type, valid_protocols)
-    target_port = get_protocol_port(vm_type, protocol)
-    # Part of the fix for https://github.com/willnx/vlab/issues/61
-    # This chunk of code allows users to delete port mapping rules
-    # for the bad/wrong ESRS port.
-    if the_vm['meta']['component'].lower() == 'esrs' and override_port:
-        target_port = override_port
+        vm_type = the_vm['meta']['component']
+        validate_ip(name, vm_type, the_vm['ips'], ip_address, the_vm['state'])
+        target_addr = determine_which_ip(the_vm['ips'], ip_address)
+        valid_protocols = get_component_protocols(vm_type)
+        if not protocol or protocol not in valid_protocols:
+            protocol = invoke_portmap_clippy(ctx.obj.username, vm_type, valid_protocols)
+        target_port = get_protocol_port(vm_type, protocol)
+        # Part of the fix for https://github.com/willnx/vlab/issues/61
+        # This chunk of code allows users to delete port mapping rules
+        # for the bad/wrong ESRS port.
+        if the_vm['meta']['component'].lower() == 'esrs' and override_port:
+            target_port = override_port
 
     with Spinner('Deleting port mapping rule to {} for {}'.format(name, protocol)):
         resp = ctx.obj.vlab_api.get('/api/1/ipam/portmap', params={'name': name, 'target_port' : target_port}).json()
         try:
-            conn_port = list(resp['content']['ports'].keys())[0]
+            if not override_port:
+                conn_port = list(resp['content']['ports'].keys())[0]
+            else:
+                conn_port = override_port
         except IndexError:
             # No such rule, but who cares? The target state (i.e. no rule) is true
             pass
