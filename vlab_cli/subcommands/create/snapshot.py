@@ -22,7 +22,7 @@ def snapshot(ctx, name, shift):
                         endpoint='/api/1/inf/snapshot',
                         message='Taking a snapshot of {}'.format(name),
                         body=body,
-                        timeout=900,
+                        timeout=1830,
                         pause=5).json()['content']
     typewriter('Successfully created a new snapshot of {}!'.format(name))
     rows = []
