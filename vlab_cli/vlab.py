@@ -22,7 +22,7 @@ from vlab_cli.lib.logger import get_logger
 from vlab_cli.lib.tokenizer import get_token
 from vlab_cli.lib.new_cli import handle_updates
 from vlab_cli.lib.configurizer import get_config, set_config
-from vlab_cli.lib.click_extras import GlobalContext, HiddenOption
+from vlab_cli.lib.click_extras import GlobalContext, HiddenOption, AliasedGroup
 from vlab_cli.subcommands import status, token, init, create, delete, show, power, connect, apply
 
 # Enable tab complete
@@ -40,7 +40,7 @@ VLAB_SKIP_VERIFY_HOSTNAME = False
 VLAB_USER = getuser()
 
 
-@click.group(context_settings=CONTEXT_SETTINGS)
+@click.group(context_settings=CONTEXT_SETTINGS, cls=AliasedGroup)
 @click.version_option(version=VLAB_VERSION)
 @click.option('--vlab-url', default=VLAB_URL, show_default=True,
               help='The URL of the vLab server')

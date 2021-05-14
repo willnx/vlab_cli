@@ -3,10 +3,11 @@
 import click
 
 from vlab_cli.lib.api import consume_task
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.lib.click_extras import MandatoryOption
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 def power():
     """Change the power state of a VM in your lab"""
     pass

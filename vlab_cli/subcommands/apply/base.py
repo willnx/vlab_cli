@@ -2,12 +2,13 @@
 """Defines the CLI for applying changes to vLab"""
 import click
 
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.subcommands.apply.snapshot import snapshot
 from vlab_cli.subcommands.apply.network import network
 from vlab_cli.subcommands.apply.template import template
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 @click.pass_context
 def apply(ctx):
     """Apply a change to something"""

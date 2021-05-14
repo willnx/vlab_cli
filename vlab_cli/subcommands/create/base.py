@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 """The base grouping of the ``create`` subcommand"""
 import click
+
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.subcommands.create.onefs import onefs
 from vlab_cli.subcommands.create.gateway import gateway
 from vlab_cli.subcommands.create.iiq import insightiq
@@ -28,7 +30,7 @@ from vlab_cli.subcommands.create.superna import superna
 from vlab_cli.subcommands.create.kemp import kemp
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 def create():
     """Create a new component in your virtual lab"""
     pass

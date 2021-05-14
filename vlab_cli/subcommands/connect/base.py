@@ -2,6 +2,7 @@
 """Defines the CLI for connecting users to components in their lab"""
 import click
 
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.lib.configurizer import CONFIG_SECTIONS, set_config, get_config
 from vlab_cli.lib.clippy.connect import invoke_bad_missing_config, invoke_config
 
@@ -27,7 +28,7 @@ from vlab_cli.subcommands.connect.superna import superna
 from vlab_cli.subcommands.connect.kemp import kemp
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 @click.pass_context
 def connect(ctx):
     """Connect to a component in your lab"""

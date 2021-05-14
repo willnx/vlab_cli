@@ -2,6 +2,7 @@
 """The base grouping of the ``show`` subcommand"""
 import click
 
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.subcommands.show.onefs import onefs
 from vlab_cli.subcommands.show.gateway import gateway
 from vlab_cli.subcommands.show.iiq import insightiq
@@ -29,7 +30,7 @@ from vlab_cli.subcommands.show.superna import superna
 from vlab_cli.subcommands.show.kemp import kemp
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 def show():
     """Display information about a specific component in your lab"""
     pass

@@ -2,6 +2,7 @@
 """The grouping of the ``delete`` subcommand"""
 import click
 
+from vlab_cli.lib.click_extras import AliasedGroup
 from vlab_cli.subcommands.delete.onefs import onefs
 from vlab_cli.subcommands.delete.gateway import gateway
 from vlab_cli.subcommands.delete.iiq import insightiq
@@ -30,7 +31,7 @@ from vlab_cli.subcommands.delete.superna import superna
 from vlab_cli.subcommands.delete.kemp import kemp
 
 
-@click.group()
+@click.group(cls=AliasedGroup)
 def delete():
     """Remove a component from your lab"""
     pass
