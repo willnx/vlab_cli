@@ -36,7 +36,7 @@ def portmap(ctx, name, protocol, ip_address, override_port):
             raise click.ClickException(error)
 
         vm_type = the_vm['meta']['component']
-        validate_ip(name, vm_type, the_vm['ips'], ip_address, the_vm['state'])
+        validate_ip(name, vm_type, the_vm['ips'], ip_address, the_vm['state'], action='delete')
         target_addr = determine_which_ip(the_vm['ips'], ip_address)
         valid_protocols = get_component_protocols(vm_type)
         if not protocol or protocol not in valid_protocols:

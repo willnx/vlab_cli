@@ -5,7 +5,7 @@ import ipaddress
 import click
 
 
-def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state):
+def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state, action='create'):
     """Ensure that there is a valid IP to create a port mapping rule for.
 
     :Returns: None
@@ -35,7 +35,7 @@ def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state):
             # everything else has VMTools installed, so the server should return
             # an IP unless the VM isn't even powered on
             if vm_power_state == 'poweredoff':
-                error = 'The VM must be powered on to create a rule. Try `vlab power on --name {}`'.format(vm_name)
+                error = 'The VM must be powered on to {} a rule. Try `vlab power on --name {}`'.format(action, vm_name)
                 raise click.ClickException(error)
             else:
                 error = 'Unable to map a port to a VM that has no IPs assigned.'
@@ -44,7 +44,7 @@ def validate_ip(vm_name, vm_type, vm_ips, requested_ip, vm_power_state):
             error = 'IP {} not owned by VM {}. VM has: {}'.format(requested_ip, vm_name, vm_ips)
             raise click.ClickException(error)
     elif requested_ip == None:
-        error = 'Must provdie an IP to create a port mapping rule for a OneFS node'
+        error = 'Must provide an IP to {} a port mapping rule for a OneFS node'.format(action)
         raise click.ClickException(error)
 
 
