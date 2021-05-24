@@ -54,6 +54,6 @@ def superna(ctx, name, image, static_ip, external_netmask, default_gateway, dns_
 
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
-    msg = "Use 'vlab connect avamar --name {} --protocol ssh' to setup your new Superna Eyeglass server\n".format(name)
+    msg = "Use 'vlab connect superna --name {} --protocol ssh' to setup your new Superna Eyeglass server\n".format(name)
     msg += "The default credentials are 'admin' and '3y3gl4ss'".format(name)
     typewriter(msg)
