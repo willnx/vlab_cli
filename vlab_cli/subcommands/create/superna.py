@@ -6,6 +6,7 @@ from vlab_cli.lib.widgets import Spinner
 from vlab_cli.lib.api import consume_task
 from vlab_cli.lib.widgets import typewriter
 from vlab_cli.lib.click_extras import MandatoryOption
+from vlab_cli.lib.ascii_output import format_machine_info
 
 
 @click.command()
