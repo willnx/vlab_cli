@@ -13,7 +13,7 @@ from vlab_cli.lib.click_extras import MandatoryOption
               help='The name of the template to deploy.')
 @click.pass_context
 def deployment(ctx, image):
-    """Deploy a template of machines in your lab"""
+    """Deploy a template of machines into your lab."""
     body = {'template' : image}
     resp = consume_task(ctx.obj.vlab_api,
                         endpoint='/api/2/inf/deployment',
