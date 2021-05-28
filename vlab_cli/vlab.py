@@ -51,7 +51,7 @@ VLAB_USER = getuser()
 @click.option('--verbose', is_flag=True, help='Increase logging output')
 @click.option('--no-scroll', '-o', is_flag=True,
               help='Output messages all at once')
-@click.option('-s', '--skip-update-check', is_flag=True, help="Don't check for and updated vLab CLI")
+@click.option('-s', '--skip-update-check', is_flag=True, help="Don't check for an updated vLab CLI")
 @click.option('--debug', is_flag=True, cls=HiddenOption)
 @click.pass_context
 def cli(ctx, vlab_url, skip_verify, vlab_username, verbose, no_scroll, skip_update_check, debug):
