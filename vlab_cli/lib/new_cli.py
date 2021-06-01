@@ -9,6 +9,7 @@ from vlab_cli import version
 from vlab_cli.lib.api import build_url
 from vlab_cli.lib.widgets import prompt
 from vlab_cli.lib.connectorizer import Connectorizer
+from vlab_cli.lib.widgets import typewriter
 
 
 def handle_updates(vlab_api, vlab_config, skip_update_check):
@@ -44,8 +45,8 @@ def handle_updates(vlab_api, vlab_config, skip_update_check):
         answer = prompt(question, boolean=True, boolean_default=True)
         if answer:
             download_url = build_url(vlab_api.server, url)
-            print("Downloading latest version...")
+            typewriter("Downloading latest version...")
             urllib.request.urlretrieve(download_url, r"C:\Windows\Temp\vlab-cli.msi")
-            print("Installing latest version. Please follow any prompts on the installer.")
+            typewriter("Installing latest version. Please follow any prompts on the installer.")
             # This will launch the install in a non-interactive mode.
             subprocess.call(r"msiexec.exe /i C:\Windows\Temp\vlab-cli.msi /qn /passive")
