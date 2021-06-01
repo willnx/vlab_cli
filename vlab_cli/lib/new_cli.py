@@ -1,12 +1,15 @@
 # -*- coding: UTF-8 -*-
 """Handles checking for new versions of the CLI"""
 import os.path
+import subprocess
+import urllib.request
 from bs4 import BeautifulSoup
 
 from vlab_cli import version
 from vlab_cli.lib.api import build_url
 from vlab_cli.lib.widgets import prompt
 from vlab_cli.lib.connectorizer import Connectorizer
+from vlab_cli.lib.widgets import typewriter
 
 
 def handle_updates(vlab_api, vlab_config, skip_update_check):
@@ -38,9 +41,12 @@ def handle_updates(vlab_api, vlab_config, skip_update_check):
 
     current_version = version.__version__
     if site_version and site_version != current_version:
-        question = "A new version of vLab CLI is available. Download now? [Y/n]"
+        question = "A new version of vLab CLI is available. Would you like to install it now? [Y/n]"
         answer = prompt(question, boolean=True, boolean_default=True)
         if answer:
             download_url = build_url(vlab_api.server, url)
-            conn = Connectorizer(vlab_config, gateway_ip='n/a')
-            conn.https(port=443, url=download_url)
+            typewriter("Downloading latest version...")
+            urllib.request.urlretrieve(download_url, r"C:\Windows\Temp\vlab-cli.msi")
+            typewriter("Installing latest version. Please follow any prompts on the installer.")
+            # This will launch the install in a non-interactive mode.
+            subprocess.call(r"msiexec.exe /i C:\Windows\Temp\vlab-cli.msi /qn /passive")
