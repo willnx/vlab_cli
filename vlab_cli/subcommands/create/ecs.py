@@ -68,7 +68,7 @@ def ecs(ctx, name, image, external_network, skip_config):
                      method='POST',
                      body=config_payload,
                      base_endpoint=False,
-                     timeout=900,
+                     timeout=1800,
                      pause=5)
     output = format_machine_info(ctx.obj.vlab_api, info=data)
     click.echo(output)
