@@ -60,9 +60,9 @@ def get_formatted_table(images):
                 '9.0.0 (Cascades)',
                 '9.1.0 (Deccan)'
                ]
-    header_d = ['9.2.0 (Empire)']
-                #'9.2.1 (Flying Scotsman)',
-                #'9.3.0 (Gotham)']
+    header_d = ['9.2.0 (Empire)',
+                '9.2.1 (Flying Scotsman)',
+                '9.3.0 (Gotham)']
     header_z = ['Update your vLab CLI']
     orca = sorted([x for x in images if '7.2.0' < x < '8.0.0.0' ])
     riptide = sorted([x for x in images if '7.2.1.9' < x < '8.0.1.0'])
@@ -77,16 +77,18 @@ def get_formatted_table(images):
     cascades = sorted([x for x in images if '9.0.0.0' <= x < '9.1.0.0'])
     deccan = sorted([x for x in images if '9.1.0' < x < '9.2.0.0'])
     empire = sorted([x for x in images if '9.2.0' < x < '9.2.1.0'])
-    net_new = sorted([x for x in images if '9.2.0' <= x])
+    flying_scotsman = sorted([x for x in images if '9.2.1' < x < '9.3.0.0'])
+    gotham = sorted([x for x in images if '9.3.0' < x < '9.4.0.0'])
+    net_new = sorted([x for x in images if '9.4.0' <= x])
     table_a = columned_table(header_a, [orca, riptide, halfpipe, freight_train])
     table_b = columned_table(header_b, [niijima, kanagawa, seismic, pipeline])
     table_c = columned_table(header_c, [acela, beachcomber, cascades, deccan])
-    table_d = columned_table(header_d, [empire])
+    table_d = columned_table(header_d, [empire, flying_scotsman, gotham])
     if net_new:
         table_z = columned_table(header_z, [net_new])
-        table = '{}\n\n{}\n\n{}\n\n{}'.format(table_a, table_b, table_c, table_d, table_z)
+        table = '{}\n\n{}\n\n{}\n\n{}\n\n{}'.format(table_a, table_b, table_c, table_d, table_z)
     else:
-        table = '{}\n\n{}\n\n{}'.format(table_a, table_b, table_c)
+        table = '{}\n\n{}\n\n{}\n\n{}'.format(table_a, table_b, table_c, table_d)
     return table
 
 
